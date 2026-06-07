@@ -1,0 +1,77 @@
+{
+  "project": "Agent Foundry",
+  "prd_version": "v8",
+  "created": "2026-06-07",
+  "preferences": {
+    "domains": ["morning-briefing", "health-habits", "learning-research"],
+    "focus_trait": "observe-reason-act feedback loop",
+    "build_size": "minimal",
+    "source": "D16 — Ram's brainstorm answers, 2026-06-07"
+  },
+  "sdk_ladder": {
+    "1_query_message_anatomy": "not_started",
+    "2_goal_predicate_loop_circuit_breaker": "not_started",
+    "3_client_sessions_resume": "not_started",
+    "4_custom_tools_mcp": "not_started",
+    "5_permissions_allowed_tools": "not_started",
+    "6_hooks_span_trace": "not_started",
+    "7_independent_verifier": "not_started",
+    "8_subagents_compaction": "not_started"
+  },
+  "_agent_schema_note": {
+    "description": "Schema for each entry in agents[]. Written at end of cycle.",
+    "fields": {
+      "slug": "string — use-case-slug matching agents/ folder name",
+      "date": "ISO date when agent was delivered",
+      "domain": "string — from preferences.domains or new",
+      "traits_demonstrated": "array of trait names",
+      "gates_passed": "array of gate IDs e.g. [G1, G2, G3, G4, G5]",
+      "sdk_concepts_introduced": "array of rung IDs e.g. [1, 2]",
+      "status": "string — delivered | in_progress | needs_fix",
+      "learning_position": "FORWARD | LATERAL-RIGHT | LATERAL-LEFT | FOUNDATIONAL | DIAGNOSTIC",
+      "learning": {
+        "probes_asked": "array of strings — Phase F (pre-run) probes asked",
+        "gaps": "array of strings — concepts that came up weak in Phase F",
+        "strengths": "array of strings — concepts demonstrated correctly",
+        "recall_question_next_cycle": "string — weakest gap as a question for next cycle opening"
+      },
+      "post_run_notes": {
+        "runtime_surprises": "array of strings — things that surprised Ram in the runtime output (Phase F2)",
+        "post_run_probes_asked": "array of strings — probes asked during Phase F2",
+        "next_cycle_expectation": "string — what Ram predicts the next SDK rung will unlock",
+        "skipped": "boolean — true if Phase F2 was skipped without any interaction"
+      }
+    }
+  },
+  "agents": [],
+  "brainstorm_sessions": [
+    {
+      "date": "2026-06-07",
+      "cycle": 1,
+      "candidates": [
+        {
+          "name": "Morning Spark",
+          "domain": "morning-briefing",
+          "gates": "G1–G5 all pass",
+          "decision": "available",
+          "notes": "Recommended for cycle 1 — minimal, clean O-R-A loop, HN API single endpoint"
+        },
+        {
+          "name": "Study Prep Agent",
+          "domain": "learning-research",
+          "gates": "G1–G5 all pass",
+          "decision": "available",
+          "notes": "Slightly richer planning step than Morning Spark; viable cycle 1 alternative"
+        },
+        {
+          "name": "Focus Booster",
+          "domain": "health-habits",
+          "gates": "G3 borderline",
+          "decision": "needs-fix",
+          "notes": "G3 weak — environment unchanged between iterations; fix: add probe_log(question) tool so model's question shapes what it observes next"
+        }
+      ],
+      "locked": null
+    }
+  ]
+}

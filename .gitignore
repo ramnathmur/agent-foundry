@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs (generated per-run by tee_to_log — keep the .log placeholder if any)
+# Uncomment to exclude all run logs:
+# agents/**/*_run_output.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets — never commit
+*.env
+.env.*
+secrets.*

@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>What Makes an AI Agent? — The Chef's Kitchen Guide v2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #1a1814;
+  --ink2: #3d3a34;
+  --ink3: #7a7670;
+  --cream: #faf7f2;
+  --cream2: #f2ede4;
+  --cream3: #e8e1d4;
+  --amber: #c8832a;
+  --amber-light: #f5e6cc;
+  --amber-dark: #8a5a1a;
+  --teal: #2a7a6e;
+  --teal-light: #d4f0ec;
+  --coral: #c85a3a;
+  --coral-light: #fae8e2;
+  --purple: #5a3a8a;
+  --purple-light: #ece6f5;
+  --green: #3a7a4a;
+  --green-light: #e2f0e6;
+  --blue: #2a5a8a;
+  --blue-light: #ddeaf5;
+  --gray-light: #f0ece6;
+  --border: #ddd8ce;
+  --shadow: 0 2px 16px rgba(26,24,20,0.08);
+  --shadow-lg: 0 8px 40px rgba(26,24,20,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 72px 40px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,131,42,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.hero h1 em { font-style: italic; color: var(--amber); }
+.hero-sub {
+  font-size: 17px;
+  font-weight: 300;
+  color: rgba(250,247,242,0.72);
+  max-width: 560px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+.hero-loop {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(250,247,242,0.5);
+  margin-bottom: 32px;
+  min-height: 22px;
+}
+.hero-loop .loop-word {
+  opacity: 0;
+  display: inline;
+}
+.hero-loop .loop-word.visible {
+  animation: wordFadeIn 0.4s ease forwards;
+}
+@keyframes wordFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 5px 14px;
+  border-radius: 99px;
+  border: 1px solid rgba(250,247,242,0.2);
+  color: rgba(250,247,242,0.7);
+}
+
+/* ── NAV ──────────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,247,242,0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+}
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  align-items: center;
+}
+.nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink3);
+  text-decoration: none;
+  padding: 14px 18px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-link:hover { color: var(--ink); border-color: var(--amber); }
+.nav-progress {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+  white-space: nowrap;
+  padding: 14px 0 14px 18px;
+  border-left: 1px solid var(--border);
+}
+.nav-progress span { color: var(--amber); font-weight: 500; }
+
+/* ── LAYOUT ───────────────────────────────────────────── */
+.container { max-width: 960px; margin: 0 auto; padding: 0 40px; }
+.section { padding: 72px 0; }
+.section + .section { border-top: 1px solid var(--border); }
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+.section-title-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.section-intro {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink2);
+  max-width: 680px;
+  margin-bottom: 48px;
+  line-height: 1.75;
+}
+
+/* ── TIER BADGE ───────────────────────────────────────── */
+.tier-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  cursor: help;
+  position: relative;
+  flex-shrink: 0;
+}
+.tier-core    { background: var(--coral-light); color: var(--coral); border: 1px solid #e0a890; }
+.tier-essential { background: var(--amber-light); color: var(--amber-dark); border: 1px solid #e8d0a0; }
+.tier-enhancing { background: var(--teal-light); color: var(--teal); border: 1px solid #a8d8d0; }
+.tier-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 220px;
+  line-height: 1.5;
+  z-index: 200;
+  pointer-events: none;
+}
+.tier-badge:hover .tier-tooltip { display: block; }
+
+/* ── SVG TRAIT MAP ────────────────────────────────────── */
+.svg-card {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 16px;
+}
+.svg-card svg { width: 100%; display: block; }
+
+/* clickable SVG nodes */
+.svg-trait-node { cursor: pointer; transition: opacity 0.2s; }
+.svg-trait-node:hover { opacity: 0.82; }
+.svg-trait-node.highlighted rect,
+.svg-trait-node.highlighted ellipse { filter: drop-shadow(0 0 6px rgba(200,131,42,0.5)); }
+
+/* SVG flow animation */
+@keyframes flowDash {
+  from { stroke-dashoffset: 30; }
+  to   { stroke-dashoffset: 0; }
+}
+.flow-line {
+  stroke-dasharray: 6 4;
+  animation: flowDash 1.8s linear infinite;
+}
+
+/* ── TRAIT CARDS ──────────────────────────────────────── */
+.traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.trait-card {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: box-shadow 0.2s, transform 0.2s, border-left-color 0.3s;
+  cursor: default;
+}
+.trait-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.trait-card.self-yes { border-left-color: var(--green); }
+.trait-card.self-no  { border-left-color: var(--coral); }
+.trait-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.trait-card-header-inner { display: flex; flex-direction: column; gap: 4px; }
+.trait-card-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.trait-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.trait-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em; color: var(--ink3);
+}
+.trait-name { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); }
+.trait-def { font-size: 14px; color: var(--ink2); line-height: 1.65; margin-bottom: 18px; }
+.trait-rows { display: flex; flex-direction: column; gap: 10px; }
+.trait-row { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.55; }
+.trait-row-label {
+  font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+  min-width: 52px; text-align: center;
+}
+.chef-label  { background: var(--amber-light); color: var(--amber-dark); }
+.agent-label { background: var(--blue-light); color: var(--blue); }
+.test-label  { background: var(--green-light); color: var(--green); }
+.trait-row-text { color: var(--ink2); }
+.trait-test {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--cream3);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px; font-style: italic; color: var(--ink2);
+}
+.trait-test strong { font-style: normal; font-weight: 600; color: var(--ink); }
+
+/* Self-test row */
+.self-test-row {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.self-test-label {
+  font-size: 12px;
+  color: var(--ink3);
+  font-style: italic;
+}
+.self-test-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.st-btn {
+  font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--cream); color: var(--ink3);
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+}
+.st-btn:hover { border-color: var(--amber); color: var(--amber-dark); }
+.st-btn.st-yes { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.st-btn.st-no  { background: var(--coral-light); border-color: var(--coral); color: var(--coral); }
+
+/* Self-test counter bar */
+.selftest-bar {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.selftest-counter {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.selftest-counter span { color: var(--amber); }
+.selftest-verdict {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+.sv-none    { background: var(--gray-light); color: var(--ink3); }
+.sv-min     { background: var(--blue-light); color: var(--blue); }
+.sv-mod     { background: var(--amber-light); color: var(--amber-dark); }
+.sv-full    { background: var(--green-light); color: var(--green); }
+.selftest-hint { font-size: 13px; color: var(--ink3); font-style: italic; }
+
+/* colour accents per trait */
+.t-amber .trait-icon { background: var(--amber-light); }
+.t-purple .trait-icon { background: var(--purple-light); }
+.t-teal .trait-icon { background: var(--teal-light); }
+.t-blue .trait-icon { background: var(--blue-light); }
+.t-coral .trait-icon { background: var(--coral-light); }
+.t-green .trait-icon { background: var(--green-light); }
+.t-gray .trait-icon { background: var(--gray-light); }
+
+/* ── RADAR CHART ──────────────────────────────────────── */
+.radar-section {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  margin-bottom: 32px;
+}
+.radar-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.radar-svg-wrap {
+  display: flex;
+  justify-content: center;
+}
+.radar-polygon {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.radar-right-col { display: flex; flex-direction: column; gap: 20px; }
+.radar-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.radar-subtitle { font-size: 13px; color: var(--ink3); }
+.radar-chips-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+
+/* ── SPECTRUM ─────────────────────────────────────────── */
+.spectrum-wrap {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  margin-bottom: 32px;
+}
+.spectrum-bar {
+  position: relative; height: 12px; border-radius: 99px;
+  background: linear-gradient(to right, #2a5a8a 0%, #c8832a 50%, #c85a3a 100%);
+  margin: 48px 0 32px;
+}
+.spectrum-labels {
+  display: flex; justify-content: space-between;
+  font-size: 13px; font-weight: 600; margin-bottom: 40px;
+}
+.spectrum-labels span:first-child { color: var(--blue); }
+.spectrum-labels span:nth-child(2) { color: var(--amber); }
+.spectrum-labels span:last-child { color: var(--coral); }
+.spectrum-examples {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.spectrum-col { display: flex; flex-direction: column; gap: 12px; }
+.spectrum-col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.s-workflow { color: var(--blue); }
+.s-border   { color: var(--amber); }
+.s-agent    { color: var(--coral); }
+.example-chip {
+  font-size: 13px; padding: 10px 14px;
+  border-radius: var(--radius-sm); line-height: 1.5;
+  border: 1.5px solid; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.example-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.example-chip.chip-active { border-width: 2px; box-shadow: var(--shadow); }
+.chip-workflow { background: var(--blue-light); border-color: #b8cfe8; color: var(--blue); }
+.chip-workflow.chip-active { border-color: var(--blue); background: #c8dff0; }
+.chip-border   { background: var(--amber-light); border-color: #e8d0a0; color: var(--amber-dark); }
+.chip-border.chip-active   { border-color: var(--amber); background: #eed8a0; }
+.chip-agent    { background: var(--coral-light); border-color: #e8c0b0; color: var(--coral); }
+.chip-agent.chip-active    { border-color: var(--coral); background: #f0c8b8; }
+.chip-name { font-weight: 600; font-size: 12px; display: block; margin-bottom: 2px; }
+.chip-why  { font-size: 11px; opacity: 0.85; }
+
+/* ── CLASSIFIER ───────────────────────────────────────── */
+.classifier {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin-bottom: 48px;
+}
+.classifier-intro { font-size: 15px; color: var(--ink2); margin-bottom: 32px; line-height: 1.7; }
+.q-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 32px; }
+.q-item {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 18px 20px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.q-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--amber); flex-shrink: 0; padding-top: 2px; min-width: 28px; }
+.q-text { flex: 1; font-size: 14px; color: var(--ink); font-weight: 500; line-height: 1.5; }
+.q-sub { font-size: 12px; font-weight: 400; color: var(--ink3); display: block; margin-top: 3px; }
+.q-toggle { display: flex; gap: 6px; flex-shrink: 0; margin-top: 1px; }
+.q-btn {
+  font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--cream); color: var(--ink3);
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+}
+.q-btn:hover { border-color: var(--amber); color: var(--amber-dark); }
+.q-btn.active-yes { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.q-btn.active-no  { background: var(--coral-light); border-color: var(--coral); color: var(--coral); }
+
+/* live score badge */
+.classifier-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--ink3);
+}
+.classifier-score-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--amber);
+}
+
+.verdict-box {
+  display: none;
+  padding: 28px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid;
+  animation: fadeUp 0.3s ease;
+}
+.verdict-box.show { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.verdict-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.verdict-title { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; margin-bottom: 12px; }
+.verdict-text  { font-size: 14px; line-height: 1.7; color: var(--ink2); }
+.verdict-score { margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink3); }
+
+/* trait gap diagnosis */
+.trait-gap-list { margin-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+.tg-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+.tg-absent  { background: rgba(200,90,58,0.08); color: var(--coral); }
+.tg-present { background: rgba(58,122,74,0.08); color: var(--green); }
+.tg-dot { flex-shrink: 0; }
+
+.verdict-workflow { background: var(--blue-light); border-color: #b8cfe8; }
+.verdict-workflow .verdict-label, .verdict-workflow .verdict-title { color: var(--blue); }
+.verdict-border   { background: var(--amber-light); border-color: #e0c07a; }
+.verdict-border .verdict-label, .verdict-border .verdict-title { color: var(--amber-dark); }
+.verdict-agent    { background: var(--coral-light); border-color: #e0a890; }
+.verdict-agent .verdict-label, .verdict-agent .verdict-title { color: var(--coral); }
+
+/* ── DECISION FRAMEWORK ───────────────────────────────── */
+.framework-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.framework-card { padding: 22px; background: var(--cream2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.framework-q { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 12px; line-height: 1.45; }
+.framework-answers { display: flex; flex-direction: column; gap: 6px; }
+.fw-ans { font-size: 13px; padding: 6px 10px; border-radius: 4px; display: flex; gap: 8px; align-items: flex-start; }
+.fw-ans-wf { background: var(--blue-light); color: var(--blue); }
+.fw-ans-ag { background: var(--coral-light); color: var(--coral); }
+.fw-dot { font-weight: 700; flex-shrink: 0; }
+
+/* ── AGENT SCORE SANDBOX ──────────────────────────────── */
+.sandbox {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 36px;
+  margin-top: 40px;
+  margin-bottom: 8px;
+  color: var(--cream);
+}
+.sandbox-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.sandbox-sub {
+  font-size: 13px;
+  color: rgba(250,247,242,0.55);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.sandbox-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 28px;
+  font-size: 13px;
+}
+.sandbox-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.45);
+  padding: 0 12px 12px;
+  text-align: left;
+  font-weight: 500;
+}
+.sandbox-table th:last-child { text-align: center; }
+.sandbox-table td {
+  padding: 8px 12px;
+  border-top: 1px solid rgba(250,247,242,0.08);
+  vertical-align: middle;
+}
+.sandbox-table tr:first-child td { border-top: none; }
+.sb-trait-name { color: rgba(250,247,242,0.82); }
+.sb-tier-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 99px;
+  display: inline-block;
+}
+.sb-core     { background: rgba(200,90,58,0.25); color: #e8a090; }
+.sb-essential{ background: rgba(200,131,42,0.25); color: #e8b870; }
+.sb-enhancing{ background: rgba(42,122,110,0.25); color: #80d0c8; }
+.sb-pts { color: rgba(250,247,242,0.4); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.sb-toggle-group { display: flex; gap: 4px; justify-content: center; }
+.sb-btn {
+  font-size: 10px; font-weight: 600; padding: 3px 9px;
+  border-radius: 4px; border: 1px solid rgba(250,247,242,0.18);
+  background: transparent; color: rgba(250,247,242,0.45);
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+}
+.sb-btn:hover { border-color: rgba(250,247,242,0.4); color: rgba(250,247,242,0.8); }
+.sb-btn.sb-absent  { background: rgba(200,90,58,0.2); border-color: rgba(200,90,58,0.5); color: #e8a090; }
+.sb-btn.sb-partial { background: rgba(200,131,42,0.2); border-color: rgba(200,131,42,0.5); color: #e8b870; }
+.sb-btn.sb-full    { background: rgba(58,160,80,0.2); border-color: rgba(58,160,80,0.5); color: #90d8a0; }
+
+.sandbox-score-section { border-top: 1px solid rgba(250,247,242,0.1); padding-top: 24px; }
+.sandbox-score-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.4);
+  margin-bottom: 8px;
+}
+.sandbox-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.sandbox-score-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 40px;
+  color: var(--amber);
+  flex-shrink: 0;
+}
+.sandbox-score-max {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: rgba(250,247,242,0.3);
+  margin-top: 6px;
+}
+.sandbox-verdict-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 99px;
+}
+.sb-v-none { background: rgba(120,116,112,0.2); color: rgba(250,247,242,0.45); }
+.sb-v-min  { background: rgba(42,90,138,0.3); color: #90c0e8; }
+.sb-v-mod  { background: rgba(200,131,42,0.3); color: #e8b870; }
+.sb-v-full { background: rgba(58,160,80,0.3); color: #90d8a0; }
+
+.sandbox-bar-wrap { width: 100%; background: rgba(250,247,242,0.1); border-radius: 99px; height: 8px; overflow: hidden; }
+.sandbox-bar-fill {
+  height: 8px; border-radius: 99px;
+  background: linear-gradient(to right, #2a5a8a, #c8832a, #c85a3a);
+  width: 0%;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── FAQ ACCORDION ────────────────────────────────────── */
+.faq-list { display: flex; flex-direction: column; gap: 2px; }
+.faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: box-shadow 0.2s; }
+.faq-item:hover { box-shadow: var(--shadow); }
+.faq-q {
+  width: 100%; display: flex; align-items: flex-start; gap: 14px;
+  padding: 20px 22px; background: var(--cream2); border: none;
+  cursor: pointer; text-align: left;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink);
+  line-height: 1.45; transition: background 0.15s;
+}
+.faq-q:hover { background: var(--cream3); }
+.faq-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500;
+  padding: 3px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.badge-hard    { background: var(--coral-light); color: var(--coral); }
+.badge-concept { background: var(--purple-light); color: var(--purple); }
+.badge-diff    { background: var(--teal-light); color: var(--teal); }
+.faq-arrow { margin-left: auto; flex-shrink: 0; font-size: 18px; color: var(--ink3); transition: transform 0.25s; line-height: 1; padding-top: 1px; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-a {
+  display: none; padding: 0 22px 22px;
+  background: var(--cream2); font-size: 14px; color: var(--ink2);
+  line-height: 1.75; border-top: 1px solid var(--border); padding-top: 18px;
+}
+.faq-item.open .faq-a { display: block; animation: fadeDown 0.25s ease; }
+@keyframes fadeDown { from { opacity: 0; } to { opacity: 1; } }
+.faq-a strong { color: var(--ink); font-weight: 600; }
+.faq-a ul { padding-left: 20px; margin-top: 8px; }
+.faq-a li { margin-bottom: 6px; }
+.faq-a .verdict-chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; margin: 0 2px; }
+.vc-wf { background: var(--blue-light); color: var(--blue); }
+.vc-ag { background: var(--coral-light); color: var(--coral); }
+.vc-bd { background: var(--amber-light); color: var(--amber-dark); }
+
+/* SMART GOAL inline table */
+.smart-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+.smart-table th { text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); padding: 4px 10px 8px; border-bottom: 1px solid var(--border); font-weight: 500; }
+.smart-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.smart-table tr:last-child td { border-bottom: none; }
+.smart-letter { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: var(--amber); }
+.smart-trait { font-weight: 600; color: var(--ink); }
+.smart-test { color: var(--ink3); font-style: italic; }
+
+/* ── FOOTER ───────────────────────────────────────────── */
+.footer-strip {
+  background: var(--ink); color: rgba(250,247,242,0.55);
+  text-align: center; padding: 32px 40px; font-size: 13px; line-height: 1.6;
+}
+.footer-strip strong { color: rgba(250,247,242,0.85); }
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 720px) {
+  .container { padding: 0 20px; }
+  .hero { padding: 48px 20px 40px; }
+  .nav { padding: 0 16px; }
+  .nav-progress { display: none; }
+  .traits-grid { grid-template-columns: 1fr; }
+  .spectrum-examples { grid-template-columns: 1fr; }
+  .framework-grid { grid-template-columns: 1fr; }
+  .svg-card { padding: 16px; }
+  .radar-layout { grid-template-columns: 1fr; }
+  .sandbox { padding: 24px 20px; }
+  .selftest-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-eyebrow">AI Literacy · Agentic Systems · v2</div>
+  <h1>What Makes an<br/><em>AI Agent?</em></h1>
+  <p class="hero-sub">A complete visual guide using the chef-in-a-kitchen analogy — from core traits to knowing when a process is truly agentic.</p>
+  <div class="hero-loop" id="hero-loop" aria-label="Perceive → Plan → Act → Observe → Adapt → Stop"></div>
+  <div class="hero-tags">
+    <span class="tag">9 Agent Traits</span>
+    <span class="tag">Interactive Radar</span>
+    <span class="tag">Live Classifier</span>
+    <span class="tag">Self-Test Scoring</span>
+    <span class="tag">Agent Score Sandbox</span>
+    <span class="tag">10 Challenge Q&As</span>
+  </div>
+</header>
+
+<!-- ══ NAV ═══════════════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-link" href="#analogy">The Analogy</a>
+    <a class="nav-link" href="#traits">9 Traits</a>
+    <a class="nav-link" href="#spectrum">Spectrum</a>
+    <a class="nav-link" href="#classifier">Classifier</a>
+    <a class="nav-link" href="#framework">Framework</a>
+    <a class="nav-link" href="#faq">Challenge Q&amp;A</a>
+    <div class="nav-progress">Self-test: <span id="nav-score">0</span>/9</div>
+  </div>
+</nav>
+
+<!-- ══ SECTION 1 — THE ANALOGY ═══════════════════════════════ -->
+<section class="section" id="analogy">
+  <div class="container">
+    <div class="section-label">Section 01</div>
+    <h2 class="section-title">The Chef &amp; the Kitchen</h2>
+    <p class="section-intro">
+      Before we define an AI agent technically, here is an analogy that maps perfectly to every trait.
+      A chef given a goal — <em>cook the perfect dish</em> — exhibits every behaviour we expect of an intelligent agent.
+      Study this picture once and you will have an intuition that no textbook definition can give you.
+      <strong>Click any trait node</strong> in the map to jump to its detailed card.
+    </p>
+
+    <div style="background:var(--ink);color:var(--cream);padding:32px 36px;border-radius:var(--radius);margin-bottom:40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:18px;">The Setup</div>
+      <p style="font-size:16px;line-height:1.8;font-weight:300;color:rgba(250,247,242,0.88);">
+        A chef walks into a kitchen. His goal is to cook a specific dish. He looks around — he sees a blender, a grinder, a fridge, and a gas oven. Those are his tools.
+        He recalls the recipe (his plan), picks up the right tool for each step, executes the steps in sequence, tastes as he goes, adjusts if something is off, and stops
+        when the dish is ready. <strong style="color:#fff;font-weight:500;">No one tells him what to do next. He figures it out.</strong>
+      </p>
+      <p style="font-size:14px;margin-top:16px;color:rgba(250,247,242,0.55);font-style:italic;">
+        That entire loop — perceive → plan → act → observe → adjust → stop — is exactly what an AI agent does.
+      </p>
+    </div>
+
+    <!-- INTERACTIVE SVG TRAIT MAP -->
+    <div class="svg-card">
+      <svg id="trait-map-svg" viewBox="0 0 680 840" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Kitchen boundary -->
+        <rect x="130" y="30" width="420" height="650" rx="20" fill="none" stroke="#c8832a" stroke-width="1" stroke-dasharray="6 4" opacity="0.4"/>
+        <text x="340" y="18" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#c8832a" opacity="0.7" letter-spacing="2">KITCHEN  —  ENVIRONMENT</text>
+
+        <!-- GOAL banner — clickable -->
+        <g class="svg-trait-node" data-trait="trait-1" data-label="Goal-Directedness" tabindex="0" role="button" aria-label="Jump to Goal-Directedness trait">
+          <rect x="195" y="42" width="290" height="52" rx="10" fill="#f5e6cc" stroke="#c8832a" stroke-width="0.8"/>
+          <text x="340" y="63" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#8a5a1a">Goal: cook the perfect dish</text>
+          <text x="340" y="81" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#c8832a" letter-spacing="1.5" font-weight="500">TRAIT: GOAL-DIRECTEDNESS ↗</text>
+        </g>
+
+        <!-- Animated flow lines -->
+        <line class="flow-line" x1="340" y1="94" x2="340" y2="118" stroke="#c8832a" stroke-width="1" marker-end="url(#arr)" opacity="0.7"/>
+
+        <!-- PLAN box — clickable -->
+        <g class="svg-trait-node" data-trait="trait-3" data-label="Planning" tabindex="0" role="button" aria-label="Jump to Planning trait">
+          <rect x="195" y="118" width="290" height="52" rx="10" fill="#ece6f5" stroke="#5a3a8a" stroke-width="0.8"/>
+          <text x="340" y="139" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#3d2560">Reads the recipe</text>
+          <text x="340" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#5a3a8a" letter-spacing="1.5" font-weight="500">TRAIT: PLANNING &amp; DECOMPOSITION ↗</text>
+        </g>
+
+        <line class="flow-line" x1="340" y1="170" x2="340" y2="195" stroke="#5a3a8a" stroke-width="1" marker-end="url(#arr)" opacity="0.7"/>
+
+        <!-- Chef figure -->
+        <ellipse cx="340" cy="258" rx="34" ry="44" fill="#f2ede4" stroke="#ddd8ce" stroke-width="1.2"/>
+        <circle cx="340" cy="205" r="24" fill="#f2ede4" stroke="#ddd8ce" stroke-width="1.2"/>
+        <rect x="320" y="176" width="40" height="9" rx="3" fill="#fff" stroke="#c8c4bc" stroke-width="0.8"/>
+        <rect x="326" y="156" width="28" height="22" rx="5" fill="#fff" stroke="#c8c4bc" stroke-width="0.8"/>
+        <circle cx="333" cy="202" r="2" fill="#7a7670"/>
+        <circle cx="347" cy="202" r="2" fill="#7a7670"/>
+        <path d="M333 213 Q340 218 347 213" fill="none" stroke="#7a7670" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="306" y1="245" x2="268" y2="276" stroke="#ddd8ce" stroke-width="8" stroke-linecap="round"/>
+        <line x1="374" y1="245" x2="412" y2="276" stroke="#ddd8ce" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="420" cy="283" r="7" fill="none" stroke="#c8c4bc" stroke-width="1.5"/>
+        <line x1="415" y1="289" x2="406" y2="300" stroke="#c8c4bc" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- PERCEPTION callout LEFT — clickable -->
+        <line x1="195" y1="195" x2="118" y2="195" stroke="#2a5a8a" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <g class="svg-trait-node" data-trait="trait-2" data-label="Perception" tabindex="0" role="button" aria-label="Jump to Perception trait">
+          <rect x="10" y="175" width="106" height="40" rx="8" fill="#ddeaf5" stroke="#2a5a8a" stroke-width="0.8"/>
+          <text x="63" y="191" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a3d6a" font-weight="500">Surveys kitchen</text>
+          <text x="63" y="207" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#2a5a8a" letter-spacing="1">PERCEPTION ↗</text>
+        </g>
+
+        <!-- MEMORY callout RIGHT — clickable -->
+        <line x1="485" y1="205" x2="564" y2="205" stroke="#5a3a8a" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <g class="svg-trait-node" data-trait="trait-4" data-label="Memory" tabindex="0" role="button" aria-label="Jump to Memory trait">
+          <rect x="566" y="185" width="106" height="40" rx="8" fill="#ece6f5" stroke="#5a3a8a" stroke-width="0.8"/>
+          <text x="619" y="201" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#3d2560" font-weight="500">Recipe in mind</text>
+          <text x="619" y="217" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#5a3a8a" letter-spacing="1">MEMORY ↗</text>
+        </g>
+
+        <!-- AUTONOMY callout LEFT lower — clickable -->
+        <line x1="195" y1="258" x2="118" y2="258" stroke="#2a7a6e" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <g class="svg-trait-node" data-trait="trait-7" data-label="Autonomy" tabindex="0" role="button" aria-label="Jump to Autonomy trait">
+          <rect x="10" y="238" width="106" height="40" rx="8" fill="#d4f0ec" stroke="#2a7a6e" stroke-width="0.8"/>
+          <text x="63" y="254" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a5048" font-weight="500">No step-by-step</text>
+          <text x="63" y="270" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#2a7a6e" letter-spacing="1">AUTONOMY ↗</text>
+        </g>
+
+        <!-- TOOLS row label -->
+        <text x="340" y="320" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#7a7670" letter-spacing="1.5">AVAILABLE  TOOLS</text>
+
+        <!-- Tool boxes — clickable as group for Tool Use trait -->
+        <g class="svg-trait-node" data-trait="trait-5" data-label="Tool Selection &amp; Use" tabindex="0" role="button" aria-label="Jump to Tool Use trait">
+          <rect x="148" y="330" width="80" height="60" rx="8" fill="#d4f0ec" stroke="#2a7a6e" stroke-width="0.8"/>
+          <text x="188" y="353" text-anchor="middle" font-size="20">🥤</text>
+          <text x="188" y="377" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a5048" font-weight="500">Blender</text>
+
+          <rect x="246" y="330" width="80" height="60" rx="8" fill="#d4f0ec" stroke="#2a7a6e" stroke-width="0.8"/>
+          <text x="286" y="353" text-anchor="middle" font-size="20">⚙️</text>
+          <text x="286" y="377" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a5048" font-weight="500">Grinder</text>
+
+          <rect x="344" y="330" width="80" height="60" rx="8" fill="#d4f0ec" stroke="#2a7a6e" stroke-width="0.8"/>
+          <text x="384" y="353" text-anchor="middle" font-size="20">🧊</text>
+          <text x="384" y="377" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a5048" font-weight="500">Fridge</text>
+
+          <rect x="442" y="330" width="80" height="60" rx="8" fill="#d4f0ec" stroke="#2a7a6e" stroke-width="0.8"/>
+          <text x="482" y="353" text-anchor="middle" font-size="20">🔥</text>
+          <text x="482" y="377" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1a5048" font-weight="500">Oven</text>
+
+          <text x="340" y="403" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#2a7a6e" letter-spacing="1.5" font-weight="500">TRAIT: TOOL SELECTION &amp; USE ↗</text>
+        </g>
+
+        <line class="flow-line" x1="340" y1="412" x2="340" y2="432" stroke="#c85a3a" stroke-width="1" marker-end="url(#arr)" opacity="0.7"/>
+
+        <!-- ACTION LOOP box — clickable (sequential + goal decomp) -->
+        <g class="svg-trait-node" data-trait="trait-6" data-label="Sequential Action-Taking" tabindex="0" role="button" aria-label="Jump to Sequential Action-Taking trait">
+          <rect x="170" y="432" width="340" height="88" rx="10" fill="#fae8e2" stroke="#c85a3a" stroke-width="0.8"/>
+          <text x="340" y="455" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#8a3020">Chop → Sauté → Season → Plate</text>
+          <text x="340" y="474" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#c85a3a" letter-spacing="1.5" font-weight="500">TRAIT: SEQUENTIAL ACTION-TAKING ↗</text>
+          <text x="340" y="492" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#c85a3a" letter-spacing="1.5" font-weight="500">TRAIT: GOAL DECOMPOSITION (SUBTASKS)</text>
+          <text x="340" y="510" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#c85a3a" letter-spacing="1.5" font-weight="500">TRAIT: AUTONOMY — NO HAND-HOLDING PER STEP</text>
+        </g>
+
+        <line class="flow-line" x1="340" y1="520" x2="340" y2="540" stroke="#3a7a4a" stroke-width="1" marker-end="url(#arr)" opacity="0.7"/>
+
+        <!-- FEEDBACK box — clickable -->
+        <g class="svg-trait-node" data-trait="trait-8" data-label="Observe–Reason–Act Loop" tabindex="0" role="button" aria-label="Jump to Feedback Loop trait">
+          <rect x="185" y="540" width="310" height="52" rx="10" fill="#e2f0e6" stroke="#3a7a4a" stroke-width="0.8"/>
+          <text x="340" y="561" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#244d2c">Tastes → Adjusts seasoning</text>
+          <text x="340" y="580" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#3a7a4a" letter-spacing="1.5" font-weight="500">TRAIT: OBSERVE → REASON → ACT FEEDBACK LOOP ↗</text>
+        </g>
+
+        <!-- retry arc -->
+        <path d="M140 556 Q96 556 96 472 Q96 388 140 388" fill="none" stroke="#7a7670" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arr)" opacity="0.6"/>
+        <text x="76" y="476" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#7a7670">Retry</text>
+        <text x="76" y="490" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#7a7670">loop</text>
+
+        <line class="flow-line" x1="340" y1="592" x2="340" y2="612" stroke="#7a7670" stroke-width="1" marker-end="url(#arr)" opacity="0.7"/>
+
+        <!-- STOP box — clickable -->
+        <g class="svg-trait-node" data-trait="trait-9" data-label="Termination Criterion" tabindex="0" role="button" aria-label="Jump to Termination Criterion trait">
+          <rect x="210" y="612" width="260" height="52" rx="10" fill="#f0ece6" stroke="#7a7670" stroke-width="0.8"/>
+          <text x="340" y="633" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#3d3a34">Dish is ready — stop</text>
+          <text x="340" y="651" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#7a7670" letter-spacing="1.5" font-weight="500">TRAIT: TERMINATION CRITERION ↗</text>
+        </g>
+
+        <!-- LEGEND -->
+        <rect x="40" y="695" width="600" height="128" rx="12" fill="#f2ede4" stroke="#ddd8ce" stroke-width="0.8"/>
+        <text x="340" y="716" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#7a7670" letter-spacing="2">TRAIT  COLOUR  LEGEND</text>
+        <rect x="65" y="728" width="10" height="10" rx="2" fill="#c8832a"/>
+        <text x="82" y="738" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Goal-directedness</text>
+        <rect x="65" y="750" width="10" height="10" rx="2" fill="#5a3a8a"/>
+        <text x="82" y="760" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Planning / Memory</text>
+        <rect x="65" y="772" width="10" height="10" rx="2" fill="#2a5a8a"/>
+        <text x="82" y="782" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Perception</text>
+        <rect x="250" y="728" width="10" height="10" rx="2" fill="#2a7a6e"/>
+        <text x="267" y="738" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Tool use</text>
+        <rect x="250" y="750" width="10" height="10" rx="2" fill="#c85a3a"/>
+        <text x="267" y="760" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Action / Autonomy</text>
+        <rect x="250" y="772" width="10" height="10" rx="2" fill="#3a7a4a"/>
+        <text x="267" y="782" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Feedback loop</text>
+        <rect x="440" y="728" width="10" height="10" rx="2" fill="#7a7670"/>
+        <text x="457" y="738" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Termination criterion</text>
+        <rect x="440" y="750" width="10" height="10" rx="2" fill="#5a3a8a" opacity="0.5"/>
+        <text x="457" y="760" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Memory</text>
+        <rect x="440" y="772" width="10" height="10" rx="2" fill="#2a7a6e" opacity="0.5"/>
+        <text x="457" y="782" font-family="DM Sans,sans-serif" font-size="12" fill="#3d3a34">Autonomy</text>
+      </svg>
+    </div>
+    <p style="font-size:13px;color:var(--ink3);font-style:italic;text-align:center;margin-bottom:0;">
+      Click any labelled node to jump to its trait card. Arrows animate to show the agent loop in motion.
+    </p>
+  </div>
+</section>
+
+<!-- ══ SECTION 2 — 9 TRAIT CARDS ════════════════════════════ -->
+<section class="section" id="traits">
+  <div class="container">
+    <div class="section-label">Section 02</div>
+    <div class="section-title-meta">
+      <h2 class="section-title" style="margin-bottom:0;">The 9 Traits of an AI Agent</h2>
+    </div>
+    <p class="section-intro">
+      Each trait is defined, mapped to the chef, mapped to the AI agent, and given a test question.
+      Use the <strong>self-test toggle</strong> on each card to evaluate a system you have in mind — your running score updates in the bar below.
+    </p>
+
+    <!-- SELF-TEST RUNNING TOTAL -->
+    <div class="selftest-bar">
+      <div class="selftest-counter"><span id="st-count">0</span>/9</div>
+      <div>
+        <div id="st-verdict" class="selftest-verdict sv-none">Not yet scored</div>
+        <div class="selftest-hint" id="st-hint">Toggle each trait card to evaluate your system.</div>
+      </div>
+    </div>
+
+    <div class="traits-grid">
+
+      <!-- T1: GOAL-DIRECTEDNESS -->
+      <div class="trait-card t-amber" id="trait-1">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--amber-light)">🎯</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 01</div>
+              <span class="tier-badge tier-core">Core<span class="tier-tooltip">Core traits are non-negotiable. A system missing any Core trait is not agentic — it is a workflow or chatbot.</span></span>
+            </div>
+            <div class="trait-name">Goal-Directedness</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent operates in service of an explicit end-state. All its actions are evaluated against whether they bring it closer to that goal. It doesn't act randomly; every step is purposeful.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">Everything the chef does — choosing tools, tasting, adjusting — is aimed at one thing: <em>the dish</em>. Not cleaning the kitchen, not restocking the fridge.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">Given "book me the cheapest flight to Mumbai next Tuesday," every web search, every comparison, every filter is aimed at that goal. It does not browse randomly.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> If you remove the stated goal, does the system still know what to do? If not — it is goal-directed. A goalless agent is just a script.</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st1-yes" onclick="setSelfTest(1,'yes')">Yes</button>
+            <button class="st-btn" id="st1-no"  onclick="setSelfTest(1,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2: PERCEPTION -->
+      <div class="trait-card t-blue" id="trait-2">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--blue-light)">👁️</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 02</div>
+              <span class="tier-badge tier-essential">Essential<span class="tier-tooltip">Essential traits are present in well-designed agents. Their absence significantly limits capability.</span></span>
+            </div>
+            <div class="trait-name">Perception</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent senses and reads its environment before and during action. It does not act blind. Perception provides the raw material for reasoning.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">Before picking up a single utensil, the chef surveys the kitchen — what tools are available, what ingredients are in the fridge, what is the stove's current temperature.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">An AI coding agent reads the repository structure, open issues, error logs, and test results before writing a single line of code. That reading <em>is</em> perception.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> Does the system read the current state of its environment, or does it just execute a fixed sequence regardless of context?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st2-yes" onclick="setSelfTest(2,'yes')">Yes</button>
+            <button class="st-btn" id="st2-no"  onclick="setSelfTest(2,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3: PLANNING -->
+      <div class="trait-card t-purple" id="trait-3">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--purple-light)">📋</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 03</div>
+              <span class="tier-badge tier-essential">Essential<span class="tier-tooltip">Essential traits are present in well-designed agents. Their absence significantly limits capability.</span></span>
+            </div>
+            <div class="trait-name">Planning</div>
+          </div>
+        </div>
+        <p class="trait-def">Before acting, the agent constructs a sequence of steps to reach the goal. It reasons about what needs to happen, in what order, and why. Planning is pre-action reasoning.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">The chef decides the recipe — the full sequence of steps — before touching a single ingredient. He considers timing: marination before cooking, sauce before plating.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">A research agent, asked to write a market report, plans: first search for data, then find recent news, then synthesise, then write — in that order, not randomly.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> Does the system decide <em>how</em> to approach a task before executing, or does it just execute the first action that comes to mind?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st3-yes" onclick="setSelfTest(3,'yes')">Yes</button>
+            <button class="st-btn" id="st3-no"  onclick="setSelfTest(3,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T4: MEMORY -->
+      <div class="trait-card t-purple" id="trait-4">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--purple-light)">🧠</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 04</div>
+              <span class="tier-badge tier-essential">Essential<span class="tier-tooltip">Essential traits are present in well-designed agents. Their absence significantly limits capability.</span></span>
+            </div>
+            <div class="trait-name">Memory</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent retains information across steps within a task. It does not restart from scratch at each action. Memory allows context to accumulate and inform later decisions.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">The chef remembers that he salted the sauce three minutes ago, so he does not salt it again. He holds the recipe in mind across the entire multi-hour session.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">An agent troubleshooting a bug remembers which fixes have already been tried, so it does not suggest the same solution twice. The conversation history is its working memory.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> If you ask the system to do Step 5, does it know what happened in Steps 1–4, or does each step feel like a fresh start?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st4-yes" onclick="setSelfTest(4,'yes')">Yes</button>
+            <button class="st-btn" id="st4-no"  onclick="setSelfTest(4,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T5: TOOL USE -->
+      <div class="trait-card t-teal" id="trait-5">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--teal-light)">🔧</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 05</div>
+              <span class="tier-badge tier-essential">Essential<span class="tier-tooltip">Essential traits are present in well-designed agents. Their absence significantly limits capability.</span></span>
+            </div>
+            <div class="trait-name">Tool Selection &amp; Use</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent identifies which external capability is required for a given step, invokes it, and uses its output. It does not do everything internally — it extends its capability through tools.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">For the coconut paste, the chef uses the blender — not his hands. For spices, the grinder. He selects the right tool for the right step, not the most familiar one for everything.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">For current stock prices, an agent calls a finance API. For web data, it calls a search tool. For code execution, it calls a REPL. It knows what it cannot do natively.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> Does the system decide <em>which</em> tool to use and <em>when</em>, or is the tool use hard-coded in advance ("always search, then always summarise")?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st5-yes" onclick="setSelfTest(5,'yes')">Yes</button>
+            <button class="st-btn" id="st5-no"  onclick="setSelfTest(5,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T6: SEQUENTIAL ACTION-TAKING -->
+      <div class="trait-card t-coral" id="trait-6">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--coral-light)">⛓️</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 06</div>
+              <span class="tier-badge tier-enhancing">Enhancing<span class="tier-tooltip">Enhancing traits increase capability and reliability, but their absence does not automatically disqualify a system.</span></span>
+            </div>
+            <div class="trait-name">Sequential Action-Taking</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent executes a series of actions over time. Each action builds on the previous one. The output of one step becomes the input for the next. This is not a single-shot response.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">Chop → Grind spices → Heat oil → Sauté → Add ingredients → Simmer → Taste → Plate. Each step depends on the previous one. You cannot plate before you cook.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">Search → Scrape results → Summarise → Cross-check facts → Draft report. The draft uses the summary which used the scrape. Remove any step and the chain breaks.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> Does the system take multiple actions over time where each depends on the previous, or does it produce a single output and stop?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st6-yes" onclick="setSelfTest(6,'yes')">Yes</button>
+            <button class="st-btn" id="st6-no"  onclick="setSelfTest(6,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T7: AUTONOMY -->
+      <div class="trait-card t-teal" id="trait-7">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--teal-light)">🕊️</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 07</div>
+              <span class="tier-badge tier-core">Core<span class="tier-tooltip">Core traits are non-negotiable. A system missing any Core trait is not agentic — it is a workflow or chatbot.</span></span>
+            </div>
+            <div class="trait-name">Autonomy</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent decides what to do next without a human providing the prompt for each step. Once the goal is given, it self-directs the execution. The human is the <em>what</em>; the agent owns the <em>how</em> and <em>when</em>.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">Nobody tells the chef "now add salt" or "now turn down the heat." He decides those things himself, in real time, based on what he perceives and what he knows.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">An agent asked to "refactor this codebase" decides which files to read first, which functions to touch, and in what order — without a human approving each micro-decision.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> After the first instruction, does the human need to keep prompting for each step? If yes — it is not autonomous. It is a chatbot with extra steps.</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st7-yes" onclick="setSelfTest(7,'yes')">Yes</button>
+            <button class="st-btn" id="st7-no"  onclick="setSelfTest(7,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T8: FEEDBACK LOOP -->
+      <div class="trait-card t-green" id="trait-8">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--green-light)">🔁</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 08</div>
+              <span class="tier-badge tier-core">Core<span class="tier-tooltip">Core traits are non-negotiable. A system missing any Core trait is not agentic — it is a workflow or chatbot.</span></span>
+            </div>
+            <div class="trait-name">Observe–Reason–Act Loop</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent checks the outcome of each action, reasons about whether it is on track, and adjusts. This closed-loop behaviour is what separates an agent from a script. Scripts execute. Agents adapt.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">The chef tastes the curry. Too bland — he adds more spice. Too thick — he adds water. He does not just execute the recipe blindly; he course-corrects based on real-time feedback.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">A coding agent runs the tests after each change. If tests fail, it reads the error, reasons about the cause, and tries a different fix. Observe → reason → act → repeat.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> If an action produces an unexpected or wrong result, does the system notice and try again differently — or does it proceed regardless?</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st8-yes" onclick="setSelfTest(8,'yes')">Yes</button>
+            <button class="st-btn" id="st8-no"  onclick="setSelfTest(8,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- T9: TERMINATION -->
+      <div class="trait-card t-gray" id="trait-9">
+        <div class="trait-card-header">
+          <div class="trait-icon" style="background:var(--gray-light)">🏁</div>
+          <div class="trait-card-header-inner">
+            <div class="trait-card-top">
+              <div class="trait-number">Trait 09</div>
+              <span class="tier-badge tier-enhancing">Enhancing<span class="tier-tooltip">Enhancing traits increase capability and reliability, but their absence does not automatically disqualify a system.</span></span>
+            </div>
+            <div class="trait-name">Termination Criterion</div>
+          </div>
+        </div>
+        <p class="trait-def">The agent knows when the task is done. It has a stopping condition — either the goal state is reached, a maximum attempt limit is hit, or a human signals completion. Without a termination criterion, an agent loops forever.</p>
+        <div class="trait-rows">
+          <div class="trait-row">
+            <span class="trait-row-label chef-label">Chef</span>
+            <span class="trait-row-text">The chef tastes the dish and knows it is ready. He does not keep cooking indefinitely "just in case." The goal state (ready to serve) is the stopping condition.</span>
+          </div>
+          <div class="trait-row">
+            <span class="trait-row-label agent-label">Agent</span>
+            <span class="trait-row-text">An agent stops when: the task succeeds, a maximum retry count is exceeded, a human intervenes, or a confidence threshold is met. A well-designed agent never loops infinitely.</span>
+          </div>
+        </div>
+        <div class="trait-test"><strong>Test question:</strong> Under what condition does the system stop? If the answer is unclear, the agent is poorly designed — and potentially unsafe.</div>
+        <div class="self-test-row">
+          <span class="self-test-label">Is this trait present in the system you're evaluating?</span>
+          <div class="self-test-btns">
+            <button class="st-btn" id="st9-yes" onclick="setSelfTest(9,'yes')">Yes</button>
+            <button class="st-btn" id="st9-no"  onclick="setSelfTest(9,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end traits-grid -->
+  </div>
+</section>
+
+<!-- ══ SECTION 3 — SPECTRUM ══════════════════════════════════ -->
+<section class="section" id="spectrum">
+  <div class="container">
+    <div class="section-label">Section 03</div>
+    <h2 class="section-title">The Agentive–Workflow Spectrum</h2>
+    <p class="section-intro">
+      "Agentive" is not a binary toggle — it is a spectrum. Most real-world systems fall somewhere between a pure workflow
+      (fully predictable, human-designed path) and a fully autonomous agent (self-directing, adaptive, goal-driven).
+      <strong>Click any example chip</strong> to see its trait profile visualised on the radar.
+    </p>
+
+    <!-- INTERACTIVE RADAR -->
+    <div class="radar-section">
+      <div class="radar-layout">
+        <div class="radar-svg-wrap">
+          <svg id="radar-svg" viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid rings -->
+            <polygon id="radar-ring-half" points="" fill="none" stroke="#ddd8ce" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
+            <polygon id="radar-ring-full" points="" fill="none" stroke="#ddd8ce" stroke-width="1" opacity="0.4"/>
+            <!-- Axis lines -->
+            <g id="radar-axes"></g>
+            <!-- Axis labels -->
+            <g id="radar-labels" font-family="DM Sans,sans-serif" font-size="9.5" fill="#7a7670" text-anchor="middle"></g>
+            <!-- Data polygon -->
+            <polygon id="radar-polygon" class="radar-polygon" points="150,150" fill="rgba(200,90,58,0.18)" stroke="#c85a3a" stroke-width="2"/>
+            <!-- Data dots -->
+            <g id="radar-dots"></g>
+          </svg>
+        </div>
+
+        <div class="radar-right-col">
+          <div>
+            <div class="radar-title">Trait Radar</div>
+            <div class="radar-subtitle">Select an example below to see which traits it exhibits</div>
+          </div>
+          <div id="radar-example-detail" style="padding:16px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--ink3);font-style:italic;line-height:1.6;">
+            Click a chip to visualise that system's trait profile on the radar.
+          </div>
+          <div>
+            <div class="radar-chips-label">Select a system to profile:</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spectrum bar -->
+      <div style="margin-top:32px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);margin-bottom:6px;">The Agentive Spectrum</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:4px;">From fully deterministic workflows to fully autonomous agents</div>
+        <div class="spectrum-bar"></div>
+        <div class="spectrum-labels">
+          <span>◀ Pure Workflow</span>
+          <span>Borderline</span>
+          <span>Fully Agentic ▶</span>
+        </div>
+      </div>
+
+      <div class="spectrum-examples">
+        <div class="spectrum-col">
+          <div class="spectrum-col-title s-workflow">Workflow</div>
+          <div class="example-chip chip-workflow" id="chip-form" onclick="selectChip('form',this)">
+            <span class="chip-name">Leave approval form</span>
+            <span class="chip-why">Fixed form → fixed rules → fixed notification. No decision-making, no adaptation.</span>
+          </div>
+          <div class="example-chip chip-workflow" id="chip-etl" onclick="selectChip('etl',this)">
+            <span class="chip-name">Nightly ETL pipeline</span>
+            <span class="chip-why">Extracts, transforms, loads. Pre-defined every step. Doesn't adapt if data is unexpected.</span>
+          </div>
+        </div>
+        <div class="spectrum-col">
+          <div class="spectrum-col-title s-border">Borderline</div>
+          <div class="example-chip chip-border" id="chip-copilot" onclick="selectChip('copilot',this)">
+            <span class="chip-name">GitHub Copilot autocomplete</span>
+            <span class="chip-why">Perceives context, generates suggestions — but waits for human at each step.</span>
+          </div>
+          <div class="example-chip chip-border" id="chip-rag" onclick="selectChip('rag',this)">
+            <span class="chip-name">RAG-based Q&amp;A bot</span>
+            <span class="chip-why">Retrieves, ranks, synthesises. Single-turn. No multi-step planning or feedback loop.</span>
+          </div>
+        </div>
+        <div class="spectrum-col">
+          <div class="spectrum-col-title s-agent">Fully Agentic</div>
+          <div class="example-chip chip-agent" id="chip-devin" onclick="selectChip('devin',this)">
+            <span class="chip-name">Devin / Claude Code</span>
+            <span class="chip-why">Reads codebase, plans changes, writes code, runs tests, reads errors, fixes bugs — autonomously.</span>
+          </div>
+          <div class="example-chip chip-agent" id="chip-researcher" onclick="selectChip('researcher',this)">
+            <span class="chip-name">Multi-step research agent</span>
+            <span class="chip-why">Plans queries, searches web, reads sources, cross-checks, synthesises, writes report.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail panel -->
+      <div id="example-detail" style="display:none;margin-top:24px;padding:22px 24px;background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);">
+        <div id="example-content"></div>
+      </div>
+
+    </div><!-- end radar-section -->
+
+    <!-- TRAIT SCORE TABLE -->
+    <div style="overflow-x:auto;margin-top:32px;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <thead>
+          <tr style="background:var(--ink);color:var(--cream);">
+            <th style="padding:14px 16px;text-align:left;font-weight:500;font-size:12px;letter-spacing:0.06em;">Trait</th>
+            <th style="padding:14px 12px;text-align:center;font-weight:500;font-size:12px;color:rgba(42,90,138,0.9);">ETL Pipeline</th>
+            <th style="padding:14px 12px;text-align:center;font-weight:500;font-size:12px;color:rgba(200,131,42,0.9);">RAG Bot</th>
+            <th style="padding:14px 12px;text-align:center;font-weight:500;font-size:12px;color:rgba(200,90,58,0.9);">Coding Agent</th>
+          </tr>
+        </thead>
+        <tbody id="trait-table"></tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 4 — CLASSIFIER ════════════════════════════════ -->
+<section class="section" id="classifier">
+  <div class="container">
+    <div class="section-label">Section 04</div>
+    <h2 class="section-title">The 5-Question Classifier</h2>
+    <p class="section-intro">
+      Think of any process — a software system, a business workflow, an AI product — and answer these five questions.
+      The verdict updates <strong>in real time</strong> as you answer, and shows exactly which traits are missing.
+    </p>
+
+    <div class="classifier">
+      <p class="classifier-intro">
+        Answer all five questions about the process you are evaluating.
+        Base your answers on what the <em>system</em> does, not what a human does around it.
+      </p>
+
+      <!-- Live score -->
+      <div class="classifier-score-wrap">
+        <div class="classifier-score-badge" id="clf-score-badge">0/5</div>
+        <div style="color:var(--ink3);font-size:13px;">questions answered yes — verdict updates automatically</div>
+      </div>
+
+      <div class="q-list">
+        <div class="q-item">
+          <div class="q-num">Q1</div>
+          <div class="q-text">
+            Does the system <strong>decide what action to take next</strong> on its own, without a human prompt for each step?
+            <span class="q-sub">i.e., is the "what to do next" decision made by the system, not by a person clicking a button?</span>
+          </div>
+          <div class="q-toggle">
+            <button class="q-btn" id="q1-yes" onclick="setQ(1,'yes')">Yes</button>
+            <button class="q-btn" id="q1-no"  onclick="setQ(1,'no')">No</button>
+          </div>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Q2</div>
+          <div class="q-text">
+            Does the system <strong>use tools or external capabilities</strong> dynamically, choosing which tool to invoke based on context?
+            <span class="q-sub">e.g., decides to search the web, call an API, read a file — based on need, not a fixed sequence.</span>
+          </div>
+          <div class="q-toggle">
+            <button class="q-btn" id="q2-yes" onclick="setQ(2,'yes')">Yes</button>
+            <button class="q-btn" id="q2-no"  onclick="setQ(2,'no')">No</button>
+          </div>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Q3</div>
+          <div class="q-text">
+            Does the system <strong>observe the result of its actions and adjust</strong> subsequent steps accordingly?
+            <span class="q-sub">i.e., if a step fails or produces unexpected output, does the system notice and try a different approach?</span>
+          </div>
+          <div class="q-toggle">
+            <button class="q-btn" id="q3-yes" onclick="setQ(3,'yes')">Yes</button>
+            <button class="q-btn" id="q3-no"  onclick="setQ(3,'no')">No</button>
+          </div>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Q4</div>
+          <div class="q-text">
+            Does the system operate across <strong>multiple steps over time</strong>, where each step depends on the output of the previous?
+            <span class="q-sub">i.e., is this a multi-action trajectory rather than a single-shot response?</span>
+          </div>
+          <div class="q-toggle">
+            <button class="q-btn" id="q4-yes" onclick="setQ(4,'yes')">Yes</button>
+            <button class="q-btn" id="q4-no"  onclick="setQ(4,'no')">No</button>
+          </div>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Q5</div>
+          <div class="q-text">
+            Does the system have a <strong>defined stopping condition</strong> it checks itself — rather than stopping only because a human ends the session?
+            <span class="q-sub">e.g., stops when the goal is met, max retries reached, or a success criterion is satisfied.</span>
+          </div>
+          <div class="q-toggle">
+            <button class="q-btn" id="q5-yes" onclick="setQ(5,'yes')">Yes</button>
+            <button class="q-btn" id="q5-no"  onclick="setQ(5,'no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="verdict-workflow" class="verdict-box verdict-workflow">
+        <div class="verdict-label">Classification</div>
+        <div class="verdict-title">Workflow / Pipeline</div>
+        <div class="verdict-text">
+          This process is <strong>not agentic</strong>. It is a deterministic workflow or pipeline — a sequence of pre-defined steps that execute in a fixed order,
+          where the path is designed by humans in advance. The system does not decide, adapt, or self-direct. It executes.
+          <br/><br/>
+          This is not a criticism — workflows are often the right choice. They are predictable, auditable, and safe.
+          Consider an agentic approach only if the task is too dynamic or complex for a fixed path.
+        </div>
+        <div class="verdict-score" id="verdict-score-wf"></div>
+        <div class="trait-gap-list" id="gap-wf"></div>
+      </div>
+
+      <div id="verdict-border" class="verdict-box verdict-border">
+        <div class="verdict-label">Classification</div>
+        <div class="verdict-title">Borderline / Assisted</div>
+        <div class="verdict-text">
+          This process has <strong>some agentic properties</strong> but not all. It may have dynamic tool use or multi-step execution, but lacks full autonomy,
+          a feedback loop, or a self-assessed stopping condition. It is an <em>assisted</em> system — more capable than a pure workflow but still dependent
+          on human direction at key decision points.
+          <br/><br/>
+          A useful heuristic: if a human must approve or prompt at more than 30% of the steps, it leans workflow. If the system runs for extended periods without human input, it leans agentic.
+        </div>
+        <div class="verdict-score" id="verdict-score-bd"></div>
+        <div class="trait-gap-list" id="gap-bd"></div>
+      </div>
+
+      <div id="verdict-agent" class="verdict-box verdict-agent">
+        <div class="verdict-label">Classification</div>
+        <div class="verdict-title">Fully Agentic</div>
+        <div class="verdict-text">
+          This process is <strong>genuinely agentic</strong>. The system exhibits autonomous decision-making, dynamic tool selection, a self-correcting feedback loop,
+          multi-step execution, and a self-assessed stopping condition. It is not just executing instructions — it is pursuing a goal.
+          <br/><br/>
+          With agentic capability comes responsibility: ensure the system has guardrails, human oversight at critical junctures, clear scope boundaries,
+          and a reliable way to intervene if something goes wrong.
+        </div>
+        <div class="verdict-score" id="verdict-score-ag"></div>
+        <div class="trait-gap-list" id="gap-ag"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 5 — DECISION FRAMEWORK ══════════════════════ -->
+<section class="section" id="framework">
+  <div class="container">
+    <div class="section-label">Section 05</div>
+    <h2 class="section-title">The Decision Framework</h2>
+    <p class="section-intro">
+      Five diagnostic lenses. For each lens, "workflow answer" and "agentic answer" are given.
+      The more your system's behaviour matches the agentic answer, the further right it sits on the spectrum.
+    </p>
+
+    <div class="framework-grid">
+      <div class="framework-card">
+        <div class="framework-q">Who decides the next step?</div>
+        <div class="framework-answers">
+          <div class="fw-ans fw-ans-wf"><span class="fw-dot">WF</span> A human, a rule, or a pre-written condition</div>
+          <div class="fw-ans fw-ans-ag"><span class="fw-dot">AG</span> The system itself, based on what it observes</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-q">Is the execution path known in advance?</div>
+        <div class="framework-answers">
+          <div class="fw-ans fw-ans-wf"><span class="fw-dot">WF</span> Yes — a flowchart could fully describe it</div>
+          <div class="fw-ans fw-ans-ag"><span class="fw-dot">AG</span> No — the path emerges from the goal and environment</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-q">What happens when something unexpected occurs?</div>
+        <div class="framework-answers">
+          <div class="fw-ans fw-ans-wf"><span class="fw-dot">WF</span> Fails, alerts a human, or goes to a fixed error path</div>
+          <div class="fw-ans fw-ans-ag"><span class="fw-dot">AG</span> Adapts — retries, reconsiders, tries an alternative</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-q">How does the system use tools?</div>
+        <div class="framework-answers">
+          <div class="fw-ans fw-ans-wf"><span class="fw-dot">WF</span> Tool use is hard-coded: always step A then tool B</div>
+          <div class="fw-ans fw-ans-ag"><span class="fw-dot">AG</span> Selects tools dynamically based on task requirements</div>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-q">Where does human judgment live?</div>
+        <div class="framework-answers">
+          <div class="fw-ans fw-ans-wf"><span class="fw-dot">WF</span> Baked into the design — rules encode human decisions</div>
+          <div class="fw-ans fw-ans-ag"><span class="fw-dot">AG</span> At the goal level — agent handles the execution</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- When to use what -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:48px;">
+      <div style="padding:28px;background:var(--blue-light);border:1px solid #b8cfe8;border-radius:var(--radius);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:var(--blue);margin-bottom:14px;">CHOOSE WORKFLOW WHEN</div>
+        <ul style="font-size:14px;color:var(--blue);padding-left:18px;line-height:2;">
+          <li>The path is fully known and repeatable</li>
+          <li>Auditability and predictability are critical</li>
+          <li>Failure modes must be pre-defined</li>
+          <li>Regulatory compliance requires determinism</li>
+          <li>Speed and cost matter more than flexibility</li>
+        </ul>
+      </div>
+      <div style="padding:28px;background:var(--coral-light);border:1px solid #e0a890;border-radius:var(--radius);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:var(--coral);margin-bottom:14px;">CHOOSE AGENTIC WHEN</div>
+        <ul style="font-size:14px;color:var(--coral);padding-left:18px;line-height:2;">
+          <li>The task is too dynamic for a fixed path</li>
+          <li>Conditions change mid-execution</li>
+          <li>Multiple tools must be combined flexibly</li>
+          <li>The human should not be in the loop per step</li>
+          <li>Recovery from failure needs intelligence</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AGENT SCORE SANDBOX -->
+    <div class="sandbox">
+      <div class="sandbox-title">Build Your Own Agent Score</div>
+      <div class="sandbox-sub">
+        Score any system you are thinking about. Absent = 0 pts · Partial = half weight · Full = full weight.
+        Core traits carry more weight because their absence disqualifies a system entirely.
+      </div>
+      <table class="sandbox-table">
+        <thead>
+          <tr>
+            <th style="width:45%">Trait</th>
+            <th style="width:18%">Tier</th>
+            <th style="width:12%">Weight</th>
+            <th style="width:25%">Score</th>
+          </tr>
+        </thead>
+        <tbody id="sandbox-tbody"></tbody>
+      </table>
+      <div class="sandbox-score-section">
+        <div class="sandbox-score-label">Agent Score</div>
+        <div class="sandbox-score-row">
+          <div>
+            <div class="sandbox-score-num" id="sb-score-num">0</div>
+            <div class="sandbox-score-max">/ 15 pts</div>
+          </div>
+          <div id="sb-verdict" class="sandbox-verdict-pill sb-v-none">Not yet scored</div>
+        </div>
+        <div class="sandbox-bar-wrap">
+          <div class="sandbox-bar-fill" id="sb-bar"></div>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:rgba(250,247,242,0.35);font-family:'JetBrains Mono',monospace;">
+          0–3: Not agentic · 4–7: Minimally agentic · 8–11: Moderately agentic · 12–15: Fully agentic
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 6 — CHALLENGE Q&A ═════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-label">Section 06</div>
+    <h2 class="section-title">Challenge Q&amp;A</h2>
+    <p class="section-intro">
+      Ten tough questions about AI agents, answered rigorously. These are the kinds of questions a well-prepared person should be able to answer confidently.
+    </p>
+
+    <div class="faq-list">
+
+      <!-- NEW: SMART GOAL -->
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-concept">Concept</span>
+          What is the SMART GOAL framework for evaluating agent capability?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>SMART GOAL</strong> is a mnemonic that maps the 9 agentic traits to a memorable acronym — useful for quickly evaluating whether a system is genuinely agentic.
+          <br/><br/>
+          <table class="smart-table">
+            <thead>
+              <tr>
+                <th>Letter</th>
+                <th>Trait</th>
+                <th>One-line test</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="smart-letter">S</td><td class="smart-trait">Self-directed (Autonomy)</td><td class="smart-test">Does it decide next steps without prompting?</td></tr>
+              <tr><td class="smart-letter">M</td><td class="smart-trait">Multi-step (Sequential Action)</td><td class="smart-test">Does each action build on the previous?</td></tr>
+              <tr><td class="smart-letter">A</td><td class="smart-trait">Adaptive (Feedback Loop)</td><td class="smart-test">Does it notice failure and adjust?</td></tr>
+              <tr><td class="smart-letter">R</td><td class="smart-trait">Reasoning-capable (Planning)</td><td class="smart-test">Does it plan before acting?</td></tr>
+              <tr><td class="smart-letter">T</td><td class="smart-trait">Tool-using (Tool Selection)</td><td class="smart-test">Does it dynamically choose and invoke tools?</td></tr>
+              <tr><td class="smart-letter">G</td><td class="smart-trait">Goal-retaining (Goal-Directedness)</td><td class="smart-test">Does every action serve the stated goal?</td></tr>
+              <tr><td class="smart-letter">O</td><td class="smart-trait">Observing (Perception)</td><td class="smart-test">Does it read the environment before acting?</td></tr>
+              <tr><td class="smart-letter">A</td><td class="smart-trait">Accumulating context (Memory)</td><td class="smart-test">Does it retain what happened in earlier steps?</td></tr>
+              <tr><td class="smart-letter">L</td><td class="smart-trait">Loop-terminating (Termination Criterion)</td><td class="smart-test">Does it know when to stop on its own?</td></tr>
+            </tbody>
+          </table>
+          <br/>
+          Use it as a quick checklist in a conversation or evaluation. The three non-negotiable letters are <strong>S</strong> (Self-directed), <strong>A</strong> (Adaptive), and <strong>G</strong> (Goal-retaining) — these are the Core tier traits. A system missing any of these three is not yet agentic.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-diff">Difference</span>
+          Is a large language model (LLM) itself an agent?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>No — an LLM alone is not an agent.</strong> An LLM is a reasoning engine: given an input, it produces an output. One shot, one response.
+          It has no memory across sessions, no ability to take actions in the world, no tools, no loop, and no goal persistence.
+          <br/><br/>
+          An <strong>agent</strong> is built <em>around</em> an LLM. The LLM is the brain; the agent is the whole person — with hands (tool calls), memory (context/storage), eyes (perception), and a goal. You make an agent by wrapping an LLM in an orchestration layer that gives it those capabilities.
+          <br/><br/>
+          Chef analogy: the LLM is the chef's culinary knowledge. The agent is the chef acting in the kitchen.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-hard">Hard</span>
+          ChatGPT answers multi-part questions. Is it an agent?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>In base form, no.</strong> ChatGPT answering a multi-part question is still a single-turn interaction — one input, one output. Even a long, structured response is not multi-step execution. The LLM is not taking actions; it is generating text.
+          <br/><br/>
+          However, <strong>ChatGPT with tools enabled</strong> (web search, code execution, file reading) begins to exhibit agentic properties within a single conversation. It can search, read the result, reason, search again, and synthesise. That is a feedback loop with tool use — borderline to agentic depending on how autonomous the step-to-step decision-making is.
+          <br/><br/>
+          The key test: <em>Is the system taking actions in the world across multiple steps, with the output of one informing the next, without human prompting in between?</em> If yes — agentic. If it is still one prompt, one reply — not agentic.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-concept">Concept</span>
+          What is the difference between a workflow and an agentic pipeline?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          This is the most important distinction in practice. The answer turns on three things:
+          <ul>
+            <li><strong>Decision-making:</strong> In a workflow, transitions between steps are determined by pre-written rules or human action. In an agentic pipeline, the system decides the next step based on what it observes.</li>
+            <li><strong>Path predictability:</strong> A workflow's execution path can be fully diagrammed in advance. An agentic pipeline's path emerges at runtime — it depends on what the agent encounters.</li>
+            <li><strong>Adaptation:</strong> A workflow handles failures through pre-defined error handling. An agent reasons about the failure and tries a different approach.</li>
+          </ul>
+          A useful shorthand: <strong>workflows execute a plan; agents make a plan and execute it adaptively.</strong>
+          <br/><br/>
+          The chef analogy makes this vivid: a workflow chef follows a recipe rigidly — if an ingredient is missing, the recipe fails. An agentic chef surveys the kitchen, adapts the recipe to what is available, and still delivers the dish.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-hard">Hard</span>
+          If an agent uses a pre-defined set of tools, is it really autonomous?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>Yes — the tool set being pre-defined does not compromise autonomy.</strong> The chef's tools are also pre-defined (the kitchen has what it has). Autonomy is not about having infinite tools; it is about <em>deciding which tool to use and when</em>.
+          <br/><br/>
+          The relevant question is: <em>Is the choice of which tool to invoke made by the system at runtime, based on context?</em> If yes — that is tool autonomy. If the sequence is hard-coded ("always call tool A, then tool B, then tool C") — that is a workflow with tools, not an agent.
+          <br/><br/>
+          Autonomy lives in the decision layer, not in the size or openness of the tool set. A highly constrained agent (two tools, narrow domain) can still be genuinely autonomous within those constraints.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-diff">Difference</span>
+          What distinguishes a "multi-step chatbot" from an agent?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          A multi-step chatbot has a <strong>conversation</strong> across multiple turns. Each turn requires a human to provide the next input. The chatbot responds; the human responds; the chatbot responds again. The human is in the loop at every step.
+          <br/><br/>
+          An agent <strong>runs autonomously across multiple steps without the human prompting each one.</strong> After the initial goal is given, the agent plans, acts, observes results, and iterates — all without waiting for human input between steps.
+          <br/><br/>
+          The diagnostic question: <em>Between Step 1 and Step 5, how many times did a human have to press a button or type something?</em> If the answer is 4 — it is a chatbot. If the answer is 0 — it is an agent.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-concept">Concept</span>
+          Can a process be agentic for some steps and a workflow for others?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>Absolutely — and this is common in production systems.</strong> Most real enterprise AI deployments are hybrid: an outer workflow orchestrates the high-level process, while agentic sub-systems handle specific steps that require adaptability.
+          <br/><br/>
+          Example: a loan origination system might have a rigid workflow for document collection and compliance checks (deterministic, auditable), but an agentic component for underwriting analysis (adaptive, multi-source reasoning). The overall process is a workflow; the underwriting module is an agent.
+          <br/><br/>
+          The chef analogy: the restaurant itself has a fixed workflow — orders come in, are routed to the right station, and go out in sequence. But each chef at each station is an agent — making real-time decisions about their specific domain. Workflows orchestrate; agents execute within bounded domains.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-hard">Hard</span>
+          A Robotic Process Automation (RPA) bot follows rules and uses tools. Is it an agent?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>No — classical RPA is not agentic.</strong> RPA bots are sophisticated workflow executors: they follow explicit, rule-based scripts to interact with UIs and systems. They use "tools" (screen scraping, form filling) but the sequence is entirely pre-defined.
+          <br/><br/>
+          The key deficiencies vs a true agent:
+          <ul>
+            <li><strong>No adaptive reasoning:</strong> if the UI changes slightly, the RPA breaks. An agent would observe the change and adapt.</li>
+            <li><strong>No dynamic tool selection:</strong> the script defines exactly which UI elements to click, in what order.</li>
+            <li><strong>No feedback loop:</strong> if step 7 fails, the bot alerts a human — it does not reason about why and try differently.</li>
+          </ul>
+          However, "AI-augmented RPA" (RPA + LLM-based decision-making) begins to cross into borderline territory, where the AI component makes dynamic decisions while RPA executes them.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-concept">Concept</span>
+          Does every AI agent need all 9 traits to qualify as agentic?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          <strong>No — but three traits are non-negotiable.</strong> The minimum viable agentic system requires:
+          <ul>
+            <li><strong>Autonomy:</strong> the system must self-direct at least some steps without human prompting.</li>
+            <li><strong>Feedback loop:</strong> the system must observe the result of actions and adapt. Without this, it is a pipeline.</li>
+            <li><strong>Goal-directedness:</strong> without a goal, the system has no basis for any decision.</li>
+          </ul>
+          The other six traits (perception, planning, memory, tool use, goal decomposition, termination) are present in well-designed agents and increase capability and reliability — but their absence does not automatically disqualify a system from being agentic.
+          <br/><br/>
+          Think of it as a spectrum score: 3 core traits = minimally agentic. All 9 traits = fully agentic. Most real systems score 4–7.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-hard">Hard</span>
+          What is the risk of calling something "agentic" when it is actually a workflow?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          The risks are practical and significant:
+          <ul>
+            <li><strong>Misaligned expectations:</strong> if a team builds what they call an "AI agent" that is actually a workflow, they will be disappointed when it cannot handle edge cases, and confused about why it fails in dynamic conditions.</li>
+            <li><strong>Wrong architecture:</strong> workflows and agents require different engineering approaches. Building an agent architecture for a workflow problem wastes complexity; building a workflow for a problem that needs an agent creates brittleness.</li>
+            <li><strong>Governance failures:</strong> truly agentic systems require different oversight — human-in-the-loop design, audit trails for decisions, scope constraints. Mislabelling a real agent as a workflow can mean insufficient controls are put in place.</li>
+            <li><strong>Vendor confusion:</strong> many vendors label fixed pipelines as "AI agents" for marketing purposes. Knowing the distinction helps you evaluate claims accurately.</li>
+          </ul>
+          The precise use of language here is not academic — it has direct consequences for system design, risk management, and business outcome.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-badge badge-concept">Concept</span>
+          How do I know if my organisation is ready to deploy an AI agent vs a workflow?
+          <span class="faq-arrow">⌄</span>
+        </button>
+        <div class="faq-a">
+          Use this readiness checklist:
+          <ul>
+            <li><strong>Task clarity:</strong> Can you articulate the goal in one sentence? Agents need clear goals. Vague goals produce uncontrolled agents.</li>
+            <li><strong>Tool availability:</strong> Are the tools the agent needs available as callable APIs or services? Agents without tools are just chatbots.</li>
+            <li><strong>Failure tolerance:</strong> Can your organisation tolerate occasional wrong actions that need human correction? Agents are not perfect. Workflows are more predictable.</li>
+            <li><strong>Oversight design:</strong> Do you have a plan for when to intervene? Human-in-the-loop checkpoints for high-stakes decisions are essential.</li>
+            <li><strong>Evaluation framework:</strong> Can you measure whether the agent is achieving the goal? You cannot improve what you cannot measure.</li>
+          </ul>
+          If you can tick all five — you are ready for an agent deployment. If not — start with a well-designed workflow and add agentic capability incrementally.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════ -->
+<footer class="footer-strip">
+  <strong>AI Agent Literacy Guide v2 — The Chef's Kitchen</strong><br/>
+  Built for internal knowledge sharing. All concepts current as of 2025.<br/>
+  <span style="font-size:12px;opacity:0.6;margin-top:6px;display:block;">
+    9 agentic traits · Interactive radar · Live classifier with gap diagnosis · Self-test scoring · Agent score sandbox · SMART GOAL framework · 11 challenge Q&amp;As
+  </span>
+</footer>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════════════════════
+// HERO LOOP ANIMATION
+// ═══════════════════════════════════════════════════════════
+(function() {
+  const words = ['Perceive', '→', 'Plan', '→', 'Act', '→', 'Observe', '→', 'Adapt', '→', 'Stop'];
+  const container = document.getElementById('hero-loop');
+  words.forEach((w, i) => {
+    const span = document.createElement('span');
+    span.className = 'loop-word';
+    span.textContent = w + (w === '→' ? ' ' : ' ');
+    container.appendChild(span);
+    setTimeout(() => span.classList.add('visible'), 300 + i * 180);
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════
+// SVG TRAIT MAP — CLICK-TO-SCROLL
+// ═══════════════════════════════════════════════════════════
+document.getElementById('trait-map-svg').addEventListener('click', function(e) {
+  const node = e.target.closest('.svg-trait-node');
+  if (!node) return;
+  const traitId = node.dataset.trait;
+  if (!traitId) return;
+  const target = document.getElementById(traitId);
+  if (!target) return;
+  // highlight
+  document.querySelectorAll('.svg-trait-node').forEach(n => n.classList.remove('highlighted'));
+  node.classList.add('highlighted');
+  setTimeout(() => node.classList.remove('highlighted'), 1200);
+  // scroll
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // brief flash on the card
+  target.style.transition = 'box-shadow 0.3s';
+  target.style.boxShadow = '0 0 0 3px var(--amber)';
+  setTimeout(() => { target.style.boxShadow = ''; }, 1200);
+});
+// keyboard support
+document.getElementById('trait-map-svg').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    const node = e.target.closest('.svg-trait-node');
+    if (node) node.click();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// TRAIT TABLE DATA
+// ═══════════════════════════════════════════════════════════
+const traitData = [
+  { name: 'Goal-directedness',      etl: false, rag: true,  agent: true },
+  { name: 'Perception',             etl: false, rag: true,  agent: true },
+  { name: 'Planning',               etl: false, rag: false, agent: true },
+  { name: 'Memory',                 etl: false, rag: false, agent: true },
+  { name: 'Tool use (dynamic)',     etl: false, rag: false, agent: true },
+  { name: 'Sequential action',      etl: true,  rag: false, agent: true },
+  { name: 'Autonomy',               etl: false, rag: false, agent: true },
+  { name: 'Feedback loop',          etl: false, rag: false, agent: true },
+  { name: 'Termination criterion',  etl: true,  rag: true,  agent: true },
+];
+function check(v) {
+  return v
+    ? '<span style="color:#3a7a4a;font-size:16px;font-weight:700;">✓</span>'
+    : '<span style="color:#c8c4bc;font-size:16px;">–</span>';
+}
+const tbody = document.getElementById('trait-table');
+traitData.forEach((t, i) => {
+  const tr = document.createElement('tr');
+  tr.style.cssText = `background:${i%2===0?'var(--cream2)':'var(--cream)'};`;
+  tr.innerHTML = `
+    <td style="padding:12px 16px;font-size:13px;color:var(--ink2);font-weight:500;border-right:1px solid var(--border);">${t.name}</td>
+    <td style="padding:12px;text-align:center;border-right:1px solid var(--border);">${check(t.etl)}</td>
+    <td style="padding:12px;text-align:center;border-right:1px solid var(--border);">${check(t.rag)}</td>
+    <td style="padding:12px;text-align:center;">${check(t.agent)}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ═══════════════════════════════════════════════════════════
+// RADAR CHART
+// ═══════════════════════════════════════════════════════════
+const radarTraits = [
+  'Goal', 'Perceive', 'Plan', 'Memory', 'Tools',
+  'Sequence', 'Autonomy', 'Feedback', 'Terminate'
+];
+const R = 110, CX = 150, CY = 150;
+const N = radarTraits.length;
+
+function getRadarPoint(i, val) {
+  const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+  const r = R * val;
+  return [CX + r * Math.cos(angle), CY + r * Math.sin(angle)];
+}
+
+// Build grid rings
+function buildRing(frac) {
+  return radarTraits.map((_, i) => getRadarPoint(i, frac).join(',')).join(' ');
+}
+document.getElementById('radar-ring-half').setAttribute('points', buildRing(0.5));
+document.getElementById('radar-ring-full').setAttribute('points', buildRing(1.0));
+
+// Build axes
+const axesG = document.getElementById('radar-axes');
+const labelsG = document.getElementById('radar-labels');
+radarTraits.forEach((label, i) => {
+  const [x, y] = getRadarPoint(i, 1.0);
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', CX); line.setAttribute('y1', CY);
+  line.setAttribute('x2', x); line.setAttribute('y2', y);
+  line.setAttribute('stroke', '#ddd8ce'); line.setAttribute('stroke-width', '1');
+  axesG.appendChild(line);
+
+  const [lx, ly] = getRadarPoint(i, 1.32);
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', lx); text.setAttribute('y', ly + 3);
+  text.setAttribute('text-anchor', 'middle');
+  text.textContent = label;
+  labelsG.appendChild(text);
+});
+
+// Example scores (9 traits each)
+const exampleScores = {
+  form:       [0,0,0,0,0,1,0,0,1],
+  etl:        [0,0,0,0,0,1,0,0,1],
+  copilot:    [1,1,0.5,0,0,0,0,0,0],
+  rag:        [1,1,0.5,0,0.5,0,0,0,0.5],
+  devin:      [1,1,1,1,1,1,1,1,1],
+  researcher: [1,1,1,1,1,1,1,1,1],
+};
+
+function updateRadar(scores) {
+  const points = scores.map((v, i) => getRadarPoint(i, Math.max(0.04, v)).join(',')).join(' ');
+  const poly = document.getElementById('radar-polygon');
+  poly.setAttribute('points', points);
+
+  // dots
+  const dotsG = document.getElementById('radar-dots');
+  dotsG.innerHTML = '';
+  scores.forEach((v, i) => {
+    if (v === 0) return;
+    const [x, y] = getRadarPoint(i, Math.max(0.04, v));
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x); circle.setAttribute('cy', y);
+    circle.setAttribute('r', 4);
+    circle.setAttribute('fill', '#c85a3a'); circle.setAttribute('stroke', '#fff');
+    circle.setAttribute('stroke-width', '1.5');
+    dotsG.appendChild(circle);
+  });
+}
+updateRadar([0,0,0,0,0,0,0,0,0]);
+
+// Example detail text
+const exampleDetails = {
+  form: {
+    title: 'Leave Approval Form — Pure Workflow',
+    body: 'An employee fills a form. It triggers a rule: if manager approves → HR notified → leave logged. Every step is determined by a rule or a human click. No decision-making, no adaptation, no tool selection. <strong>Trait score: 2/9</strong> (sequential steps + fixed termination). This is the purest possible workflow.'
+  },
+  etl: {
+    title: 'Nightly ETL Pipeline — Workflow',
+    body: 'Extract data from source A, transform it by rule set B, load it to destination C. Pre-defined, scheduled, deterministic. If source A is unavailable, the pipeline fails and alerts an engineer — it does not adapt. <strong>Trait score: 2/9</strong> (sequential execution + fixed termination). A very sophisticated workflow, but still a workflow.'
+  },
+  copilot: {
+    title: 'GitHub Copilot Autocomplete — Borderline',
+    body: 'Copilot reads the code context (perception), reasons about what to suggest (partial planning within a single step), and provides a suggestion. But it waits for the human to accept or reject at every step. There is no autonomous multi-step execution. <strong>Trait score: 3–4/9</strong>. Highly intelligent, but human-in-the-loop at every action. Borderline.'
+  },
+  rag: {
+    title: 'RAG-based Q&A Bot — Borderline',
+    body: 'Retrieval-Augmented Generation: the system embeds a query, retrieves relevant documents, passes them to an LLM, synthesises an answer. It uses tools (retriever, LLM) in a fixed sequence. There is no adaptation: if retrieval returns poor results, the system still generates an answer without retrying with a different query. <strong>Trait score: 4/9</strong>. A smart pipeline. Not yet agentic.'
+  },
+  devin: {
+    title: 'Devin / Claude Code — Fully Agentic',
+    body: 'Given a task ("fix this bug"), the system reads the codebase (perception), forms a plan (planning), makes targeted edits (action), runs tests (tool use), reads the error output (feedback loop), and retries with a different approach if tests fail — all without human prompting between steps. It stops when tests pass. <strong>Score: 9/9 traits.</strong> This is the gold standard of what a software engineering agent looks like.'
+  },
+  researcher: {
+    title: 'Multi-Step Research Agent — Fully Agentic',
+    body: 'Given "write a market analysis report on EV battery technology," the agent decomposes the goal into sub-topics, plans a search strategy, executes 10–20 searches, reads and cross-checks sources, identifies gaps, performs additional targeted searches, synthesises findings, and writes the report — without human intervention. <strong>Score: 9/9 traits.</strong> Every single agentic property is present and necessary.'
+  }
+};
+
+let activeChip = null;
+function selectChip(key, el) {
+  // remove old active
+  if (activeChip) activeChip.classList.remove('chip-active');
+  el.classList.add('chip-active');
+  activeChip = el;
+
+  const scores = exampleScores[key];
+  updateRadar(scores);
+
+  const det = exampleDetails[key];
+  const radarDetail = document.getElementById('radar-example-detail');
+  radarDetail.style.fontStyle = 'normal';
+  radarDetail.style.color = 'var(--ink2)';
+  radarDetail.innerHTML = `<strong style="color:var(--ink);font-size:13px;">${det.title}</strong><br/><span style="font-size:12px;">${det.body}</span>`;
+
+  // also show detail panel below
+  const d = document.getElementById('example-detail');
+  const c = document.getElementById('example-content');
+  c.innerHTML = `
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Example Detail</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);margin-bottom:10px;">${det.title}</div>
+    <div style="font-size:14px;color:var(--ink2);line-height:1.75;">${det.body}</div>
+  `;
+  d.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELF-TEST (Section 2)
+// ═══════════════════════════════════════════════════════════
+const selfTestAnswers = {};
+const selfTestHints = [
+  'Not yet scored — start toggling.',
+  '1 trait scored — keep going.',
+  '2 traits scored — keep going.',
+  '3 traits scored — minimally agentic territory.',
+  '4 traits scored — getting there.',
+  '5 traits scored — halfway there.',
+  '6 traits scored — looking more agentic.',
+  '7 traits scored — strong signal.',
+  '8 traits scored — almost fully agentic.',
+  '9 traits scored — self-assessment complete!'
+];
+
+function setSelfTest(n, v) {
+  selfTestAnswers[n] = v;
+  ['yes','no'].forEach(b => {
+    const el = document.getElementById(`st${n}-${b}`);
+    el.classList.remove('st-yes','st-no');
+  });
+  document.getElementById(`st${n}-${v}`).classList.add(v==='yes'?'st-yes':'st-no');
+
+  // card border
+  const card = document.getElementById(`trait-${n}`);
+  card.classList.remove('self-yes','self-no');
+  card.classList.add(v==='yes'?'self-yes':'self-no');
+
+  const yeses = Object.values(selfTestAnswers).filter(x=>x==='yes').length;
+  const answered = Object.keys(selfTestAnswers).length;
+
+  document.getElementById('st-count').textContent = yeses;
+  document.getElementById('nav-score').textContent = yeses;
+  document.getElementById('st-hint').textContent = selfTestHints[answered] || selfTestHints[9];
+
+  const vEl = document.getElementById('st-verdict');
+  vEl.className = 'selftest-verdict';
+  if (answered === 0) {
+    vEl.className += ' sv-none'; vEl.textContent = 'Not yet scored';
+  } else if (yeses <= 2) {
+    vEl.className += ' sv-min'; vEl.textContent = 'Not agentic';
+  } else if (yeses <= 4) {
+    vEl.className += ' sv-min'; vEl.textContent = 'Minimally agentic';
+  } else if (yeses <= 7) {
+    vEl.className += ' sv-mod'; vEl.textContent = 'Moderately agentic';
+  } else {
+    vEl.className += ' sv-full'; vEl.textContent = 'Fully agentic';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLASSIFIER (Section 4) — LIVE, with trait gap diagnosis
+// ═══════════════════════════════════════════════════════════
+const classifierAnswers = {};
+const qTraitMap = {
+  1: { name: 'Goal-directedness', consequence: 'the system cannot self-direct — it needs human prompting for each step.' },
+  2: { name: 'Tool use (dynamic)', consequence: 'the system cannot flexibly extend itself — it is limited to pre-defined capabilities.' },
+  3: { name: 'Feedback loop', consequence: 'the system cannot adapt to errors mid-task — it will proceed even when failing.' },
+  4: { name: 'Sequential action-taking', consequence: 'the system is single-shot — it cannot build context across steps.' },
+  5: { name: 'Termination criterion', consequence: 'the system has no self-assessed stopping condition — it requires human termination.' },
+};
+
+function setQ(n, v) {
+  classifierAnswers[n] = v;
+  ['yes','no'].forEach(b => {
+    const el = document.getElementById(`q${n}-${b}`);
+    el.classList.remove('active-yes','active-no');
+  });
+  document.getElementById(`q${n}-${v}`).classList.add(v==='yes'?'active-yes':'active-no');
+  updateClassifier();
+}
+
+function updateClassifier() {
+  const answered = Object.keys(classifierAnswers).length;
+  const yeses = Object.values(classifierAnswers).filter(v=>v==='yes').length;
+
+  document.getElementById('clf-score-badge').textContent = `${yeses}/5`;
+
+  ['verdict-workflow','verdict-border','verdict-agent'].forEach(id => {
+    document.getElementById(id).classList.remove('show');
+  });
+
+  if (answered < 5) return; // wait for all 5
+
+  const scoreText = `You answered YES to ${yeses} of 5 questions.`;
+
+  // Build gap diagnosis
+  function buildGap(gapElId) {
+    const gapEl = document.getElementById(gapElId);
+    gapEl.innerHTML = '';
+    const title = document.createElement('div');
+    title.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:inherit;opacity:0.6;margin-bottom:8px;margin-top:16px;';
+    title.textContent = 'Trait Diagnosis';
+    gapEl.appendChild(title);
+    for (let q = 1; q <= 5; q++) {
+      const present = classifierAnswers[q] === 'yes';
+      const item = document.createElement('div');
+      item.className = `tg-item ${present ? 'tg-present' : 'tg-absent'}`;
+      item.innerHTML = `<span class="tg-dot">${present ? '✓' : '✗'}</span><span><strong>${qTraitMap[q].name}</strong>${present ? ' — present' : ' absent — ' + qTraitMap[q].consequence}</span>`;
+      gapEl.appendChild(item);
+    }
+  }
+
+  if (yeses <= 1) {
+    document.getElementById('verdict-score-wf').textContent = scoreText;
+    buildGap('gap-wf');
+    document.getElementById('verdict-workflow').classList.add('show');
+  } else if (yeses <= 3) {
+    document.getElementById('verdict-score-bd').textContent = scoreText;
+    buildGap('gap-bd');
+    document.getElementById('verdict-border').classList.add('show');
+  } else {
+    document.getElementById('verdict-score-ag').textContent = scoreText;
+    buildGap('gap-ag');
+    document.getElementById('verdict-agent').classList.add('show');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// AGENT SCORE SANDBOX (Section 5)
+// ═══════════════════════════════════════════════════════════
+const sandboxTraits = [
+  { name: 'Goal-Directedness',      tier: 'core',      pts: 2 },
+  { name: 'Autonomy',               tier: 'core',      pts: 2 },
+  { name: 'Feedback Loop',          tier: 'core',      pts: 2 },
+  { name: 'Perception',             tier: 'essential', pts: 1.5 },
+  { name: 'Planning',               tier: 'essential', pts: 1.5 },
+  { name: 'Memory',                 tier: 'essential', pts: 1.5 },
+  { name: 'Tool Selection & Use',   tier: 'essential', pts: 1.5 },
+  { name: 'Sequential Action',      tier: 'enhancing', pts: 1.5 },
+  { name: 'Termination Criterion',  tier: 'enhancing', pts: 1.5 },
+];
+// Max = 3×2 + 4×1.5 + 2×1.5 = 6 + 6 + 3 = 15
+
+const sbState = {};
+sandboxTraits.forEach((t, i) => { sbState[i] = 'absent'; });
+
+const sbTbody = document.getElementById('sandbox-tbody');
+sandboxTraits.forEach((t, i) => {
+  const tierLabel = {core:'Core',essential:'Essential',enhancing:'Enhancing'}[t.tier];
+  const tierClass = `sb-${t.tier}`;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="sb-trait-name">${t.name}</td>
+    <td><span class="sb-tier-pill ${tierClass}">${tierLabel}</span></td>
+    <td class="sb-pts">${t.pts} pt${t.pts!==1?'s':''}</td>
+    <td>
+      <div class="sb-toggle-group">
+        <button class="sb-btn sb-absent" id="sb${i}-a" onclick="setSb(${i},'absent')">Absent</button>
+        <button class="sb-btn" id="sb${i}-p" onclick="setSb(${i},'partial')">Partial</button>
+        <button class="sb-btn" id="sb${i}-f" onclick="setSb(${i},'full')">Full</button>
+      </div>
+    </td>
+  `;
+  sbTbody.appendChild(tr);
+});
+
+function setSb(i, val) {
+  sbState[i] = val;
+  ['absent','partial','full'].forEach(s => {
+    const btn = document.getElementById(`sb${i}-${s[0]}`);
+    if (btn) btn.className = `sb-btn${s===val?' sb-'+s:''}`;
+  });
+  updateSandbox();
+}
+
+function updateSandbox() {
+  let score = 0;
+  sandboxTraits.forEach((t, i) => {
+    const v = sbState[i];
+    if (v === 'full')    score += t.pts;
+    if (v === 'partial') score += t.pts * 0.5;
+  });
+  score = Math.round(score * 10) / 10;
+  document.getElementById('sb-score-num').textContent = score;
+  document.getElementById('sb-bar').style.width = `${(score / 15) * 100}%`;
+
+  const vEl = document.getElementById('sb-verdict');
+  vEl.className = 'sandbox-verdict-pill';
+  if (score <= 3) {
+    vEl.className += ' sb-v-none'; vEl.textContent = 'Not agentic';
+  } else if (score <= 7) {
+    vEl.className += ' sb-v-min'; vEl.textContent = 'Minimally agentic';
+  } else if (score <= 11) {
+    vEl.className += ' sb-v-mod'; vEl.textContent = 'Moderately agentic';
+  } else {
+    vEl.className += ' sb-v-full'; vEl.textContent = 'Fully agentic';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FAQ ACCORDION
+// ═══════════════════════════════════════════════════════════
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

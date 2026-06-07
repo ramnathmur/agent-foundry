@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Foundry — Project Overview</title>
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:   #0f172a;
+    --navy2:  #1e293b;
+    --blue:   #3b82f6;
+    --blue2:  #2563eb;
+    --teal:   #0ea5e9;
+    --green:  #22c55e;
+    --amber:  #f59e0b;
+    --red:    #ef4444;
+    --slate:  #64748b;
+    --light:  #f1f5f9;
+    --white:  #ffffff;
+    --text:   #1e293b;
+    --muted:  #475569;
+    --border: #e2e8f0;
+    --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── Nav ─────────────────────────────────────────────── */
+  #top-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,23,42,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0 24px;
+  }
+  #top-nav .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; gap: 6px;
+    height: 52px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #top-nav .nav-inner::-webkit-scrollbar { display: none; }
+  #top-nav a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    padding: 6px 12px; border-radius: 6px;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+  #top-nav a:hover, #top-nav a.active {
+    background: rgba(59,130,246,0.2); color: #93c5fd;
+  }
+  .nav-brand {
+    font-weight: 700; font-size: 14px;
+    color: var(--white) !important;
+    margin-right: 8px; padding-left: 0 !important;
+    letter-spacing: -0.3px;
+  }
+  .nav-sep {
+    width: 1px; height: 18px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0; margin: 0 4px;
+  }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  section { padding: 80px 24px; }
+  section:nth-child(even) { background: var(--light); }
+  .inner { max-width: 860px; margin: 0 auto; }
+  .wide  { max-width: 1080px; margin: 0 auto; }
+
+  /* ── Typography ──────────────────────────────────────── */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700; line-height: 1.3;
+    color: var(--navy); margin-bottom: 20px;
+  }
+  h3 { font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+  p { color: var(--muted); margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { padding-left: 20px; color: var(--muted); }
+  li { margin-bottom: 8px; }
+  strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: var(--mono);
+    font-size: 13px; background: #e0e7ff;
+    color: #3730a3; padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── Hero ────────────────────────────────────────────── */
+  #hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0c1a35 100%);
+    padding: 80px 24px 60px;
+    color: var(--white);
+  }
+  #hero .inner { text-align: center; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(59,130,246,0.2);
+    color: #93c5fd; border: 1px solid rgba(59,130,246,0.35);
+    font-size: 12px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  #hero h1 {
+    font-size: clamp(28px, 5vw, 50px);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 20px;
+  }
+  #hero h1 span { color: #60a5fa; }
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 19px);
+    color: rgba(255,255,255,0.7);
+    max-width: 620px; margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  .hero-meta {
+    display: flex; justify-content: center; gap: 32px;
+    flex-wrap: wrap; margin-bottom: 48px;
+  }
+  .hero-meta-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .hero-meta-num {
+    font-size: 28px; font-weight: 800; color: #60a5fa;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-meta-label {
+    font-size: 12px; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+
+  /* ── Cycle SVG ───────────────────────────────────────── */
+  .cycle-container {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 32px 20px;
+    margin-top: 8px; overflow-x: auto;
+  }
+  .cycle-svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* ── Achieves ────────────────────────────────────────── */
+  .achieve-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px; margin-top: 36px;
+  }
+  .achieve-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .achieve-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+  .achieve-icon {
+    font-size: 28px; margin-bottom: 12px; display: block;
+  }
+  .achieve-card h3 { font-size: 16px; margin-bottom: 6px; }
+  .achieve-card p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ── SDK Ladder ──────────────────────────────────────── */
+  .ladder-intro { margin-bottom: 32px; }
+  .rung-list { list-style: none; padding: 0; }
+  .rung-item {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 10px;
+    overflow: hidden; transition: box-shadow 0.2s;
+  }
+  .rung-item:hover { box-shadow: var(--shadow); }
+  .rung-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px; cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .rung-header:hover { background: #f8faff; }
+  .rung-num {
+    flex-shrink: 0; width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; font-family: var(--mono);
+  }
+  .rung-num.done { background: #dcfce7; color: #166534; }
+  .rung-num.next { background: #dbeafe; color: #1d4ed8; }
+  .rung-num.future { background: #f1f5f9; color: #64748b; }
+  .rung-title { flex: 1; font-size: 15px; font-weight: 600; color: var(--navy); }
+  .rung-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .rung-badge.cycle-1 { background: #dbeafe; color: #1d4ed8; }
+  .rung-badge.cycle-2 { background: #e0f2fe; color: #0369a1; }
+  .rung-badge.cycle-3 { background: #f3e8ff; color: #7c3aed; }
+  .rung-badge.cycle-4 { background: #fef3c7; color: #92400e; }
+  .rung-badge.cycle-5 { background: #fce7f3; color: #9d174d; }
+  .rung-chevron { color: var(--slate); transition: transform 0.25s; font-size: 14px; }
+  .rung-item.open .rung-chevron { transform: rotate(90deg); }
+  .rung-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+    padding: 0 20px 0 66px;
+  }
+  .rung-item.open .rung-body { max-height: 200px; padding: 0 20px 18px 66px; }
+  .rung-body p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ── 8-file grid ─────────────────────────────────────── */
+  .file-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-top: 28px;
+  }
+  .file-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px;
+  }
+  .file-name {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--blue2); font-weight: 600;
+    margin-bottom: 6px; word-break: break-all;
+  }
+  .file-desc { font-size: 13px; color: var(--muted); }
+
+  /* ── Experience timeline ─────────────────────────────── */
+  .timeline { position: relative; padding-left: 32px; margin-top: 36px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 9px; top: 6px;
+    bottom: 6px; width: 2px;
+    background: linear-gradient(to bottom, var(--blue), var(--teal));
+    border-radius: 2px;
+  }
+  .timeline-item { position: relative; margin-bottom: 32px; }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute; left: -27px; top: 4px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--blue); border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .timeline-phase {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .timeline-item h3 { font-size: 16px; margin-bottom: 6px; }
+  .timeline-item p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ── Feature cards ───────────────────────────────────── */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; margin-top: 36px;
+  }
+  .feature-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    border-top: 3px solid var(--blue);
+  }
+  .feature-card h3 { font-size: 16px; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; margin: 0; }
+
+  /* ── Output table ────────────────────────────────────── */
+  .output-table { margin-top: 28px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    text-align: left; padding: 10px 14px;
+    background: var(--navy); color: var(--white);
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8faff; }
+
+  /* ── Nav guide ───────────────────────────────────────── */
+  .nav-guide { margin-top: 32px; }
+  .nav-step {
+    display: flex; gap: 18px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .nav-step:last-child { border-bottom: none; }
+  .nav-step-num {
+    flex-shrink: 0; width: 36px; height: 36px;
+    background: var(--blue2); color: var(--white);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 15px;
+  }
+  .nav-step-content h3 { font-size: 15px; margin-bottom: 4px; }
+  .nav-step-content p { font-size: 14px; margin: 0; }
+
+  /* ── Accordion ───────────────────────────────────────── */
+  .accordion { margin-top: 32px; }
+  .acc-item {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 10px; overflow: hidden;
+    background: var(--white);
+  }
+  .acc-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; cursor: pointer;
+    font-size: 15px; font-weight: 600; color: var(--navy);
+    user-select: none; transition: background 0.15s;
+  }
+  .acc-header:hover { background: #f8faff; }
+  .acc-icon { font-size: 20px; color: var(--blue); transition: transform 0.25s; }
+  .acc-item.open .acc-icon { transform: rotate(45deg); }
+  .acc-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.35s ease;
+    font-size: 14px; color: var(--muted);
+  }
+  .acc-item.open .acc-body { max-height: 400px; }
+  .acc-content { padding: 0 20px 18px; }
+  .acc-content ul { margin-top: 6px; }
+  .acc-content p { margin-bottom: 8px; }
+
+  /* ── Caveats ─────────────────────────────────────────── */
+  .caveat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; margin-top: 28px;
+  }
+  .caveat-card {
+    background: #fff7ed; border: 1px solid #fed7aa;
+    border-radius: var(--radius); padding: 20px;
+  }
+  .caveat-card .caveat-icon { font-size: 22px; margin-bottom: 10px; }
+  .caveat-card h3 { font-size: 15px; color: #92400e; margin-bottom: 6px; }
+  .caveat-card p { font-size: 13px; color: #78350f; margin: 0; }
+
+  /* ── Get Started ─────────────────────────────────────── */
+  #get-started { background: var(--navy); }
+  #get-started h2 { color: var(--white); }
+  #get-started .section-label { color: #7dd3fc; }
+  .start-steps {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin-top: 36px;
+  }
+  .start-step {
+    flex: 1; min-width: 220px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius); padding: 24px;
+    text-align: center;
+  }
+  .start-step-num {
+    font-size: 36px; font-weight: 800; color: #60a5fa;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 12px; display: block;
+  }
+  .start-step h3 { font-size: 16px; color: var(--white); margin-bottom: 8px; }
+  .start-step p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; }
+  .start-command {
+    display: inline-block; margin-top: 12px;
+    font-family: var(--mono); font-size: 13px;
+    background: rgba(59,130,246,0.2); color: #93c5fd;
+    padding: 6px 12px; border-radius: 6px;
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  footer {
+    background: #0a0f1e;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px; text-align: center;
+    padding: 24px;
+  }
+
+  /* ── Utilities ───────────────────────────────────────── */
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 4px; letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .tag-blue  { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #dcfce7; color: #166534; }
+  .tag-amber { background: #fef3c7; color: #92400e; }
+  .tag-red   { background: #fee2e2; color: #991b1b; }
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+  .callout {
+    background: #eff6ff; border-left: 4px solid var(--blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px; margin: 24px 0;
+    font-size: 14px; color: var(--text);
+  }
+  .callout strong { color: var(--blue2); }
+
+  @media (max-width: 640px) {
+    section { padding: 60px 16px; }
+    .start-steps { flex-direction: column; }
+    .hero-meta { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Navigation ───────────────────────────────────────── -->
+<nav id="top-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">🏭 Agent Foundry</a>
+    <div class="nav-sep"></div>
+    <a href="#achieves">Achieves</a>
+    <a href="#structure">Structure</a>
+    <a href="#experience">Experience</a>
+    <a href="#features">Features</a>
+    <a href="#outputs">Outputs</a>
+    <a href="#navigate">Navigate</a>
+    <a href="#tips">Tips</a>
+    <a href="#caveats">Caveats</a>
+    <a href="#get-started">Get Started</a>
+  </div>
+</nav>
+
+<!-- ─── Hero ────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="inner">
+    <div class="hero-tag">Personal Learning Project</div>
+    <h1>Learn agents by <span>building</span> them.</h1>
+    <p class="hero-sub">
+      Agent Foundry turns brainstormed daily-life ideas into runnable, annotated Python agents — one per session, each one more capable than the last. You do not write code. You read it, run it, and understand why it works.
+    </p>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">8</span>
+        <span class="hero-meta-label">files per agent</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">9</span>
+        <span class="hero-meta-label">agentic traits</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">8</span>
+        <span class="hero-meta-label">SDK rungs</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">5</span>
+        <span class="hero-meta-label">planned cycles</span>
+      </div>
+    </div>
+
+    <!-- Full Cycle SVG Diagram -->
+    <div class="cycle-container">
+      <svg class="cycle-svg" viewBox="0 0 900 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Full cycle from brainstorm to learning insights">
+        <!-- Background track -->
+        <rect x="0" y="0" width="900" height="160" rx="12" fill="rgba(255,255,255,0.03)"/>
+
+        <!-- Arrow definitions -->
+        <defs>
+          <marker id="arrowW" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.35)"/>
+          </marker>
+          <marker id="arrowB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#60a5fa"/>
+          </marker>
+        </defs>
+
+        <!-- Nodes: x positions at 50,150,250,350,450,550,650,750,850 -->
+        <!-- Step 1: Brainstorm -->
+        <circle cx="60" cy="80" r="34" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="60" y="76" text-anchor="middle" font-size="18" fill="#60a5fa">💭</text>
+        <text x="60" y="92" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Brainstorm</text>
+        <text x="60" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">Claude leads</text>
+
+        <!-- Arrow 1→2 -->
+        <line x1="96" y1="80" x2="162" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+        <text x="129" y="72" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)" font-family="-apple-system,sans-serif">lock</text>
+
+        <!-- Step 2: Generate -->
+        <circle cx="185" cy="80" r="34" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="185" y="76" text-anchor="middle" font-size="18" fill="#60a5fa">⚙️</text>
+        <text x="185" y="92" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Generate</text>
+        <text x="185" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">8 files</text>
+
+        <!-- Arrow 2→3 -->
+        <line x1="221" y1="80" x2="287" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+        <text x="254" y="72" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)" font-family="-apple-system,sans-serif">QA</text>
+
+        <!-- Step 3: Part 1 HTML -->
+        <circle cx="310" cy="80" r="34" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="310" y="76" text-anchor="middle" font-size="18" fill="#60a5fa">📖</text>
+        <text x="310" y="90" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Read</text>
+        <text x="310" y="100" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Guide (Pt 1)</text>
+        <text x="310" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">Student reads</text>
+
+        <!-- Arrow 3→4 -->
+        <line x1="346" y1="80" x2="412" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+
+        <!-- Step 4: Professor F -->
+        <circle cx="435" cy="80" r="34" fill="#1e3a5f" stroke="#0ea5e9" stroke-width="1.5"/>
+        <text x="435" y="76" text-anchor="middle" font-size="18" fill="#38bdf8">🎓</text>
+        <text x="435" y="90" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Professor</text>
+        <text x="435" y="100" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Phase F</text>
+        <text x="435" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">skippable</text>
+
+        <!-- Arrow 4→5 -->
+        <line x1="471" y1="80" x2="537" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+
+        <!-- Step 5: Run in PyCharm -->
+        <circle cx="560" cy="80" r="34" fill="#1e3a5f" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="560" y="76" text-anchor="middle" font-size="18" fill="#86efac">▶</text>
+        <text x="560" y="92" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Run in</text>
+        <text x="560" y="102" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">PyCharm</text>
+        <text x="560" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">log auto-saves</text>
+
+        <!-- Arrow 5→6 -->
+        <line x1="596" y1="80" x2="662" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+
+        <!-- Step 6: Professor F2 -->
+        <circle cx="685" cy="80" r="34" fill="#1e3a5f" stroke="#0ea5e9" stroke-width="1.5"/>
+        <text x="685" y="76" text-anchor="middle" font-size="18" fill="#38bdf8">🎓</text>
+        <text x="685" y="90" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Professor</text>
+        <text x="685" y="100" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Phase F2</text>
+        <text x="685" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">post-run</text>
+
+        <!-- Arrow 6→7 -->
+        <line x1="721" y1="80" x2="787" y2="80" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+
+        <!-- Step 7: Insights HTML -->
+        <circle cx="810" cy="80" r="34" fill="#1e3a5f" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="810" y="76" text-anchor="middle" font-size="18" fill="#fcd34d">✨</text>
+        <text x="810" y="90" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">Insights</text>
+        <text x="810" y="100" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="-apple-system,sans-serif">HTML (Pt 2)</text>
+        <text x="810" y="126" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">proof from run</text>
+
+        <!-- Arrow 7→ next cycle (loop back label) -->
+        <path d="M844 80 C870 80 880 148 810 148 C740 148 160 148 60 148 C-20 148 -20 80 60 80" stroke="rgba(96,165,250,0.2)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+        <text x="450" y="156" text-anchor="middle" font-size="8" fill="rgba(96,165,250,0.4)" font-family="-apple-system,sans-serif">next cycle →</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ─── What This Project Achieves ──────────────────────── -->
+<section id="achieves">
+  <div class="inner">
+    <div class="section-label">What It Achieves</div>
+    <h2>Practical understanding through construction</h2>
+    <p>
+      This project does not teach agents through slides or reading. It teaches them by having
+      you build one in every session. By cycle 5, you will have built five increasingly capable
+      agents and will be able to explain, from code, exactly why each one is an agent and not
+      just a script.
+    </p>
+
+    <div class="achieve-grid">
+      <div class="achieve-card">
+        <span class="achieve-icon">🎯</span>
+        <h3>Agency that is provable, not asserted</h3>
+        <p>Every agent is accepted or rejected by five formal Agency Gates (G1–G5). You learn to apply the same gates, not just hear about them.</p>
+      </div>
+      <div class="achieve-card">
+        <span class="achieve-icon">🪜</span>
+        <h3>A cumulative SDK concept ladder</h3>
+        <p>Each new agent introduces at least one SDK concept the previous one did not. You climb from basic <code>query()</code> calls to subagents and context compaction, one rung per cycle.</p>
+      </div>
+      <div class="achieve-card">
+        <span class="achieve-icon">👁</span>
+        <h3>Visible runtime behavior</h3>
+        <p>Every agent prints 24+ labeled output lines — including the Python↔LLM boundary, model decisions, goal predicate evaluations, and loop feedback. You watch the agent think.</p>
+      </div>
+      <div class="achieve-card">
+        <span class="achieve-icon">📚</span>
+        <h3>Two learning artifacts per agent</h3>
+        <p>A pre-run HTML guide (why it's an agent) and a post-run HTML insights file (proof from execution). Together they complete the learning loop.</p>
+      </div>
+      <div class="achieve-card">
+        <span class="achieve-icon">🔁</span>
+        <h3>Cross-cycle retention</h3>
+        <p>A registry accumulates every agent built, concept introduced, and gap identified. Each new brainstorm session builds on the last. Nothing is lost between sessions.</p>
+      </div>
+      <div class="achieve-card">
+        <span class="achieve-icon">📐</span>
+        <h3>A framework you can apply</h3>
+        <p>The 9-trait framework and Agency Gates are not invented for this project — they are a portable vocabulary you can use to evaluate any agent you encounter in the wild.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Structure ────────────────────────────────────────── -->
+<section id="structure">
+  <div class="wide">
+    <div class="inner">
+      <div class="section-label">How It Is Structured</div>
+      <h2>The 8-rung SDK concept ladder</h2>
+      <p class="ladder-intro">
+        Each cycle introduces at least one new rung. Rungs are tracked in the project registry
+        so the brainstorm always builds forward. Click any rung to see what it introduces and
+        when you will encounter it.
+      </p>
+    </div>
+
+    <ul class="rung-list" id="sdk-ladder" role="list" style="max-width:860px;margin:0 auto;">
+      <li class="rung-item" data-rung="1">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num next">1</span>
+          <span class="rung-title"><code>query()</code> + message anatomy</span>
+          <span class="rung-badge cycle-1">Cycle 1</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>The basic call: how to send a prompt, receive messages, and read the <code>usage</code> object. You see <code>SystemMessage</code>, <code>AssistantMessage</code>, and <code>ResultMessage</code> for the first time. The agent loop uses <code>query()</code> on every iteration.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="2">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num next">2</span>
+          <span class="rung-title">Goal predicate + agent loop + circuit breaker</span>
+          <span class="rung-badge cycle-1">Cycle 1</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>The foundation of agency: <code>goal_met(state) → bool</code> evaluated every iteration (G1), the <code>while</code> loop that runs until it returns <code>True</code> (G3), and a hard iteration cap that prevents infinite loops (G4).</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="3">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">3</span>
+          <span class="rung-title"><code>ClaudeSDKClient</code> + <code>session_id</code> capture and resume</span>
+          <span class="rung-badge cycle-2">Cycle 2</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>Multi-turn sessions where the model's context persists across SDK calls. Cycle 1 uses stateless <code>query()</code> — each call starts fresh. Rung 3 makes context cumulative. You will understand why this matters before you see the code.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="4">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">4</span>
+          <span class="rung-title">Custom tools — <code>@tool</code>, model-owned selection (G2)</span>
+          <span class="rung-badge cycle-3">Cycle 3</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>The model decides which tool to call — not a Python <code>if</code> chain. This is where Agency Gate G2 (model-owned decision) becomes fully demonstrable. The <code>[MODEL DECISION]</code> output line acquires a new meaning at this rung.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="5">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">5</span>
+          <span class="rung-title"><code>allowed_tools</code> / <code>permission_mode</code></span>
+          <span class="rung-badge cycle-3">Cycle 3–4</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>Controlling what the model is permitted to do. Autonomy is not a binary — you learn to dial it precisely. The four documented permission modes each produce a different behavior.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="6">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">6</span>
+          <span class="rung-title">Hooks — <code>PreToolUse</code> guard, <code>PostToolUse</code> audit</span>
+          <span class="rung-badge cycle-4">Cycle 4</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>Hooks intercept tool calls before and after execution. A <code>PreToolUse</code> guard can block unsafe operations; a <code>PostToolUse</code> audit writes a JSONL span trace. You can see every tool invocation logged, not just printed.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="7">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">7</span>
+          <span class="rung-title">Independent verifier — separate critic call, fresh context (G5)</span>
+          <span class="rung-badge cycle-4">Cycle 4–5</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>Agency Gate G5: verification is independent. A second SDK call with a fresh context checks the first agent's work. This is where trust and reliability become architectural concerns, not afterthoughts.</p>
+        </div>
+      </li>
+      <li class="rung-item" data-rung="8">
+        <div class="rung-header" role="button" tabindex="0" aria-expanded="false">
+          <span class="rung-num future">8</span>
+          <span class="rung-title">Subagents + context compaction</span>
+          <span class="rung-badge cycle-5">Cycle 5</span>
+          <span class="rung-chevron">▶</span>
+        </div>
+        <div class="rung-body">
+          <p>Each subagent has its own context window. Context compaction prevents runaway token accumulation. This is the frontier: orchestrating multiple agents, each with bounded context, working toward a shared goal.</p>
+        </div>
+      </li>
+    </ul>
+
+    <div class="inner" style="margin-top:48px;">
+      <h3>8 files generated per agent</h3>
+      <p>Every cycle produces this complete set. Nothing is left partial.</p>
+      <div class="file-grid">
+        <div class="file-card">
+          <div class="file-name">prompt.md</div>
+          <div class="file-desc">Blueprint. Written before any code. A cold session can regenerate the agent from this file alone.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">main.py</div>
+          <div class="file-desc">Entry point. Prints 24+ labeled output lines. Run this in PyCharm.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">agent.py</div>
+          <div class="file-desc">Agent loop and SDK wiring, if main.py exceeds ~150 lines.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">smoke_test.py</div>
+          <div class="file-desc">QA tests with mocked LLM. Must pass before handover. All branches covered.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">requirements.txt</div>
+          <div class="file-desc">Pinned, verified-current packages. <code>pip install -r requirements.txt</code> is all you need.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">README.md</div>
+          <div class="file-desc">How to run in PyCharm. Mechanics only — no concepts. Open this if you forget the commands.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">&lt;slug&gt;_learning-guide.html</div>
+          <div class="file-desc">Part 1: read this before running. 13 sections. MCQ self-check. Why it's an agent. ≤10 min.</div>
+        </div>
+        <div class="file-card">
+          <div class="file-name">&lt;slug&gt;_learning-insights.html</div>
+          <div class="file-desc">Part 2: generated after your first run, from the actual runtime log. Proof from execution.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Student Experience ────────────────────────────────── -->
+<section id="experience">
+  <div class="inner">
+    <div class="section-label">The Student Experience</div>
+    <h2>What one cycle actually looks like</h2>
+    <p>
+      A cycle takes one Claude Desktop session. The duration depends on how deeply you engage
+      with the Professor sessions — the generation itself typically takes 15–20 minutes.
+      Below is what you do and see at each phase.
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#3b82f6;box-shadow:0 0 0 2px #3b82f6;"></div>
+        <div class="timeline-phase">Phase A</div>
+        <h3>You describe a daily-life idea</h3>
+        <p>Claude asks a short sequence of structured questions — domain, complexity preference, what you want to learn. It proposes 3–4 candidates, each with a Learning Position label (FORWARD, FOUNDATIONAL, etc.) and a G1–G5 gate verdict. You choose one and lock it with an explicit command. Nothing is written before you lock.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#3b82f6;box-shadow:0 0 0 2px #3b82f6;"></div>
+        <div class="timeline-phase">Phase B</div>
+        <h3>Claude shows a mini-spec and waits for confirmation</h3>
+        <p>Before any code is written, you see the goal predicate, tools, loop structure, and termination conditions in plain English. You confirm or adjust. This is the last human checkpoint before generation begins.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#22c55e;box-shadow:0 0 0 2px #22c55e;"></div>
+        <div class="timeline-phase">Phase C</div>
+        <h3>Claude generates all 8 files and runs its own QA</h3>
+        <p>Code is generated, the smoke test is run in Claude's sandbox (LLM mocked), failures are repaired and narrated. You watch a feedback loop work before you read one. When Claude says "green," the smoke test has actually passed — not been skipped.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div>
+        <div class="timeline-phase">Phase C — Read first</div>
+        <h3>You read the learning guide (Part 1) before opening the code</h3>
+        <p>The Part 1 HTML is delivered before <code>main.py</code>. It explains why this agent is an agent, maps each trait to a function, shows you what the runtime output will look like, and includes a Python Reading Primer so you can follow the code even without a Python background.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#0ea5e9;box-shadow:0 0 0 2px #0ea5e9;"></div>
+        <div class="timeline-phase">Phase F — Skippable</div>
+        <h3>The Professor session (pre-run)</h3>
+        <p>An interactive ~10-minute conversation. The Professor asks 2–3 Socratic questions anchored to the code you just read. On a wrong answer, you get one counter-question, then a targeted explanation pointing to the exact line. No scoring. No shame. The session ends with a note on what to watch in your first run.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#22c55e;box-shadow:0 0 0 2px #22c55e;"></div>
+        <div class="timeline-phase">Your run</div>
+        <h3>You run main.py in PyCharm</h3>
+        <p>The agent prints its full operation to the console — every SDK call, every model decision, every goal predicate evaluation. The output is saved to a <code>.log</code> file automatically. The brief (or whatever the agent was built to produce) appears at the end.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#0ea5e9;box-shadow:0 0 0 2px #0ea5e9;"></div>
+        <div class="timeline-phase">Phase F2 — Skippable</div>
+        <h3>The Professor session (post-run)</h3>
+        <p>You say "I ran it." The Professor asks 3–5 probes anchored to specific lines from your actual runtime output — not the code. This is typically more useful than Phase F because you have evidence to point to.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div>
+        <div class="timeline-phase">Phase C — Post-run</div>
+        <h3>Claude generates the learning insights file (Part 2)</h3>
+        <p>Using your runtime log as evidence, Claude produces the Part 2 HTML. It proves — from quoted output lines — that G1, G2, and G3 were satisfied. Flashcards and MCQs reinforce what you just saw. Brainstorm seeds show you what to build next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Salient Features ──────────────────────────────────── -->
+<section id="features">
+  <div class="inner">
+    <div class="section-label">Salient Features</div>
+    <h2>What makes this different from a course or tutorial</h2>
+
+    <div class="callout">
+      <strong>The key difference:</strong> you are not consuming content about agents. You are building them, watching them run, and being asked to explain why they behave the way they do. The code is the curriculum; the runtime output is the exam.
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>🚦 Agency Gates — not just a checklist</h3>
+        <p>Five formal pass/fail gates (G1–G5) determine whether what Claude generated is actually an agent. If G1, G2, or G3 do not pass, the artifact is called a workflow and a fix is proposed. You learn to apply the same gates yourself by watching them applied.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📺 24-element runtime output standard</h3>
+        <p>Every generated agent prints the same set of labeled elements — including the Python↔LLM boundary brackets <code>[SDK →]</code>/<code>[← SDK]</code>, the model's tool selection decision, and the goal predicate result every iteration. The output is a teaching artifact, not a debug log.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎓 Two-phase Professor persona</h3>
+        <p>A pre-run session (Phase F) sets up what to watch. A post-run session (Phase F2) asks you to explain what you actually saw. Both are anchored to specific artifacts — code lines or output lines — not abstract concepts. Both are skippable.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔎 Honest QA narrated in real time</h3>
+        <p>When the smoke test fails, Claude narrates what failed, what changed, and why. You see a feedback loop work before you read one. The repair loop is capped at 3 attempts — after which Claude tells you what it could not fix.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🧭 Learning Position labels</h3>
+        <p>Every brainstorm candidate is labeled FORWARD (new SDK rung), FOUNDATIONAL (targets your weakest gap), LATERAL-RIGHT (new domain), or DIAGNOSTIC (deliberately built to fail a gate). You always know whether a cycle is advancing, consolidating, or repairing your understanding.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📋 Persistent cross-session memory</h3>
+        <p>A JSON registry remembers every agent built, every concept introduced, every gap identified in Professor sessions. The next brainstorm reads it. No repetition; no forgetting; no starting from scratch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Outputs ───────────────────────────────────────────── -->
+<section id="outputs">
+  <div class="inner">
+    <div class="section-label">What You Will Produce</div>
+    <h2>Concrete outputs after five cycles</h2>
+
+    <div class="output-table">
+      <table>
+        <thead>
+          <tr>
+            <th>After cycle</th>
+            <th>Agents built</th>
+            <th>New SDK rungs</th>
+            <th>Learning artifacts</th>
+            <th>Registry accumulates</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1</strong></td>
+            <td>1 minimal agent (e.g. morning briefing)</td>
+            <td>Rungs 1–2</td>
+            <td>2 HTML files, 1 run log</td>
+            <td>First learning record + gaps</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>1 multi-turn agent</td>
+            <td>Rung 3</td>
+            <td>+2 HTML, +1 log</td>
+            <td>Cross-cycle INSIGHTS.md §6 arc</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td>1 tool-using agent</td>
+            <td>Rungs 4–5</td>
+            <td>+2 HTML, +1 log</td>
+            <td>First G2 runtime evidence</td>
+          </tr>
+          <tr>
+            <td><strong>4</strong></td>
+            <td>1 hooks + verifier agent</td>
+            <td>Rungs 6–7</td>
+            <td>+2 HTML, +1 log</td>
+            <td>G5 satisfied for first time</td>
+          </tr>
+          <tr>
+            <td><strong>5</strong></td>
+            <td>1 subagent orchestrator</td>
+            <td>Rung 8</td>
+            <td>+2 HTML, +1 log</td>
+            <td>Full 8-rung ladder covered</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>By cycle 5 you will be able to:</h3>
+    <ul>
+      <li>Read any Python agent and identify which Agency Gates it satisfies — or why it is actually a workflow</li>
+      <li>Describe the observe→reason→act loop from a specific line of runtime output, not from memory of a definition</li>
+      <li>Explain what happens inside the <code>[SDK →]</code>/<code>[← SDK]</code> brackets and why it matters for trust and cost</li>
+      <li>Design a new agent: choose the appropriate SDK rungs, define the goal predicate, specify the tools</li>
+      <li>Read the Claude Agent SDK documentation productively — you will have seen the concepts in running code before you read the reference</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─── How to Navigate ──────────────────────────────────── -->
+<section id="navigate">
+  <div class="inner">
+    <div class="section-label">How to Navigate</div>
+    <h2>Recommended order and what to read when</h2>
+
+    <div class="nav-guide">
+      <div class="nav-step">
+        <div class="nav-step-num">1</div>
+        <div class="nav-step-content">
+          <h3>Read this file once</h3>
+          <p>This overview is your entry point. It does not contain learning content — it tells you what the system is and how to use it. You will not need to return to it during normal cycles.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">2</div>
+        <div class="nav-step-content">
+          <h3>Start the brainstorm in Claude Desktop</h3>
+          <p>Open the project folder in Claude Desktop and say <strong>"new agent"</strong> or <strong>"begin the brainstorm."</strong> Claude reads the session state files automatically before responding. You do not need to read CLAUDE.md or PRD.md — those are instructions for Claude, not for you.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">3</div>
+        <div class="nav-step-content">
+          <h3>Read the learning guide (Part 1) before opening main.py</h3>
+          <p>Claude will hand you <code>&lt;agent-slug&gt;_learning-guide.html</code> before the code. Double-click it and read it. It is ≤10 minutes. The MCQ self-check at the end tells you whether you are ready to run the agent. Do not skip this — the runtime output will be confusing without it.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">4</div>
+        <div class="nav-step-content">
+          <h3>Run main.py in PyCharm and read the output carefully</h3>
+          <p>The output has structure. Match each emoji-labeled line to the section in the learning guide that explains it. The <code>[SDK →]</code>/<code>[← SDK]</code> brackets and <code>[MODEL DECISION]</code> lines are the most important ones to understand.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">5</div>
+        <div class="nav-step-content">
+          <h3>Say "I ran it" in Claude Desktop</h3>
+          <p>This triggers Phase F2 — the post-run Professor session. Say it even if you ran the agent earlier in a different session. Claude will ask you about your actual runtime output.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">6</div>
+        <div class="nav-step-content">
+          <h3>Read the learning insights file (Part 2)</h3>
+          <p>Claude generates <code>&lt;agent-slug&gt;_learning-insights.html</code> from your runtime log. It proves — with quoted output lines — that G1, G2, and G3 were satisfied. The flashcards use your specific run as source material, not generic definitions.</p>
+        </div>
+      </div>
+      <div class="nav-step">
+        <div class="nav-step-num">7</div>
+        <div class="nav-step-content">
+          <h3>Start the next cycle when ready</h3>
+          <p>The brainstorm seeds in Part 2 §10 suggest what to build next. They name the specific SDK rung each seed would introduce. Use them as your starting point for the next "new agent" conversation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Tips and Best Practices ─────────────────────────── -->
+<section id="tips">
+  <div class="inner">
+    <div class="section-label">Tips and Best Practices</div>
+    <h2>What makes the difference between a productive cycle and a frustrating one</h2>
+
+    <div class="accordion" id="tips-accordion">
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          Read Part 1 before running. Every time.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>The runtime output is 24+ labeled lines per iteration. If you open PyCharm first, you will see 80+ lines of structured output before the agent's actual result appears. Without Part 1's annotated output guide, this is overwhelming. With it, each line is recognizable.</p>
+            <p>Part 1 has a "Python Reading Primer" subsection specifically for readers who do not write Python. Five concepts in five minutes. It covers everything you need to follow the guided reading order.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          Do not skip Phase F2. It is usually better than Phase F.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>The pre-run Professor session (Phase F) is useful. The post-run session (Phase F2) is where understanding consolidates. Every probe in F2 starts with "find this line in your log" — you are explaining real evidence, not recalling a definition. The difference is measurable.</p>
+            <p>You can skip Phase F entirely and go straight to running. Phase F2 is the one to protect.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          Watch the [SDK →] / [← SDK] brackets on your first run.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>Everything between those two lines is LLM time. The elapsed time shown on the closing bracket (<code>← SDK] 1.2s</code>) is the model thinking. The token count is what was consumed from your monthly credit allocation.</p>
+            <p>On first run, find the bracket pair and ask: what Python code runs between those lines? The answer is: none. That gap is where the agent is not under Python's control.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          The [MODEL DECISION] line is the most important one.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>Find <code>[MODEL DECISION] selected: X</code> in your output. Ask: could Python have predicted what X would be, given only the code? If the answer is no — because it depends on the content the model saw at runtime — that is Agency Gate G2 satisfied.</p>
+            <p>In a workflow, every branch is predetermined by the code. In an agent, at least one branch is owned by the model at runtime. The <code>[MODEL DECISION]</code> line makes this visible.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          Run the agent more than once and compare the logs.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>The log file appends — it never overwrites. After two or three runs, you can compare the <code>[MODEL DECISION]</code> lines across runs. If the model made different decisions with different inputs, you are watching G2 in action across multiple executions.</p>
+            <p>By cycle 3, your log file is a record of how the agent behaves across different contexts. This is the compounding value of the tee mechanism.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <div class="acc-header" tabindex="0" role="button" aria-expanded="false">
+          Use INSIGHTS.md as your learning pulse check.
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p><code>INSIGHTS.md</code> is regenerated at the end of every cycle. It shows your active gaps (concepts that came up weak), which SDK rungs you have introduced vs. not yet encountered, and which domains you have built in. At any point you can open it and see where you are in the curriculum.</p>
+            <p>The "Recommended focus for next cycle" section (§6) is the most actionable part — it names the specific gap to repair and which rung to introduce next.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Honest Caveats ───────────────────────────────────── -->
+<section id="caveats">
+  <div class="inner">
+    <div class="section-label">Honest Caveats</div>
+    <h2>What this project is not, and where it may fall short</h2>
+    <p>
+      These are not disclaimers added to hedge a marketing claim. They are accurate
+      descriptions of real constraints. Read them before starting.
+    </p>
+
+    <div class="caveat-grid">
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>This is not a Python course</h3>
+        <p>You will read Python code, not write it. The Part 1 guide includes a 5-concept reading primer. If you want to modify the generated agents, you will need Python fundamentals from another source.</p>
+      </div>
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>The runtime trace is teaching, not production output</h3>
+        <p>24 labeled lines per iteration is noisy for production use. The output standard exists because this is a learning system. Agents built for real use would have quieter, more targeted logging.</p>
+      </div>
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>Claude Max plan required</h3>
+        <p>The agents authenticate via the Claude Code CLI and your Max plan subscription. There is no API key option. If you do not have a Max plan, the agents will not run.</p>
+      </div>
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>Requires Windows + PyCharm</h3>
+        <p>Generated agents are tested on Windows with Python 3.12+. They are standard asyncio Python and would likely work on macOS, but this is not tested or supported in the spec.</p>
+      </div>
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>The Professor sessions require engagement</h3>
+        <p>Both Phase F and Phase F2 are Socratic — you are asked questions, not given answers. If you skip both sessions every cycle, the learning artifacts (HTML files, registry) still accumulate, but the retention benefits of active recall do not.</p>
+      </div>
+      <div class="caveat-card">
+        <div class="caveat-icon">⚠️</div>
+        <h3>This is one student's learning system</h3>
+        <p>It is designed for a single user (Ram), a single machine, and a specific learning style. It is not a product for others, not a course platform, and not maintained as open-source software. If you adapt it for your own use, you are on your own.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Get Started ──────────────────────────────────────── -->
+<section id="get-started">
+  <div class="inner">
+    <div class="section-label">Get Started</div>
+    <h2>Three steps to your first agent</h2>
+
+    <div class="start-steps">
+      <div class="start-step">
+        <span class="start-step-num">1</span>
+        <h3>Open the project in Claude Desktop</h3>
+        <p>Load this folder as a Claude Desktop project. Claude reads the session state automatically. No configuration needed.</p>
+        <span class="start-command">open Claude Desktop → load project folder</span>
+      </div>
+      <div class="start-step">
+        <span class="start-step-num">2</span>
+        <h3>Say "new agent"</h3>
+        <p>Claude begins the brainstorm. Answer the questions. Lock a candidate. The first cycle uses rungs 1–2 and keeps the agent minimal by design.</p>
+        <span class="start-command">"new agent"  or  "begin the brainstorm"</span>
+      </div>
+      <div class="start-step">
+        <span class="start-step-num">3</span>
+        <h3>Read Part 1, then run in PyCharm</h3>
+        <p>After Claude hands over the files, open the learning guide HTML first. Then open PyCharm, right-click <code>main.py</code>, and run. Come back to Claude and say "I ran it."</p>
+        <span class="start-command">right-click main.py → Run 'main'</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ───────────────────────────────────────────── -->
+<footer>
+  <p>Agent Foundry — Personal learning project | PRD v8 | Generated 2026-06-07</p>
+  <p style="margin-top:6px;">This file is distributed with the project. It describes the system as designed; actual results depend on engagement.</p>
+</footer>
+
+<!-- ─── JavaScript ───────────────────────────────────────── -->
+<script>
+(function() {
+  'use strict';
+
+  /* ── SDK Ladder accordion ─────────────────────────── */
+  document.querySelectorAll('#sdk-ladder .rung-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var item = header.closest('.rung-item');
+      var isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('#sdk-ladder .rung-item').forEach(function(el) {
+        el.classList.remove('open');
+        el.querySelector('.rung-header').setAttribute('aria-expanded', 'false');
+      });
+      // Open clicked if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        header.setAttribute('aria-expanded', 'true');
+      }
+    });
+    header.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
+    });
+  });
+
+  /* ── Tips accordion ───────────────────────────────── */
+  document.querySelectorAll('#tips-accordion .acc-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var item = header.closest('.acc-item');
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('#tips-accordion .acc-item').forEach(function(el) {
+        el.classList.remove('open');
+        el.querySelector('.acc-header').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        header.setAttribute('aria-expanded', 'true');
+      }
+    });
+    header.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
+    });
+  });
+
+  /* ── Active nav highlight on scroll ─────────────── */
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('#top-nav a[href^="#"]');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function(link) { link.classList.remove('active'); });
+        var active = document.querySelector('#top-nav a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(function(s) { observer.observe(s); });
+
+})();
+</script>
+
+</body>
+</html>
