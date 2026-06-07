@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Prep Agent — After the Run</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --border:#2e3252;
+    --text:#e2e8f0; --muted:#8892a4; --dim:#5a657a;
+    --purple:#9b72e8; --purple-dim:#3d2e6b;
+    --blue:#60a5fa; --blue-dim:#1e3a5f;
+    --green:#4ade80; --green-dim:#1a3a29;
+    --orange:#fb923c; --orange-dim:#3d2010;
+    --teal:#2dd4bf; --teal-dim:#0d3030;
+    --red:#f87171; --red-dim:#3d1515; --yellow:#fbbf24; --yellow-dim:#3d2e0a;
+    --font:'Segoe UI',system-ui,sans-serif; --mono:'Cascadia Code','Fira Code',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;font-size:15.5px;}
+  .hero{background:linear-gradient(135deg,#0d2237 0%,#0f1117 50%,#1a1038 100%);border-bottom:1px solid var(--border);padding:56px 40px 40px;max-width:980px;margin:0 auto;}
+  .badge{display:inline-block;background:var(--green-dim);color:var(--green);border:1px solid var(--green);border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;margin-bottom:14px;}
+  .hero h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.02em;}
+  .hero .sub{color:var(--muted);font-size:17px;margin-bottom:24px;line-height:1.5;max-width:780px;}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;}
+  .chip{font-size:13px;color:var(--muted);}
+  .chip b{color:var(--text);}
+  main{max-width:980px;margin:0 auto;padding:0 40px 80px;}
+  .section{margin-top:56px;}
+  .sh{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .snum{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+  .sh h2{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.3;}
+  .stag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 11px;border-radius:12px;margin-left:auto;flex-shrink:0;}
+  .s1 .snum,.s1 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s2 .snum,.s2 .stag{background:var(--green-dim);color:var(--green);}
+  .s3 .snum,.s3 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s4 .snum,.s4 .stag{background:var(--teal-dim);color:var(--teal);}
+  .s5 .snum,.s5 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s6 .snum,.s6 .stag{background:var(--orange-dim);color:var(--orange);}
+  .s7 .snum,.s7 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s8 .snum,.s8 .stag{background:var(--yellow-dim);color:var(--yellow);}
+  .s9 .snum,.s9 .stag{background:var(--teal-dim);color:var(--teal);}
+  .s10 .snum,.s10 .stag{background:var(--green-dim);color:var(--green);}
+  .s11 .snum{background:var(--surface2);color:var(--muted);}
+  /* Section 2 is the most prominent */
+  .s2 .sh h2{font-size:24px;}
+  .s2{padding:28px 30px;background:var(--surface);border:1px solid var(--green);border-radius:14px;margin-top:40px;}
+  .s2 .sh{padding-bottom:14px;border-bottom:1px solid var(--green-dim);}
+  /* Snapshot dashboard */
+  /* §1 Setup grid (cold-read context cards) */
+  .setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px;}
+  .setup-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+  .setup-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+  .setup-card p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .setup-card.setup-caveat{background:var(--yellow-dim);border-color:var(--yellow);}
+  .setup-card.setup-caveat .setup-label{color:var(--yellow);}
+  .setup-card.setup-caveat p{color:#fbe28a;}
+  .subhead{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;}
+  .subhead.second{margin-top:30px;}
+  /* §1 Snapshot dashboard */
+  .snapshot{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0;overflow:hidden;}
+  .snapshot-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+  .snap-cell{padding:20px 18px;border-right:1px solid var(--border);}
+  .snap-cell:last-child{border-right:none;}
+  .snap-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .snap-val{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.1;}
+  .snap-sub{font-size:12px;color:var(--muted);margin-top:5px;}
+  .snap-val.warn{color:var(--orange);}
+  .snap-val.ok{color:var(--green);}
+  /* Question card for section 2 */
+  .qcard{background:#0d1019;border:1px solid var(--border);border-radius:10px;padding:22px 26px;margin-bottom:14px;}
+  .qcard .qhead{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .qcard .qicon{width:32px;height:32px;background:var(--green-dim);border:1px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--green);flex-shrink:0;font-weight:800;}
+  .qcard h3{font-size:17px;font-weight:700;color:#fff;}
+  .quote{background:#070b10;border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:12px 16px;font-family:var(--mono);font-size:12.5px;color:var(--green);margin-bottom:12px;overflow-x:auto;}
+  .verdict{font-size:14.5px;color:var(--muted);line-height:1.65;}
+  .verdict b{color:var(--text);}
+  /* Card styling */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px 26px;margin-bottom:14px;}
+  .card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+  .card p,.card li{font-size:14.5px;color:var(--muted);line-height:1.7;}
+  .card p+p{margin-top:10px;}
+  /* Trait cards */
+  .trait-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .tcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;}
+  .tname{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .tname h4{font-size:14.5px;font-weight:700;color:var(--text);}
+  .tier-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:10px;}
+  .core{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple);}
+  .ess{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue);}
+  .enh{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal);}
+  .tquote{background:#070b10;border-left:2px solid var(--muted);padding:8px 12px;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:10px;border-radius:0 4px 4px 0;overflow-x:auto;}
+  .tcard p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  /* Timeline for section 5 */
+  .timeline{position:relative;padding-left:50px;}
+  .timeline::before{content:'';position:absolute;left:18px;top:18px;bottom:18px;width:2px;background:var(--border);}
+  .tstage{position:relative;margin-bottom:22px;}
+  .tstage::before{content:'';position:absolute;left:-39px;top:6px;width:14px;height:14px;background:var(--bg);border:2px solid var(--purple);border-radius:50%;}
+  .tstage h4{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+  .tstage .tquote-line{background:#070b10;border-left:2px solid var(--purple);padding:8px 12px;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:6px 0;border-radius:0 4px 4px 0;overflow-x:auto;}
+  .tstage p{font-size:14px;color:var(--muted);line-height:1.65;}
+  /* Goal progress strip */
+  .strip{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-bottom:14px;}
+  .siter{background:var(--red-dim);border:1px solid var(--red);border-radius:6px;padding:10px 6px;text-align:center;}
+  .siter.met{background:var(--green-dim);border-color:var(--green);}
+  .siter .siter-n{font-size:10px;color:var(--muted);font-weight:700;}
+  .siter .siter-val{font-size:11px;color:var(--red);font-weight:700;margin-top:3px;}
+  .siter.met .siter-val{color:var(--green);}
+  /* Spectrum bar */
+  .spectrum{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:16px;}
+  .spec-bar{position:relative;height:10px;background:linear-gradient(90deg,var(--orange) 0%,var(--yellow) 33%,var(--green) 66%,var(--purple) 100%);border-radius:5px;margin:30px 0 40px;}
+  .spec-marker{position:absolute;top:-12px;width:32px;height:32px;background:#fff;border:3px solid var(--bg);border-radius:50%;box-shadow:0 0 0 2px var(--purple);display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .spec-labels{display:grid;grid-template-columns:repeat(4,1fr);font-size:12px;color:var(--muted);text-align:center;}
+  .spec-labels b{display:block;color:var(--text);font-size:13px;margin-bottom:3px;}
+  /* Flashcards */
+  .flash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .flash{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;cursor:pointer;min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;transition:border-color .15s,background .15s;position:relative;}
+  .flash:hover{border-color:var(--purple);background:var(--surface2);}
+  .flash .front,.flash .back{transition:opacity .15s;}
+  .flash .front{font-size:15px;font-weight:700;color:var(--text);}
+  .flash .back{display:none;font-size:13px;color:var(--muted);line-height:1.6;text-align:left;}
+  .flash.flipped .front{display:none;}
+  .flash.flipped .back{display:block;}
+  .flash::after{content:'tap to flip';position:absolute;bottom:8px;right:12px;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;}
+  .flash.flipped::after{content:'tap to flip back';}
+  /* Callouts */
+  .callout{border-radius:8px;padding:14px 18px;margin-bottom:14px;font-size:14.5px;border-left:3px solid;display:flex;gap:11px;}
+  .ci{flex-shrink:0;font-size:17px;}
+  .cb{flex:1;line-height:1.6;}
+  .cb b{display:block;margin-bottom:4px;}
+  .info{background:var(--blue-dim);border-color:var(--blue);color:#b8d0f8;}
+  .warn{background:var(--orange-dim);border-color:var(--orange);color:#fbd0a8;}
+  .ok{background:var(--green-dim);border-color:var(--green);color:#a8f0c0;}
+  .ins{background:var(--purple-dim);border-color:var(--purple);color:#c8b0f8;}
+  /* MCQ */
+  .mcq{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;}
+  .mq{font-size:15.5px;font-weight:600;color:var(--text);margin-bottom:14px;}
+  .mopts{display:flex;flex-direction:column;gap:8px;}
+  .mopt{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:11px 15px;font-size:13.5px;cursor:pointer;transition:border-color .15s,background .15s;color:var(--text);text-align:left;width:100%;font-family:var(--font);}
+  .mopt:hover{border-color:var(--purple);background:var(--purple-dim);}
+  .mopt.ok2{background:var(--green-dim);border-color:var(--green);color:#a8f0c0;}
+  .mopt.no{background:var(--red-dim);border-color:var(--red);color:#f8a8a8;}
+  .mex{margin-top:11px;padding:11px 15px;background:var(--surface2);border-radius:6px;font-size:13.5px;color:var(--muted);line-height:1.6;display:none;}
+  .mex.show{display:block;}
+  /* Inline code */
+  code.i{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:12.5px;color:var(--teal);font-family:var(--mono);}
+  /* Collapsible technical view */
+  details.tech-view{background:var(--surface2);border:1px dashed var(--dim);border-radius:8px;margin-top:14px;}
+  details.tech-view summary{cursor:pointer;padding:12px 18px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  details.tech-view[open] summary{border-bottom:1px solid var(--border);}
+  .tech-body{padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.65;font-family:var(--mono);}
+  .tech-body .line{margin-bottom:4px;}
+  /* Glossary table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:14px;}
+  th{text-align:left;padding:10px 14px;background:var(--surface2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  /* Build ideas */
+  .idea{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:8px;padding:16px 20px;margin-bottom:10px;}
+  .idea h4{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:5px;}
+  .idea p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  footer{max-width:980px;margin:48px auto 0;padding:24px 40px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+  @media(max-width:680px){main,.hero,footer{padding-left:20px;padding-right:20px;}.trait-grid,.flash-grid{grid-template-columns:1fr;}.snapshot-row{grid-template-columns:1fr 1fr;}.snap-cell{border-bottom:1px solid var(--border);}.strip{grid-template-columns:repeat(5,1fr);}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Part 2 · After the run</div>
+  <h1>Study Prep Agent — Debrief</h1>
+  <p class="sub">What happened when you ran this agent, why it counted as an agent (even though it didn't reach its goal), and what to take away. Read this after running <code style="background:#22263a;padding:2px 6px;border-radius:4px;color:#2dd4bf;">main.py</code>.</p>
+  <div class="meta">
+    <div class="chip">📅 Run date: <b>2026-06-07</b></div>
+    <div class="chip">📊 Source: <b>study-prep_run_output.log</b></div>
+    <div class="chip">🔗 Pairs with: <b>Part 1 (before-run guide)</b></div>
+  </div>
+</div>
+
+<main>
+
+<!-- §1 ABOUT THIS RUN (setup + snapshot) -->
+<section class="section s1">
+  <div class="sh"><div class="snum">1</div><h2>About this run</h2><span class="stag">Setup &amp; snapshot</span></div>
+  <p style="color:var(--muted);margin-bottom:22px;font-size:15px;">If you haven't read Part 1, start here — this section gives you everything you need before the rest of the document will make sense.</p>
+
+  <!-- SETUP GRID -->
+  <div class="subhead">Setup &mdash; what we asked the agent to do</div>
+  <div class="setup-grid">
+    <div class="setup-card">
+      <div class="setup-label">🤖 The agent's role</div>
+      <p>A study-prep research helper. You give it a short list of topics you want to learn about, and it builds a small reading list by finding web sources for each one.</p>
+    </div>
+    <div class="setup-card">
+      <div class="setup-label">📚 This run's topics (three of them)</div>
+      <p><code class="i">python_asyncio</code> &middot; <code class="i">agent_loops</code> &middot; <code class="i">sdk_rung2_patterns</code> &mdash; Python's async tooling, agent loop design, and one specific SDK pattern.</p>
+    </div>
+    <div class="setup-card">
+      <div class="setup-label">✅ The success rule</div>
+      <p>"Find at least <b>2 distinct web sources</b> for each of the three topics, then stop." Not fuzzy &mdash; a yes-or-no test the agent could actually run on itself.</p>
+    </div>
+    <div class="setup-card">
+      <div class="setup-label">🔒 The safety cap (set by us)</div>
+      <p>Maximum <b>10 attempts</b>. If the agent can't satisfy the success rule in 10 tries, it stops itself anyway. <b>We set this limit &mdash; not the agent</b> &mdash; so no run can spin forever.</p>
+    </div>
+    <div class="setup-card">
+      <div class="setup-label">🔧 Tools the agent could use</div>
+      <p>Two of them. A <b>web search</b> (returns a list of pages matching a query) and a <b>page fetch</b> (reads the content of one page). The model picked which to use at every step.</p>
+    </div>
+    <div class="setup-card setup-caveat">
+      <div class="setup-label">⚠ Important &mdash; about the "internet" it searched</div>
+      <p>This run used a small <b>built-in fake search database</b>, not the real web. The mock only knew certain phrases word-for-word. Searches phrased differently came back empty &mdash; even when the topic was reasonable. This matters a lot for interpreting the result.</p>
+    </div>
+  </div>
+
+  <!-- RESULT SNAPSHOT -->
+  <div class="subhead second">What actually happened</div>
+  <div class="snapshot">
+    <div class="snapshot-row">
+      <div class="snap-cell">
+        <div class="snap-label">Tries used</div>
+        <div class="snap-val warn">10 / 10</div>
+        <div class="snap-sub">Maxed out the safety cap</div>
+      </div>
+      <div class="snap-cell">
+        <div class="snap-label">Topics covered</div>
+        <div class="snap-val warn">0 / 3</div>
+        <div class="snap-sub">Goal not reached</div>
+      </div>
+      <div class="snap-cell">
+        <div class="snap-label">How it ended</div>
+        <div class="snap-val ok">Stopped itself</div>
+        <div class="snap-sub">Safety cap fired correctly</div>
+      </div>
+      <div class="snap-cell">
+        <div class="snap-label">Cost</div>
+        <div class="snap-val">~$2.10</div>
+        <div class="snap-sub">137,070 in &middot; 1,438 out tokens</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout warn" style="margin-top:18px;">
+    <div class="ci">⚠</div>
+    <div class="cb"><b>The goal wasn't met &mdash; but the agent worked correctly</b>
+    Read on. The agent did everything it was supposed to do (all three core traits fired), but the mock search database only knew certain queries word-for-word, and the model phrased its searches differently every time. The agent stopped itself rather than spinning forever &mdash; exactly as designed.</div>
+  </div>
+</section>
+
+<!-- §2 WAS THIS REALLY AN AGENT? -->
+<section class="section s2">
+  <div class="sh"><div class="snum">2</div><h2>Was this really an agent? Here's the proof.</h2><span class="stag">The big question</span></div>
+  <p style="color:var(--muted);margin-bottom:20px;font-size:15.5px;">Three things have to be true at the same time. Each one shows up in a specific line from your run.</p>
+
+  <div class="qcard">
+    <div class="qhead">
+      <div class="qicon">1</div>
+      <h3>Did the agent decide when it was done?</h3>
+    </div>
+    <div class="quote">📐 [GOAL PREDICATE] is_coverage_met() → False</div>
+    <p class="verdict"><b>Yes.</b> At every single step (all 10 of them), the agent ran its own check before deciding whether to keep going. That check is the did-it-finish trait. The fact that the answer was "no" every time doesn't change that the check fired — and was honest about the state.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="qhead">
+      <div class="qicon">2</div>
+      <h3>Did the agent choose its own next move?</h3>
+    </div>
+    <div class="quote">🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page</div>
+    <p class="verdict"><b>Yes.</b> At every step, the model — not your Python code — picked which tool to use. It had two options (<code class="i">search_web</code> or <code class="i">fetch_page</code>) and chose <code class="i">search_web</code> all 10 times. That choice could have gone differently; the freedom was there. (Sidebar: an interesting follow-up question — given that searches kept coming back empty, should the model have tried <code class="i">fetch_page</code> instead? See "What you could build next" in §10.)</p>
+  </div>
+
+  <div class="qcard">
+    <div class="qhead">
+      <div class="qicon">3</div>
+      <h3>Did the agent learn from what it saw?</h3>
+    </div>
+    <div class="quote">🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step</div>
+    <p class="verdict"><b>Partially.</b> This is the most interesting one. After every empty search, the agent <em>told itself</em> "0 new urls — shift topic or reformulate" — and the model <em>did</em> reformulate (it tried "python asyncio tutorial event loop coroutines", then "python asyncio official documentation tutorial", then variants). So the loop fed back into the next decision. But the variations weren't different enough to match the database. A truly idle script would have repeated the exact same query 10 times; this agent kept varying. That's learning. It just wasn't enough.</p>
+  </div>
+
+  <div class="callout ok">
+    <div class="ci">✓</div>
+    <div class="cb"><b>Verdict: this was an agent.</b>
+    All three core traits fired. The goal wasn't met because the world wasn't cooperating (the fake database was too strict), not because the agent failed to be agentic.</div>
+  </div>
+</section>
+
+<!-- §3 WHY THIS GOAL COUNTED AS A REAL CHECK -->
+<section class="section s3">
+  <div class="sh"><div class="snum">3</div><h2>Why this goal counted as a real check</h2><span class="stag">Verifiability</span></div>
+  <div class="card">
+    <p>The success rule from §1 ("at least 2 sources per topic") sounds simple. The interesting question is: <em>who decided</em> whether the rule was satisfied? Not you watching the terminal. Not a human reviewing results afterward. The agent itself &mdash; at every single step.</p>
+    <p>A wish-based goal sounds like: "find some good sources on these topics." That's not testable. Neither the agent nor anyone reading the output could say definitively whether it was reached. An agent given a wish can't honestly stop.</p>
+    <p>This agent's goal was different. It was a <b>computable check</b> &mdash; a yes/no test the agent ran on itself at every step. You can see the exact moment it fired:</p>
+    <div class="quote" style="border-color:var(--green);color:#a8f0c0;">📐 [GOAL PREDICATE] is_coverage_met() &rarr; False</div>
+    <p>That line appeared 10 times in your run. Every step, the agent looked at its own collected sources and asked: "Do I have at least 2 distinct URLs for every topic yet?" The answer was a clean False each time &mdash; and, crucially, an <em>honest</em> one. The agent wasn't guessing whether it was done; it was <em>computing</em> whether it was done.</p>
+  </div>
+  <div class="callout ins">
+    <div class="ci">🎯</div>
+    <div class="cb"><b>What this trait actually is</b>
+    The first core trait &mdash; "it knows what 'done' means" &mdash; isn't an attitude or a vibe. It's a function in the code that returns True or False. That function fired 10 times in your run. Even though the answer was always False, the trait itself was demonstrably present. That's the difference between an agent and a hopeful loop: an agent runs until its own verifiable test says it's done (or until the safety cap stops it). Either way, the stopping is principled.</div>
+  </div>
+</section>
+
+<!-- §4 TRAITS IN ACTION -->
+<section class="section s4">
+  <div class="sh"><div class="snum">4</div><h2>Traits in Action</h2><span class="stag">What fired, and where</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">Each card names a trait, its tier in the framework, one quoted line from your run that demonstrates it, and one sentence on why that line is the trait in motion.</p>
+  <div class="trait-grid">
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag core">Core</span><h4>Goal-directedness</h4></div>
+      <div class="tquote">📐 [GOAL PREDICATE] is_coverage_met() → False</div>
+      <p>The agent ran its own check at every step rather than blindly looping. Even when the answer was "no" each time, the check was real and honest.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag core">Core</span><h4>Autonomy</h4></div>
+      <div class="tquote">🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page</div>
+      <p>The model picked the tool at every step. Your code dispatched but didn't decide. That handover of authority is what autonomy looks like in code.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag core">Core</span><h4>Observe → Reason → Act</h4></div>
+      <div class="tquote">🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step</div>
+      <p>The result of each step fed into the next decision. The model varied its searches (10 different queries) instead of repeating identical attempts — that's the loop closing.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag ess">Essential</span><h4>Perception</h4></div>
+      <div class="tquote">📥 [TOOL RESULT] 2 chars · preview: []…</div>
+      <p>The agent ingested external data (the search results) and incorporated them — even when they were empty. Reading the world is perception.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag ess">Essential</span><h4>Planning</h4></div>
+      <div class="tquote">📋 [PLAN GENERATED] · ○ python_asyncio · ○ agent_loops · ○ sdk_rung2_patterns</div>
+      <p>The agent broke the goal into a board of three topics and tracked them through every step. The plan board is what planning looks like at runtime.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag ess">Essential</span><h4>Memory</h4></div>
+      <div class="tquote">💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls · agent_loops: 0 urls · sdk_rung2_patterns: 0 urls</div>
+      <p>The <code class="i">coverage_map</code> persisted across all 10 iterations. Each step's choice was conditioned on what memory said. (At this stage memory only lives for this run — next cycle it'll survive across runs.)</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag ess">Essential</span><h4>Tool selection</h4></div>
+      <div class="tquote">🔧 [TOOL CALL] search_web({"query": "python asyncio tutorial event loop coroutines"})</div>
+      <p>The model named the tool and the arguments. The agent dispatched. The dispatcher didn't choose — that's the difference between a routing layer and an agent.</p>
+    </div>
+    <div class="tcard">
+      <div class="tname"><span class="tier-tag enh">Enhancing</span><h4>Principled stop</h4></div>
+      <div class="tquote">🏁 EXIT: cap reached — 10/10 iterations consumed</div>
+      <p>The safety cap fired exactly when it should have. The agent didn't try forever — it stopped itself the moment it had used its allowance. This is the trait working <em>correctly</em>, not failing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- §5 LIFE OF THE AGENT -->
+<section class="section s5">
+  <div class="sh"><div class="snum">5</div><h2>The life of this agent (from wake-up to goodbye)</h2><span class="stag">Timeline</span></div>
+  <p style="color:var(--muted);margin-bottom:24px;">Six stages. The middle four repeated 10 times because the agent kept trying. Each stage is anchored to a real line from your run.</p>
+  <div class="timeline">
+    <div class="tstage">
+      <h4>🤖 Wake up</h4>
+      <div class="tquote-line">🤖 [AGENT BOOT] Study Prep Agent v1 · rungs: 1+2</div>
+      <p>The agent introduced itself, confirmed the environment was ready, and got cleared for takeoff. This happens once per run.</p>
+    </div>
+    <div class="tstage">
+      <h4>📋 Plan</h4>
+      <div class="tquote-line">🎯 [GOAL SET] Collect ≥2 sources per topic: python_asyncio, agent_loops, sdk_rung2_patterns<br>📋 [PLAN GENERATED] · ○ python_asyncio · ○ agent_loops · ○ sdk_rung2_patterns</div>
+      <p>The agent stated the goal in plain words and broke it into a board of three topics to chase. Empty circles, all waiting to be filled.</p>
+    </div>
+    <div class="tstage">
+      <h4>⚡ Try (iteration 1)</h4>
+      <div class="tquote-line">🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page<br>🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial event loop coroutines"})</div>
+      <p>First attempt: the model picked <code class="i">search_web</code> and chose a search query in its own words. The Python ran that query against the fake database.</p>
+    </div>
+    <div class="tstage">
+      <h4>👁 Look</h4>
+      <div class="tquote-line">📥 [TOOL RESULT] 2 chars · preview: []…<br>💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls · agent_loops: 0 urls · sdk_rung2_patterns: 0 urls</div>
+      <p>The agent read what came back: <code class="i">[]</code> — empty. It updated its notes (still 0 URLs for every topic) and noticed nothing new had been learned.</p>
+    </div>
+    <div class="tstage">
+      <h4>🔄 Try again (iterations 2–10)</h4>
+      <div class="tquote-line">🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step<br>📐 [GOAL PREDICATE] is_coverage_met() → False</div>
+      <p>The agent acknowledged the failure ("shift topic or reformulate") and ran its done-check (False — not yet). It went around again, with the model trying a different phrasing each time. This cycle repeated nine more times. Every time, the same thing: empty results, no urls added, done-check returns False.</p>
+    </div>
+    <div class="tstage">
+      <h4>🏁 Stop</h4>
+      <div class="tquote-line">🏁 EXIT: cap reached — 10/10 iterations consumed</div>
+      <p>At attempt 10, the safety cap kicked in and the agent stopped itself. The goal wasn't met — but the agent didn't keep trying anyway, didn't crash, didn't burn unlimited credit. It made the principled choice to stop and report.</p>
+    </div>
+  </div>
+  <details class="tech-view">
+    <summary>Technical view — the SDK call sequence</summary>
+    <div class="tech-body">
+      <div class="line">━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 0</div>
+      <div class="line">  ┆ HookEventMessage × 4</div>
+      <div class="line">  ┆ SystemMessage × 3</div>
+      <div class="line">  ┆ AssistantMessage: {"tool": "search_web", "query": "..."}</div>
+      <div class="line">  ┆ RateLimitEvent</div>
+      <div class="line">  ┆ ResultMessage[ok] · $0.3142</div>
+      <div class="line">━━━ [← SDK] +13707 in / +193 out tokens</div>
+      <div class="line" style="margin-top:10px;color:var(--dim);font-family:var(--font);font-size:12px;">↑ Each <code class="i">[SDK →]</code> / <code class="i">[← SDK]</code> bracket pair is one call into <code class="i">claude_agent_sdk.query()</code>. Everything between them happens inside the LLM. The agent had 10 such pairs in this run, one per iteration. Total: ~137K input tokens, 1.4K output tokens, ~$2.10.</div>
+    </div>
+  </details>
+</section>
+
+<!-- §6 GOAL TRACE -->
+<section class="section s6">
+  <div class="sh"><div class="snum">6</div><h2>Did the agent reach its goal? (the progress trace)</h2><span class="stag">10 of 10 done-checks</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">The agent ran the did-it-finish check at every iteration. Here's what it returned, in order:</p>
+  <div class="strip">
+    <div class="siter"><div class="siter-n">Iter 1</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 2</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 3</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 4</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 5</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 6</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 7</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 8</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 9</div><div class="siter-val">No</div></div>
+    <div class="siter"><div class="siter-n">Iter 10</div><div class="siter-val">Cap</div></div>
+  </div>
+  <div class="callout info">
+    <div class="ci">📊</div>
+    <div class="cb"><b>Every step: "0 of 3 topics met — not done yet"</b>
+    The check never wavered. The agent kept honestly reporting it wasn't done. At iteration 10, the safety cap stepped in and forced the run to end. The verdict — <em>no, the goal was not reached</em> — is correct. The agent was correct. The world it was reading from (the fake database) just didn't cooperate.</div>
+  </div>
+</section>
+
+<!-- §7 SPECTRUM -->
+<section class="section s7">
+  <div class="sh"><div class="snum">7</div><h2>Agent Spectrum Placement</h2><span class="stag">Where this sits</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">A horizontal scale from "not really an agent" to "fully autonomous". Where does this one land?</p>
+  <div class="spectrum">
+    <div class="spec-bar">
+      <div class="spec-marker" style="left:33%;">⬆</div>
+    </div>
+    <div class="spec-labels">
+      <div><b>Workflow</b>You script every move</div>
+      <div><b>Simple Agent</b>One decision per call</div>
+      <div><b>Multi-Step Agent</b>Loop + state + own choices</div>
+      <div><b>Autonomous Agent</b>Plans, revises, verifies itself</div>
+    </div>
+  </div>
+  <div class="callout ins">
+    <div class="ci">📍</div>
+    <div class="cb"><b>Landing place: between Simple Agent and Multi-Step Agent — leaning toward Multi-Step.</b>
+    There's a real loop (not just one call), real state (the <code class="i">coverage_map</code> persisted), and real model decisions (10 different tool-and-query choices). Not yet "Multi-Step" because the plan never restructured itself — the model never said "I'm changing what I'm chasing." That comes in a future cycle.</div>
+  </div>
+  <div class="card">
+    <h3>"If this had been a workflow instead"</h3>
+    <p>A workflow version would hard-code the searches: "for each topic, search Google for 'topic tutorial', take the top 2 URLs, save them, move on." Same goal, no agency. The difference would be visible right here in the output:</p>
+    <div class="quote" style="border-color:var(--orange);color:#fbd0a8;">🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page</div>
+    <p>In a workflow there would be no such line. The query would already be decided before the run started. In your run, this line appeared 10 times — each one a moment where the model exercised real choice over what to do. <em>That</em> is the difference, in one line.</p>
+  </div>
+</section>
+
+<!-- §8 FLASHCARDS -->
+<section class="section s8">
+  <div class="sh"><div class="snum">8</div><h2>Flashcards</h2><span class="stag">Tap to flip</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">Each card's back is the definition <em>anchored to this run</em>, not a generic one.</p>
+  <div class="flash-grid">
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">Did-it-finish check</div>
+      <div class="back"><b>In this run:</b> <code class="i">is_coverage_met()</code> returned False at every step. That's the trait working — running an honest check even when the answer is "not yet."</div>
+    </div>
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">Model's own choice</div>
+      <div class="back"><b>In this run:</b> the model picked <code class="i">search_web</code> 10 times over <code class="i">fetch_page</code>. That's 10 separate moments where the model — not your Python — owned the decision.</div>
+    </div>
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">Learning from what it saw</div>
+      <div class="back"><b>In this run:</b> after each empty search, the model tried a different phrasing. It never repeated the exact same query — that variation is the loop feeding back into the next decision.</div>
+    </div>
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">Principled stop</div>
+      <div class="back"><b>In this run:</b> the safety cap fired at iteration 10. The agent stopped itself rather than spin forever. That's success for this trait, even though the goal wasn't reached.</div>
+    </div>
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">Session memory</div>
+      <div class="back"><b>In this run:</b> the <code class="i">coverage_map</code> persisted across all 10 iterations. Next run, it starts fresh — that's "session" memory. Future cycles introduce memory that survives between runs.</div>
+    </div>
+    <div class="flash" onclick="this.classList.toggle('flipped')">
+      <div class="front">SDK boundary</div>
+      <div class="back"><b>In this run:</b> the lines <code class="i">[SDK →]</code> and <code class="i">[← SDK]</code> mark where your Python handed off to the language model and where it got the answer back. 10 such pairs, one per iteration.</div>
+    </div>
+  </div>
+</section>
+
+<!-- §9 SELF-CHECK -->
+<section class="section s9">
+  <div class="sh"><div class="snum">9</div><h2>Quick self-check</h2><span class="stag">3 questions</span></div>
+
+  <div class="mcq">
+    <div class="mq">1. The run ended with 0/3 topics covered and the safety cap firing. What does that tell you about whether this was an agent?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. It wasn't an agent — agents reach their goals.</button>
+      <button class="mopt" onclick="reveal(this,0)">B. It was an agent — all three core traits fired; the goal failure was caused by the fake search database, not by failed agency.</button>
+      <button class="mopt" onclick="reveal(this,1)">C. It was a workflow that pretended to be an agent.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>B</b>. Reaching the goal isn't a trait — it's an outcome. The traits are about <em>how</em> the agent runs. All three fired correctly. The world (the mock database) just didn't cooperate.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">2. When the first search came back empty, what did the agent do?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. It crashed.</button>
+      <button class="mopt" onclick="reveal(this,1)">B. It repeated the exact same search.</button>
+      <button class="mopt" onclick="reveal(this,0)">C. It noticed the empty result, told itself to reformulate, and tried a different phrasing on the next step.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>C</b>. You can see this in the <code class="i">[LOOP FEEDBACK]</code> line followed by a different <code class="i">[MODEL DECISION]</code> the next step. That's the third core trait — the loop feeding back into the next decision.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">3. If you wanted to fix this so the next run actually finds sources, what would you change?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. Remove the safety cap so the agent can try forever.</button>
+      <button class="mopt" onclick="reveal(this,0)">B. Fix the fake search database to do fuzzy matching, OR teach the agent which exact phrases the database knows.</button>
+      <button class="mopt" onclick="reveal(this,1)">C. Remove the did-it-finish check so the loop runs to the cap on purpose.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>B</b>. The agent did its job — the world (the mock database) failed it. The fix lives at the perception layer, not in the agent's loop. Removing the cap (A) would just burn more credit. Removing the check (C) would weaken the agent.</div>
+  </div>
+</section>
+
+<!-- §10 NEXT BUILDS -->
+<section class="section s10">
+  <div class="sh"><div class="snum">10</div><h2>What you could build next</h2><span class="stag">Brainstorm seeds</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">Daily-life agents that would exercise something new beyond what Study Prep did. Each one introduces a different capability.</p>
+
+  <div class="idea">
+    <h4>🌅 Morning briefing agent</h4>
+    <p>You ask it "what should I know this morning?" — it pulls weather, calendar, and 2-3 headlines into a short brief. Introduces: <em>real web tools</em> (not a mock database), and a slightly looser goal that the agent has to interpret on its own.</p>
+  </div>
+  <div class="idea">
+    <h4>🍳 Recipe-from-fridge agent</h4>
+    <p>You tell it what's in your fridge — it proposes 3 meals you could make. Introduces: <em>tools that take real input</em>, and goal that's "good enough" rather than strictly measurable.</p>
+  </div>
+  <div class="idea">
+    <h4>🧠 Conversation memory agent</h4>
+    <p>An agent that remembers what you talked about yesterday and brings it up today. Introduces: <em>memory that lives between runs</em> — this run only kept memory within a single session (close the program and it forgot everything). The next step up is an agent whose own brain carries context forward.</p>
+  </div>
+  <div class="idea">
+    <h4>📅 Calendar conflict resolver</h4>
+    <p>Looks at your calendar, finds conflicts, proposes a way to resolve each one. Introduces: <em>plan revision</em> — when the model has to abandon its first plan because something it discovered makes it impossible.</p>
+  </div>
+  <div class="idea">
+    <h4>🔍 Independent fact-checker</h4>
+    <p>An agent that does some research, then a <em>separate</em> agent (with no shared memory) double-checks the answer. Introduces: <em>independent verification</em> — a check from outside the agent that did the work.</p>
+  </div>
+</section>
+
+<!-- §11 PROVENANCE + GLOSSARY -->
+<section class="section s11">
+  <div class="sh"><div class="snum">11</div><h2>Provenance &amp; glossary</h2></div>
+  <div class="card">
+    <h3>Run details</h3>
+    <p style="font-size:13px;line-height:1.7;">
+      <b>Agent slug:</b> <code class="i">study-prep</code> &middot;
+      <b>Run date:</b> 2026-06-07 17:35:39 &middot;
+      <b>SDK rungs introduced:</b> 1, 2 &middot;
+      <b>Log source:</b> Option B (file: <code class="i">study-prep_run_output.log</code>) &middot;
+      <b>Companion file:</b> <code class="i">study-prep_learning-guide.html</code> (Part 1, pre-run) &middot;
+      <b>Spec:</b> PRD.md FR-C9 (lay-first per FR-C10) &middot;
+      <b>Version:</b> v2 (lay-first rewrite; v1 preserved as <code class="i">study-prep_learning-insights_technical-v1.html</code>)
+    </p>
+  </div>
+  <div class="card">
+    <h3>Gate verdicts (this run)</h3>
+    <table>
+      <tr><th>Functional name (used above)</th><th>Spec code</th><th>Verdict</th></tr>
+      <tr><td>Did-it-finish check</td><td>G1</td><td>Demonstrated — fired at every iteration, returned False each time honestly</td></tr>
+      <tr><td>Model's own choice</td><td>G2</td><td>Demonstrated — model picked tool + query at all 10 iterations</td></tr>
+      <tr><td>Learning from what it saw</td><td>G3</td><td>Partially demonstrated — model varied queries each step; variation wasn't enough to satisfy the mock database, but the loop closed</td></tr>
+      <tr><td>Principled stop</td><td>G4</td><td>Demonstrated — safety cap fired at 10/10 iterations exactly as designed</td></tr>
+      <tr><td>Independent check</td><td>G5</td><td>N/A — this agent has no separate verifier; first appears at SDK rung 7</td></tr>
+    </table>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px;font-style:italic;">This glossary is the only place gate codes (G1–G5) appear in this file. They live in the code's comments and the project's spec — not in your reading.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>Study Prep Agent · Learning Insights · Part 2</span>
+  <span>Agent Foundry · Cycle 1 · Run 1</span>
+  <span>Read after running · Part 1 reads before</span>
+</footer>
+
+<script>
+function reveal(btn, kind){
+  const opts = btn.parentElement.querySelectorAll('.mopt');
+  const ex = btn.parentElement.parentElement.querySelector('.mex');
+  opts.forEach(o => o.disabled = true);
+  if(kind === 0){ btn.classList.add('ok2'); } else { btn.classList.add('no'); opts.forEach(o => { if(o.getAttribute('onclick').includes(',0')) o.classList.add('ok2'); }); }
+  ex.classList.add('show');
+}
+</script>
+
+</body>
+</html>

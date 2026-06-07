@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Prep Agent — Before You Run It</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --border:#2e3252;
+    --text:#e2e8f0; --muted:#8892a4; --dim:#5a657a;
+    --purple:#9b72e8; --purple-dim:#3d2e6b;
+    --blue:#60a5fa; --blue-dim:#1e3a5f;
+    --green:#4ade80; --green-dim:#1a3a29;
+    --orange:#fb923c; --orange-dim:#3d2010;
+    --teal:#2dd4bf; --teal-dim:#0d3030;
+    --red:#f87171; --yellow:#fbbf24; --yellow-dim:#3d2e0a;
+    --font:'Segoe UI',system-ui,sans-serif; --mono:'Cascadia Code','Fira Code',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;font-size:15.5px;}
+  .hero{background:linear-gradient(135deg,#1a1038 0%,#0f1117 50%,#0d2237 100%);border-bottom:1px solid var(--border);padding:56px 40px 40px;max-width:980px;margin:0 auto;}
+  .badge{display:inline-block;background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple);border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;margin-bottom:14px;}
+  .hero h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.02em;}
+  .hero .sub{color:var(--muted);font-size:17px;margin-bottom:24px;line-height:1.5;max-width:780px;}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;}
+  .chip{font-size:13px;color:var(--muted);}
+  .chip b{color:var(--text);}
+  main{max-width:980px;margin:0 auto;padding:0 40px 80px;}
+  .section{margin-top:56px;}
+  .sh{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .snum{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+  .sh h2{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.3;}
+  .stag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 11px;border-radius:12px;margin-left:auto;flex-shrink:0;}
+  .s1 .snum,.s1 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s2 .snum,.s2 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s3 .snum,.s3 .stag{background:var(--green-dim);color:var(--green);}
+  .s6 .snum,.s6 .stag{background:var(--teal-dim);color:var(--teal);}
+  .s7 .snum,.s7 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s8 .snum,.s8 .stag{background:var(--orange-dim);color:var(--orange);}
+  .s9 .snum,.s9 .stag{background:var(--yellow-dim);color:var(--yellow);}
+  .s11 .snum,.s11 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s12 .snum,.s12 .stag{background:var(--green-dim);color:var(--green);}
+  .s13 .snum{background:var(--surface2);color:var(--muted);}
+  /* Deeper-dive sidebar styling — visually subdued so reader knows they can skip */
+  .section.dive .sh{border-bottom:1px dashed var(--dim);}
+  .section.dive .snum{background:transparent;color:var(--dim);border:1px dashed var(--dim);}
+  .section.dive .sh h2{color:var(--muted);font-size:18px;font-weight:600;}
+  .dive-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);background:var(--surface2);border:1px dashed var(--dim);padding:4px 11px;border-radius:12px;margin-left:auto;flex-shrink:0;}
+  .dive-note{font-size:12.5px;color:var(--dim);font-style:italic;margin-bottom:16px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px 26px;margin-bottom:14px;}
+  .card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+  .card p,.card li{font-size:14.5px;color:var(--muted);line-height:1.7;}
+  .card p+p{margin-top:10px;}
+  .card ul{padding-left:20px;}
+  .card li{margin-bottom:6px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  code.i{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:12.5px;color:var(--teal);font-family:var(--mono);}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.04em;}
+  .pass{background:var(--green-dim);color:var(--green);border:1px solid #2a6e42;}
+  .trait-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .tc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+  .ttag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:6px;}
+  .tc h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .tc p{font-size:13.5px;color:var(--muted);line-height:1.65;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:14px;}
+  th{text-align:left;padding:10px 14px;background:var(--surface2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .callout{border-radius:8px;padding:14px 18px;margin-bottom:14px;font-size:14.5px;border-left:3px solid;display:flex;gap:11px;}
+  .ci{flex-shrink:0;font-size:17px;}
+  .cb{flex:1;line-height:1.6;}
+  .cb b{display:block;margin-bottom:4px;}
+  .info{background:var(--blue-dim);border-color:var(--blue);color:#b8d0f8;}
+  .warn{background:var(--orange-dim);border-color:var(--orange);color:#fbd0a8;}
+  .ok{background:var(--green-dim);border-color:var(--green);color:#a8f0c0;}
+  .ins{background:var(--purple-dim);border-color:var(--purple);color:#c8b0f8;}
+  pre{background:#070b10;border:1px solid var(--border);border-radius:8px;padding:14px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.85;margin-bottom:14px;}
+  .kw{color:var(--purple);} .fn{color:var(--blue);} .st{color:var(--green);} .cm{color:#6e7c8f;} .em{color:var(--teal);}
+  .out{background:#070b10;border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-family:var(--mono);font-size:12.5px;line-height:2;overflow-x:auto;margin-bottom:14px;}
+  .out .ln{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;}
+  .ol{color:var(--teal);font-weight:600;white-space:nowrap;}
+  .og{color:var(--muted);font-size:11.5px;font-family:var(--font);line-height:1.5;font-style:italic;}
+  .gotcha{background:var(--orange-dim);border:1px solid #6b3010;border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+  .gtag{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--orange);background:rgba(251,146,60,.15);padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:8px;}
+  .gotcha h4{font-size:14.5px;font-weight:700;color:var(--orange);margin-bottom:6px;}
+  .gotcha p{font-size:13.5px;color:#fbd0a8;line-height:1.65;}
+  .steps{counter-reset:s;}
+  .step{display:flex;gap:14px;margin-bottom:14px;counter-increment:s;}
+  .sn{width:30px;height:30px;background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;}
+  .sn::before{content:counter(s);}
+  .sb{flex:1;}
+  .sb b{color:var(--text);display:block;margin-bottom:4px;font-size:14.5px;}
+  .sb p{font-size:14px;color:var(--muted);line-height:1.65;}
+  .mcq{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;}
+  .mq{font-size:15.5px;font-weight:600;color:var(--text);margin-bottom:14px;}
+  .mopts{display:flex;flex-direction:column;gap:8px;}
+  .mopt{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:11px 15px;font-size:13.5px;cursor:pointer;transition:border-color .15s,background .15s;color:var(--text);text-align:left;width:100%;font-family:var(--font);}
+  .mopt:hover{border-color:var(--purple);background:var(--purple-dim);}
+  .mopt.ok2{background:var(--green-dim);border-color:var(--green);color:#a8f0c0;}
+  .mopt.no{background:#3d1515;border-color:var(--red);color:#f8a8a8;}
+  .mex{margin-top:11px;padding:11px 15px;background:var(--surface2);border-radius:6px;font-size:13.5px;color:var(--muted);line-height:1.6;display:none;}
+  .mex.show{display:block;}
+  .chk{list-style:none;padding:0;}
+  .chk li{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14.5px;color:var(--text);}
+  .chk li:last-child{border-bottom:none;}
+  .ck{color:var(--green);font-size:17px;flex-shrink:0;}
+  .diag{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:30px;text-align:center;overflow-x:auto;margin-bottom:16px;}
+  footer{max-width:980px;margin:48px auto 0;padding:24px 40px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+  @media(max-width:680px){main,.hero,footer{padding-left:20px;padding-right:20px;}.trait-grid{grid-template-columns:1fr;}.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Part 1 · Before you run it</div>
+  <h1>Study Prep Agent</h1>
+  <p class="sub">What this agent does, why it counts as an "agent" (not just a script that loops), and what you'll see when you hit Run. Written for someone who has never read agent code before.</p>
+  <div class="meta">
+    <div class="chip">📚 Topic: <b>learning research</b></div>
+    <div class="chip">⏱ Read: <b>~8 min</b></div>
+    <div class="chip">📅 Cycle: <b>1 · 2026-06-07</b></div>
+    <div class="chip">📖 Sections marked <b>"deeper dive"</b> are skippable</div>
+  </div>
+</div>
+
+<main>
+
+<!-- §1 WHAT THIS AGENT IS FOR -->
+<section class="section s1">
+  <div class="sh"><div class="snum">1</div><h2>What this agent is for</h2><span class="stag">What &amp; Why</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>In one paragraph</h3>
+      <p>You give it a short list of topics you want to learn about — in this run it's three: <code class="i">python_asyncio</code>, <code class="i">agent_loops</code>, and one SDK pattern. The agent searches the web looking for reference material on each one. It stops when every topic has at least two distinct sources collected — <em>or</em> when it's tried 10 times without getting there.</p>
+    </div>
+    <div class="card">
+      <h3>Why this is worth building</h3>
+      <p>You could write a script that runs three fixed Google searches and saves the top results. That's not an agent — it's a list of instructions. This is different: the agent decides <em>which topic to chase next</em>, <em>what to search for</em>, and <em>when it has enough</em>. Those three decisions live inside the running program, not in the code you wrote.</p>
+    </div>
+  </div>
+  <div class="callout info">
+    <div class="ci">💡</div>
+    <div class="cb"><b>The honest framing</b>
+    A script does what you told it. An agent does what it judges is the right next move given what it just saw. That judgment is what we're going to watch happen in real time when you run it.</div>
+  </div>
+</section>
+
+<!-- §2 HOW THIS AGENT THINKS -->
+<section class="section s2">
+  <div class="sh"><div class="snum">2</div><h2>How this agent thinks</h2><span class="stag">A visual map</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">The agent's life is a loop of six stages. The middle four (<b>Try → Look → Try again</b>) repeat until the goal is met or the safety cap kicks in.</p>
+  <div class="diag">
+    <svg width="900" height="280" viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--font);max-width:100%;height:auto;">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#8892a4"/></marker>
+        <marker id="arl" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5 z" fill="#9b72e8"/></marker>
+      </defs>
+      <!-- Wake up -->
+      <rect x="20" y="110" width="118" height="68" rx="8" fill="#1e2a4a" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="79" y="138" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="700">🤖 Wake up</text>
+      <text x="79" y="155" text-anchor="middle" fill="#8892a4" font-size="11">checks it can run</text>
+      <text x="79" y="170" text-anchor="middle" fill="#8892a4" font-size="11">sets the goal</text>
+      <line x1="138" y1="144" x2="170" y2="144" stroke="#8892a4" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- Plan -->
+      <rect x="172" y="110" width="118" height="68" rx="8" fill="#241a3d" stroke="#9b72e8" stroke-width="1.5"/>
+      <text x="231" y="138" text-anchor="middle" fill="#9b72e8" font-size="13" font-weight="700">📋 Plan</text>
+      <text x="231" y="155" text-anchor="middle" fill="#8892a4" font-size="11">lists the topics</text>
+      <text x="231" y="170" text-anchor="middle" fill="#8892a4" font-size="11">to cover</text>
+      <line x1="290" y1="144" x2="322" y2="144" stroke="#8892a4" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- Try -->
+      <rect x="324" y="110" width="118" height="68" rx="8" fill="#1a2a1a" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="383" y="138" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">⚡ Try</text>
+      <text x="383" y="155" text-anchor="middle" fill="#8892a4" font-size="11">picks a topic + tool</text>
+      <text x="383" y="170" text-anchor="middle" fill="#8892a4" font-size="11">runs the search</text>
+      <line x1="442" y1="144" x2="474" y2="144" stroke="#8892a4" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- Look -->
+      <rect x="476" y="110" width="118" height="68" rx="8" fill="#0d3030" stroke="#2dd4bf" stroke-width="1.5"/>
+      <text x="535" y="138" text-anchor="middle" fill="#2dd4bf" font-size="13" font-weight="700">👁 Look</text>
+      <text x="535" y="155" text-anchor="middle" fill="#8892a4" font-size="11">reads what came back</text>
+      <text x="535" y="170" text-anchor="middle" fill="#8892a4" font-size="11">updates its notes</text>
+      <line x1="594" y1="144" x2="626" y2="144" stroke="#8892a4" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- Try again -->
+      <rect x="628" y="110" width="118" height="68" rx="8" fill="#1d1a0d" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="687" y="135" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700">🔄 Try again?</text>
+      <text x="687" y="152" text-anchor="middle" fill="#8892a4" font-size="11">am I done?</text>
+      <text x="687" y="168" text-anchor="middle" fill="#8892a4" font-size="11">if not, decide next</text>
+      <!-- Try again → Stop (done) -->
+      <line x1="746" y1="144" x2="780" y2="144" stroke="#8892a4" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="763" y="135" text-anchor="middle" fill="#8892a4" font-size="10">done</text>
+      <!-- Stop -->
+      <rect x="782" y="110" width="100" height="68" rx="8" fill="#1a1d27" stroke="#f87171" stroke-width="1.5"/>
+      <text x="832" y="138" text-anchor="middle" fill="#f87171" font-size="13" font-weight="700">🏁 Stop</text>
+      <text x="832" y="155" text-anchor="middle" fill="#8892a4" font-size="11">goal met</text>
+      <text x="832" y="170" text-anchor="middle" fill="#8892a4" font-size="11">OR cap reached</text>
+      <!-- Loop arc: Try again → Try -->
+      <path d="M 687 110 Q 687 50 535 50 Q 383 50 383 110" fill="none" stroke="#9b72e8" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arl)"/>
+      <text x="535" y="42" text-anchor="middle" fill="#9b72e8" font-size="11" font-weight="700">if not done — go around again</text>
+      <!-- Safety cap callout -->
+      <rect x="20" y="220" width="862" height="40" rx="6" fill="#3d2e0a" stroke="#fbbf24" stroke-width="1"/>
+      <text x="34" y="244" fill="#fbd07a" font-size="12">🔒 <tspan font-weight="700">Safety cap:</tspan> the loop can only go around 10 times max. Even if the goal isn't met, the agent stops itself — it never spins forever.</text>
+    </svg>
+  </div>
+  <div class="callout ins">
+    <div class="ci">🧠</div>
+    <div class="cb"><b>The shape worth remembering</b>
+    Try → Look → Try again is the loop. The model picks a move, sees what happened, picks the <em>next</em> move based on that. That feedback is the difference between an agent and a script that just retries the same thing.</div>
+  </div>
+</section>
+
+<!-- §3 WHAT MAKES THIS AN AGENT -->
+<section class="section s3">
+  <div class="sh"><div class="snum">3</div><h2>What makes this an "agent" (in plain English)</h2><span class="stag">The three core traits</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">Lots of programs run a loop. Not all of them are agents. Three things have to be true at the same time:</p>
+  <div class="trait-grid">
+    <div class="tc">
+      <div class="ttag">Trait 1</div>
+      <h4>It knows what "done" means</h4>
+      <p>The agent has its own <b>did-it-finish check</b> that it runs at every step. Not "did I do 10 steps?" — but "do I actually have what I came for?" Without this check, a loop is just an obedient repeater. With it, the loop can declare victory and walk away.</p>
+      <p style="font-size:12.5px;color:var(--dim);margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;">👁 <b style="color:var(--muted);">Watch for this in the output:</b> the line that starts with <code class="i">📐 [GOAL PREDICATE]</code> — fires once per step.</p>
+    </div>
+    <div class="tc">
+      <div class="ttag">Trait 2</div>
+      <h4>It picks its own next move</h4>
+      <p>At every step, the agent looks at the situation and <b>chooses</b> what to do next: which topic to chase, which search to run. That choice isn't hard-coded in your Python — it's the model's call. If your code dictated every move, this would be a workflow, not an agent.</p>
+      <p style="font-size:12.5px;color:var(--dim);margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;">👁 <b style="color:var(--muted);">Watch for this in the output:</b> the line that starts with <code class="i">🎲 [MODEL DECISION]</code> — names the chosen tool and the alternatives.</p>
+    </div>
+    <div class="tc">
+      <div class="ttag">Trait 3</div>
+      <h4>It learns from what it just saw</h4>
+      <p>What the agent does in step 5 depends on what came back in step 4. If the last search was empty, the agent doesn't repeat it — it shifts. That's the <b>observe → reason → act</b> loop: the world's reaction feeds the next decision.</p>
+      <p style="font-size:12.5px;color:var(--dim);margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;">👁 <b style="color:var(--muted);">Watch for this in the output:</b> the line that starts with <code class="i">🔄 [LOOP FEEDBACK]</code> — names what changed because of the previous step.</p>
+    </div>
+  </div>
+  <div class="callout ok">
+    <div class="ci">✓</div>
+    <div class="cb"><b>All three or none</b>
+    If any one of these is missing, what you have is a clever script — useful, but not an agent. The Study Prep Agent has all three. We'll watch each of them fire when you run the code.</div>
+  </div>
+</section>
+
+<!-- §4 DEEPER DIVE — TRAIT-TO-CODE MAP -->
+<section class="section dive">
+  <div class="sh"><div class="snum">4</div><h2>Where each trait lives in the code</h2><span class="dive-tag">⊕ Deeper dive — skip if not curious</span></div>
+  <div class="dive-note">For when you want to peek at the actual lines that make each trait happen. Skip this section entirely and you still understand the agent.</div>
+  <table>
+    <tr><th>Trait</th><th>File</th><th>What to look for</th></tr>
+    <tr><td>Did-it-finish check</td><td><code class="i">main.py</code> · <code class="i">is_coverage_met()</code></td><td>A function that returns True/False based on the current state. Called at the top of every loop iteration.</td></tr>
+    <tr><td>Model's own choice</td><td><code class="i">main.py</code> · the <code class="i">call_llm()</code> call inside <code class="i">run_loop()</code></td><td>The model returns a JSON snippet naming the tool + arguments. Your Python parses and dispatches — but never chooses.</td></tr>
+    <tr><td>Learning from what it saw</td><td><code class="i">main.py</code> · the <code class="i">coverage_map</code> dict that gets re-injected into the prompt</td><td>Each iteration starts by showing the model the current state. The model's next choice is conditioned on that state.</td></tr>
+    <tr><td>Principled stop</td><td><code class="i">main.py</code> · <code class="i">MAX_ITERATIONS = 10</code> and the <code class="i">while</code> condition</td><td>Two exit paths: goal met, or safety cap hit. Both are tested in <code class="i">smoke_test.py</code>.</td></tr>
+  </table>
+</section>
+
+<!-- §5 DEEPER DIVE — READING THE CODE -->
+<section class="section dive">
+  <div class="sh"><div class="snum">5</div><h2>If you want to read the code</h2><span class="dive-tag">⊕ Deeper dive — skip if not curious</span></div>
+  <div class="dive-note">A short Python primer for someone who doesn't write Python daily, followed by a suggested reading order. Everything you need to <em>recognize</em>, not write.</div>
+  <div class="card">
+    <h3>Python reading primer (5 things you need to spot)</h3>
+    <ul>
+      <li><code class="i">def name(...):</code> — defines a function. The body is the indented block below.</li>
+      <li><code class="i">while ...:</code> and <code class="i">for ... in ...:</code> — loops. <code class="i">while</code> keeps going as long as the condition is true.</li>
+      <li><code class="i">if .../else:</code> — branching. Reads exactly like English.</li>
+      <li><code class="i">print(...)</code> — writes a line to the terminal. Everything emoji-labelled in the output comes from a <code class="i">print()</code>.</li>
+      <li><code class="i">async</code> / <code class="i">await</code> — treat these as a black box. "<code class="i">await x</code>" means "wait here until <code class="i">x</code> finishes, then continue." That's all you need.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Suggested reading order</h3>
+    <ol style="padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.8;">
+      <li>Open <code class="i">main.py</code> in PyCharm.</li>
+      <li>Scroll to <code class="i">is_coverage_met()</code> — the did-it-finish check. 4 lines.</li>
+      <li>Then <code class="i">run_loop()</code> — that's the agent loop itself. Read it top to bottom.</li>
+      <li>Then <code class="i">call_llm()</code> — the one function that talks to the LLM. Everything else is plain Python.</li>
+      <li>Skim <code class="i">MOCK_SEARCH_DB</code> at the top of the file — that's the fake "internet" this agent searches. (See §8 for why this mattered.)</li>
+    </ol>
+  </div>
+</section>
+
+<!-- §6 WHAT TO EXPECT -->
+<section class="section s6">
+  <div class="sh"><div class="snum">6</div><h2>What to expect when you run it</h2><span class="stag">Live walkthrough</span></div>
+  <div class="card">
+    <h3>How to run it in PyCharm</h3>
+    <ol style="padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.9;">
+      <li>Open the <code class="i">study-prep</code> folder as a PyCharm project. Make sure the Python interpreter is 3.12 or newer.</li>
+      <li>In the terminal: <code class="i">pip install -r requirements.txt</code></li>
+      <li>In the terminal: <code class="i">claude auth status</code> — you should see "logged in".</li>
+      <li>Right-click <code class="i">smoke_test.py</code> → Run. All tests should pass green before you run the real thing.</li>
+      <li>Right-click <code class="i">main.py</code> → Run. Watch the terminal.</li>
+    </ol>
+  </div>
+  <h3 style="margin-top:24px;margin-bottom:12px;color:var(--text);font-size:16px;">What the first few lines of output mean</h3>
+  <div class="out">
+    <div class="ln"><span class="ol">🤖 [AGENT BOOT]</span><span class="og">"The agent is starting up." Confirms the SDK is ready and the topics are loaded.</span></div>
+    <div class="ln"><span class="ol">🎯 [GOAL SET]</span><span class="og">"This is what 'done' means for this run." States the did-it-finish check in plain words.</span></div>
+    <div class="ln"><span class="ol">📋 [PLAN GENERATED]</span><span class="og">"Here are the topics I'm going to chase." A board of three open circles, one per topic.</span></div>
+    <div class="ln"><span class="ol">📍 [STEP 1]</span><span class="og">"Beginning attempt number 1 of 10."</span></div>
+    <div class="ln"><span class="ol">👁 [OBSERVE]</span><span class="og">"Here's what I have so far." The agent reminds itself of the current state.</span></div>
+    <div class="ln"><span class="ol">━━ [SDK →]</span><span class="og">"Handing the question over to the language model now." This is the line where your code stops thinking and the LLM starts.</span></div>
+    <div class="ln"><span class="ol">🎲 [MODEL DECISION]</span><span class="og">"The model picked this tool over the alternatives." This is the model's own choice — the second core trait.</span></div>
+    <div class="ln"><span class="ol">🔧 [TOOL CALL]</span><span class="og">"Calling the chosen tool with these arguments."</span></div>
+    <div class="ln"><span class="ol">📥 [TOOL RESULT]</span><span class="og">"Here's what came back."</span></div>
+    <div class="ln"><span class="ol">🔄 [LOOP FEEDBACK]</span><span class="og">"Based on what I just saw, here's what I'll change next step." This is the third core trait — learning from what it saw.</span></div>
+    <div class="ln"><span class="ol">📐 [GOAL PREDICATE]</span><span class="og">"Am I done? Running my own check now." The did-it-finish check fires here — the first core trait.</span></div>
+    <div class="ln"><span class="ol">🏁 [GOAL MET] or [EXIT: cap reached]</span><span class="og">"Stopping. Here's why." The safety cap means the agent will never run forever.</span></div>
+  </div>
+  <div class="callout info">
+    <div class="ci">📍</div>
+    <div class="cb"><b>Read the labels, not the code</b>
+    Every emoji-labelled line is a teaching marker. You don't need to read the surrounding Python — the labels tell you exactly which part of the agent's life you're watching.</div>
+  </div>
+</section>
+
+<!-- §7 THINGS WORTH NOTICING -->
+<section class="section s7">
+  <div class="sh"><div class="snum">7</div><h2>Things worth noticing during the run</h2><span class="stag">Insights</span></div>
+  <div class="card">
+    <h3>The agent doesn't remember conversations</h3>
+    <p>Every time you see <code class="i">[SDK →]</code>, the LLM starts <em>fresh</em>. It doesn't remember anything from the previous step's chat. The way the agent "remembers" anything is that your Python re-shows it the current state at every step. The model itself is forgetful by design at this stage.</p>
+    <p>A future build (next cycle) introduces sessions — that's when the LLM itself will start carrying context across calls.</p>
+  </div>
+  <div class="card">
+    <h3>The log file keeps every run</h3>
+    <p>After the run, you'll find <code class="i">study-prep_run_output.log</code> in the same folder. It captures everything the terminal showed. Every future run appends to the same file — so you can compare how the agent behaved differently across runs once we build more agents.</p>
+  </div>
+  <div class="card">
+    <h3>The model talks a lot — but only the JSON matters</h3>
+    <p>You'll see the model emit text blocks, then a JSON line like <code class="i">{"tool": "search_web", "query": "..."}</code>. Only the JSON is parsed and acted on. The prose is the model's thinking on the way to that decision.</p>
+  </div>
+</section>
+
+<!-- §8 WATCH OUT FOR THESE -->
+<section class="section s8">
+  <div class="sh"><div class="snum">8</div><h2>Watch out for these</h2><span class="stag">Gotchas</span></div>
+  <div class="gotcha">
+    <span class="gtag">Gotcha 1</span>
+    <h4>The mock "internet" only knows certain queries word-for-word</h4>
+    <p>This agent searches a fake search database we built in. It uses <em>exact</em> matching — so if the model searches "python asyncio tutorial event loop coroutines" but the database only has "python asyncio tutorial", every result comes back empty. The agent will keep trying, but it won't find anything. <b>This is what happened on the first run</b> — see Part 2 (after you've run it) for the full story.</p>
+  </div>
+  <div class="gotcha">
+    <span class="gtag">Gotcha 2</span>
+    <h4>Empty results aren't errors — they're information</h4>
+    <p>When a search returns nothing, the agent doesn't crash. It treats "zero results" as a signal to try something different. Whether it actually does try something different is what the third core trait (learning from what it saw) is about. Watch the <code class="i">[LOOP FEEDBACK]</code> line carefully — it tells you whether the agent changed strategy.</p>
+  </div>
+  <div class="gotcha">
+    <span class="gtag">Gotcha 3</span>
+    <h4>The safety cap WILL fire if the goal can't be reached</h4>
+    <p>At 10 iterations, the agent stops regardless. This isn't a bug — it's the <b>principled stop</b> trait working correctly. If you ever see the cap fire, ask: was the goal unreachable, or was the agent making bad choices? Both have different fixes.</p>
+  </div>
+  <div class="gotcha">
+    <span class="gtag">Gotcha 4</span>
+    <h4>"Plan revised" doesn't show up in this agent</h4>
+    <p>You won't see a <code class="i">[PLAN REVISED]</code> line in this run. That's not a bug — the plan here is simple and linear (the three topics never change). You'll first see plan revision in a future cycle, when the model encounters a surprise and restructures what it's chasing.</p>
+  </div>
+  <div class="gotcha">
+    <span class="gtag">Gotcha 5</span>
+    <h4>The same URL might show up twice — the agent has a dedup guard</h4>
+    <p>If the model asks the same search twice and the same URL comes back, the agent checks before saving. You'll see <code class="i">[DUPLICATE URL DETECTED]</code> if that happens.</p>
+  </div>
+</section>
+
+<!-- §9 WHO MAKES THE DECISIONS -->
+<section class="section s9">
+  <div class="sh"><div class="snum">9</div><h2>Who's making the decisions</h2><span class="stag">Control plane</span></div>
+  <p style="color:var(--muted);margin-bottom:18px;">Every step in the agent's life is a decision. Some are made by your code (deterministic, predictable). Some are made by the model (judged in the moment). Knowing which is which is the single most important thing you'll learn from reading agent code.</p>
+  <table>
+    <tr><th>Decision</th><th>Who decides</th><th>Why this matters</th></tr>
+    <tr><td>How many tries before giving up</td><td>Your code (<code class="i">MAX_ITERATIONS = 10</code>)</td><td>You set the safety boundary. Even a confused agent can't burn unlimited credit.</td></tr>
+    <tr><td>What "done" means</td><td>Your code (<code class="i">is_coverage_met()</code>)</td><td>You define success. The model can't move the goalposts mid-run.</td></tr>
+    <tr><td>Which topic to chase this step</td><td>The model</td><td>This is the freedom you're handing over. The model judges based on what it sees.</td></tr>
+    <tr><td>Which tool to use (search vs fetch)</td><td>The model</td><td>Same: model picks, your code dispatches.</td></tr>
+    <tr><td>What search query to send</td><td>The model</td><td>Same: free-form text the model invents.</td></tr>
+    <tr><td>Whether to stop now</td><td>The did-it-finish check (your code) AND the safety cap (your code)</td><td>The model proposes, the code disposes. The agent itself can't keep going past either limit.</td></tr>
+  </table>
+  <div class="callout ins">
+    <div class="ci">🔍</div>
+    <div class="cb"><b>If you removed the model's freedom</b>
+    Hard-code the topic order, hard-code the search queries, and what you have is a workflow — useful, predictable, not agentic. The freedom you're giving the model is exactly what makes this an agent.</div>
+  </div>
+</section>
+
+<!-- §10 DEEPER DIVE — SDK GLOSSARY -->
+<section class="section dive">
+  <div class="sh"><div class="snum">10</div><h2>SDK glossary</h2><span class="dive-tag">⊕ Deeper dive — skip if not curious</span></div>
+  <div class="dive-note">For when you want to know the official names of what you just watched. Not required to understand any of the above.</div>
+  <table>
+    <tr><th>SDK term</th><th>What it actually is</th></tr>
+    <tr><td><code class="i">query()</code></td><td>The one function that talks to the language model. Used once per "Try" step.</td></tr>
+    <tr><td><code class="i">AssistantMessage</code> / <code class="i">ResultMessage</code></td><td>The shapes of what comes back from the model. The agent extracts the text, then parses the JSON.</td></tr>
+    <tr><td><code class="i">ClaudeAgentOptions</code></td><td>Settings bundle — which model to use, max turns, permission mode.</td></tr>
+    <tr><td><code class="i">claude-agent-sdk</code></td><td>The Python package this whole thing is built on. The <em>real</em> agent infrastructure lives here.</td></tr>
+    <tr><td>SDK Rung</td><td>A teaching ladder — each agent introduces one new SDK concept. This one teaches rungs 1 and 2: the basic call + the agent loop with a did-it-finish check.</td></tr>
+    <tr><td>FORWARD position</td><td>This agent is on your learning frontier — it introduces concepts not seen in any prior cycle.</td></tr>
+  </table>
+</section>
+
+<!-- §11 SELF-CHECK -->
+<section class="section s11">
+  <div class="sh"><div class="snum">11</div><h2>A few self-check questions</h2><span class="stag">Before you run</span></div>
+  <p style="color:var(--muted);margin-bottom:16px;">Click an answer to reveal whether it's right and why.</p>
+
+  <div class="mcq">
+    <div class="mq">1. The agent runs 10 attempts and stops with the goal unmet. What does that prove?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,0)">A. The agent is broken.</button>
+      <button class="mopt" onclick="reveal(this,1)">B. The safety cap fired correctly — the agent declined to spin forever.</button>
+      <button class="mopt" onclick="reveal(this,2)">C. The model gave up.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>B</b>. Hitting the cap is the principled-stop trait <em>working</em>. The agent is supposed to stop itself rather than burn through unlimited tries. Whether the goal was actually reachable is a separate question.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">2. Which line in the output is the model's <em>own choice</em>?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. <code class="i">[GOAL SET]</code></button>
+      <button class="mopt" onclick="reveal(this,0)">B. <code class="i">[MODEL DECISION]</code></button>
+      <button class="mopt" onclick="reveal(this,1)">C. <code class="i">[TERMINATION CHECK]</code></button>
+    </div>
+    <div class="mex">✓ Correct: <b>B</b>. The model-decision line names the tool the model picked and what alternatives it had. <code class="i">[GOAL SET]</code> is your code declaring the goal up front, and <code class="i">[TERMINATION CHECK]</code> is your code checking the limits.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">3. If you removed the <code class="i">while</code> loop and just called the model once, what would you have?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. A smaller agent.</button>
+      <button class="mopt" onclick="reveal(this,1)">B. A faster agent.</button>
+      <button class="mopt" onclick="reveal(this,0)">C. A search function — not an agent. There's no loop to learn-and-retry inside.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>C</b>. The loop is where "learning from what it saw" happens. Remove it and you have a one-shot search call dressed up. The loop + did-it-finish check + model decision is what makes the difference.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">4. The <code class="i">coverage_map</code> dictionary is re-shown to the model at the top of every step. Why?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="reveal(this,1)">A. To debug the agent.</button>
+      <button class="mopt" onclick="reveal(this,0)">B. Because the model is forgetful between calls — it has to be reminded of the current state each time.</button>
+      <button class="mopt" onclick="reveal(this,1)">C. To make the output look pretty.</button>
+    </div>
+    <div class="mex">✓ Correct: <b>B</b>. At this stage of learning, each call to the model is stateless — fresh slate. The way the agent maintains continuity is by re-injecting state. A future cycle introduces sessions, where the LLM itself remembers.</div>
+  </div>
+</section>
+
+<!-- §12 BEFORE YOU HIT RUN -->
+<section class="section s12">
+  <div class="sh"><div class="snum">12</div><h2>Before you hit Run</h2><span class="stag">Ready-gate checklist</span></div>
+  <ul class="chk">
+    <li><span class="ck">✓</span>You can name the three core traits (knows what done means, picks own next move, learns from what it saw).</li>
+    <li><span class="ck">✓</span>You can point to where each trait will become visible in the terminal output (the labels in §6).</li>
+    <li><span class="ck">✓</span>You understand that the safety cap is supposed to be there — even if it fires, that's not a bug.</li>
+    <li><span class="ck">✓</span>You've spotted the mock-search gotcha in §8 — so if the first run produces a lot of empty results, you'll know why.</li>
+    <li><span class="ck">✓</span>You know the run will save a log file you can read afterward.</li>
+  </ul>
+  <div class="callout ok" style="margin-top:18px;">
+    <div class="ci">🚀</div>
+    <div class="cb"><b>You're ready</b>
+    Run <code class="i">smoke_test.py</code> first — all green — then run <code class="i">main.py</code> and watch the loop. When you're done, open Part 2 (<code class="i">study-prep_learning-insights.html</code>) for the post-run debrief.</div>
+  </div>
+</section>
+
+<!-- §13 PROVENANCE -->
+<section class="section s13">
+  <div class="sh"><div class="snum">13</div><h2>Provenance</h2></div>
+  <div class="card">
+    <p style="font-size:13px;line-height:1.7;">
+      <b>Agent slug:</b> <code class="i">study-prep</code> &middot;
+      <b>Cycle:</b> 1 &middot;
+      <b>Date:</b> 2026-06-07 &middot;
+      <b>SDK rungs introduced:</b> 1 (query + message anatomy), 2 (goal predicate + agent loop + safety cap) &middot;
+      <b>Learning position:</b> FORWARD &middot;
+      <b>Pairs with:</b> <code class="i">study-prep_learning-insights.html</code> (Part 2, after the run) &middot;
+      <b>Companion files:</b> <code class="i">main.py</code>, <code class="i">smoke_test.py</code>, <code class="i">prompt.md</code>, <code class="i">README.md</code> &middot;
+      <b>Spec:</b> PRD.md FR-C5 (lay-first per FR-C10) &middot;
+      <b>Version:</b> v2 (lay-first rewrite; v1 preserved as <code class="i">study-prep_learning-guide_technical-v1.html</code>)
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>Study Prep Agent · Learning Guide · Part 1</span>
+  <span>Agent Foundry · Cycle 1</span>
+  <span>Read before running · Part 2 reads after</span>
+</footer>
+
+<script>
+function reveal(btn, kind){
+  // kind: 0 = correct, 1 = wrong
+  const opts = btn.parentElement.querySelectorAll('.mopt');
+  const ex = btn.parentElement.parentElement.querySelector('.mex');
+  opts.forEach(o => o.disabled = true);
+  if(kind === 0){ btn.classList.add('ok2'); } else { btn.classList.add('no'); opts.forEach(o => { if(o.getAttribute('onclick').includes(',0')) o.classList.add('ok2'); }); }
+  ex.classList.add('show');
+}
+</script>
+
+</body>
+</html>

@@ -267,57 +267,147 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
   **Max plan subscription login**; never an API key (§7.4).
 - FR-C4: Generated `smoke_test.py` mocks the LLM boundary; one optional live-call
   verification runs once, after green, on Ram's machine with his confirmation.
-- FR-C5: **`<agent-slug>_learning-guide.html`** (Part 1, pre-code) — single self-contained
-  static HTML (inline CSS; vanilla JS only for MCQ reveal + navigation; no CDN/framework/
-  build; offline double-click). **Beautifully made**: typographic care, generous whitespace,
-  color-coded callouts — in the visual spirit of `agent_traits_chef_guide_v2.html` — a
-  reading document Ram *wants* to read, not a rendered README. Generated before code runs.
-  Mandatory sections in order: (1) use case & objective, (2) agent-loop SVG with this
-  agent's actual step names, (3) high-level trait summary, (4) trait-to-code map with
-  file/function anchors, (5) code-block arrangement & guided reading order, (6) "run it
-  first" with PyCharm steps + ~10-line annotated expected output, (7) learning insights,
-  (8) gotchas (≤5, drawn from annex §5), (9) control plane — who owns the next decision
-  (incl. workflow→agent diff when applicable), (10) SDK glossary, (11) MCQ self-check
-  (3–5, inline reveal with one-line explanations), (12) takeaway & ready-gate checklist,
-  (13) provenance footer. ≤10-minute read; no code excerpts beyond 10 lines.
+- FR-C5: **`<agent-slug>_learning-guide.html`** (Part 1, pre-code, **lay-first per FR-C10**) —
+  single self-contained static HTML (inline CSS; vanilla JS only for MCQ reveal + navigation;
+  no CDN/framework/build; offline double-click). **Beautifully made**: typographic care,
+  generous whitespace, color-coded callouts — in the visual spirit of
+  `agent_traits_chef_guide_v2.html` — a reading document Ram *wants* to read, not a rendered
+  README. Generated before code runs. Sections 4, 5, and 10 are deeper-dive sidebars (FR-C10
+  §2) — clearly marked optional and skippable without losing comprehension of the body.
+  Mandatory sections in order:
+  1. **What this agent is for** — use case + objective in plain English. Names what the
+     agent does, not what its code looks like.
+  2. **How this agent thinks** — agent-loop SVG with non-coder stage names (Wake up → Plan
+     → Try → Look → Try again → Stop) tailored to this specific agent's steps.
+  3. **What makes this an "agent" (in plain English)** — high-level trait summary using
+     functional aliases (FR-C10 §3), not gate codes. One short paragraph per Core trait.
+  4. *Deeper dive — Where each trait lives in the code* (optional, sidebar-styled) —
+     trait-to-code map with file:line anchors. Marked clearly as skippable.
+  5. *Deeper dive — Reading the code* (optional, sidebar-styled) — code-block arrangement
+     and guided reading order. Begins with a ≤10-line "Python Reading Primer" defining
+     `def` / `while` / `for` / `if/else` / `print()` / `async/await` for *recognition only*,
+     not authoring (the only Python prerequisite for following the guided order).
+  6. **What to expect when you run it** — PyCharm run steps + ~10-line annotated expected
+     output, with each line glossed in plain English.
+  7. **Things worth noticing during the run** — learning insights. **Always includes:**
+     (a) one plain-English sentence that this agent's LLM calls start fresh each time —
+     "the agent doesn't remember what it asked the LLM in the previous step" — and one
+     sentence naming the future capability that will change that;
+     (b) one sentence noting that `<agent-slug>_run_output.log` accumulates every run and
+     will enable cross-cycle comparison in later cycles.
+  8. **Watch out for these** — gotchas (≤5, drawn from annex §5, matching the agent's
+     `GOTCHA[...]` lines). Each gotcha named in plain English. For rung 1–2 agents,
+     **always include the standing note** that `[PLAN REVISED]` does not fire here because
+     the plan is simple and linear, and students will first see it in cycle 3.
+  9. **Who's making the decisions** — control plane in plain English. Names who or what
+     owns each branching choice (code? model? Ram?). Workflow→agent diff when applicable.
+  10. *Deeper dive — SDK glossary* (optional, sidebar-styled, end-positioned) — appears
+      at the very end, marked clearly as skippable.
+  11. **A few self-check questions** — 3–5 MCQ inline-reveal with one-line explanations.
+      Questions phrased functionally (e.g., "Did the agent know when to stop?"), never in
+      gate-code vocabulary.
+  12. **Before you hit Run** — takeaway + ready-gate checklist in plain English.
+  13. **Provenance footer** — agent slug, generation date, SDK rung introduced, file
+      pointers, version stamps. Technical content permitted in this footer.
+  ≤10-minute read; no code excerpts beyond 10 lines. **Boundary rule:** README = mechanics;
+  learning-guide = why this is an agent and what to expect (lay, forward-looking);
+  learning-insights = proof from execution (lay, backward-confirming). No content
+  duplication across the three; one-line cross-references permitted.
 - FR-C6: Three-file boundary rule: README = how to run (mechanics only); learning-guide =
   why it's an agent and what to learn (forward-looking, pre-run); learning-insights = proof
   from execution (backward-confirming, post-run). No content duplication across the three.
   One-line cross-references permitted.
-- FR-C9: **`<agent-slug>_learning-insights.html`** (Part 2, post-run) — single self-contained
-  static HTML (inline CSS; vanilla JS for flip-cards + MCQ reveal; no CDN; offline
-  double-click). Generated **after** `main.py` runs, using `<agent-slug>_run_output.log`
-  as primary input (fallback: user pastes terminal output). Same visual quality standard
-  as Part 1. Never generated before the first run; never duplicates Part 1 content.
+- FR-C9: **`<agent-slug>_learning-insights.html`** (Part 2, post-run, **lay-first per FR-C10**) —
+  single self-contained static HTML (inline CSS; vanilla JS for flip-cards + MCQ reveal; no
+  CDN; offline double-click). Generated **after** `main.py` runs, using
+  `<agent-slug>_run_output.log` as primary input (fallback: user pastes terminal output).
+  Same visual quality standard as Part 1. Never generated before the first run; never
+  duplicates Part 1 content. **Sections 4 and 7 retain their current titles and intent
+  verbatim — Ram's audit found them well-implemented.** All other sections use functional
+  language (FR-C10). G1/G2/G3 codes appear only in §11's provenance-footer glossary.
   Input pipeline — two options in order of preference:
   *Option B (standard):* `main.py` tees all stdout to `<agent-slug>_run_output.log` via a
   `tee_to_log()` context manager; Claude reads the file. Add to every `main.py` as FR-C8
   Hard Requirement #8.
   *Option A (fallback):* user copies PyCharm terminal output and pastes into Claude Desktop.
   Mandatory sections in order:
-  (1) Runtime Snapshot Banner — dashboard card: iterations, total context tokens
-  (from final `[CONTEXT]` line), termination reason, elapsed time.
-  (2) "Why Was This an Agent?" — G1/G2/G3 proof panel; one quoted `[GOAL PREDICATE]` line
-  for G1, one `[MODEL DECISION]` line for G2, one `[LOOP FEEDBACK]` line for G3; one-
-  sentence verdict per gate; most prominent section in the document.
-  (3) Purpose of This Agent — use case + goal predicate in plain English; sourced from
-  `🎯 [GOAL SET]` and AGENT SUMMARY.
-  (4) Traits in Action — one card per fired trait: trait name, tier, one quoted output line,
-  one-sentence explanation.
-  (5) Life of the Agent — visual timeline from `🤖 [AGENT BOOT]` to `🏁 [EXIT]`; `[SDK →]`/
-  `[← SDK]` brackets as visible nodes; loop iterations shown as a repeating arc.
-  (6) Goal Achievement Trace — `📐 [GOAL PREDICATE]` from every iteration as a progress
-  strip (False → True or cap hit).
-  (7) Agent Spectrum Placement — horizontal scale (Workflow → Simple Agent → Multi-Step →
-  Autonomous); "If this were a workflow" contrast callout citing the `[MODEL DECISION]` line.
-  (8) Flashcards — 5–8 flip-on-click; front: term; back: definition anchored to this
-  agent's specific runtime behavior (not generic).
-  (9) MCQ Self-Check — 3–5, inline reveal with one-line explanations; ≥1 question tests
-  agent/workflow distinction; wrong answers explain why they are wrong.
-  (10) Next Session Brainstorm Seeds — 3–5 daily-life use-case suggestions; each names the
-  new SDK rung or trait it would exercise beyond this agent.
-  (11) Provenance Footer — agent slug, run date, SDK rungs introduced, G1–G5 verdicts, Part
-  1 companion file, log source (A or B).
+  1. **About this run** — two halves designed for cold-read. A student who opens the file
+     without having read Part 1 should be fully oriented after §1 and able to make sense of
+     every subsequent section.
+     *Top half — Setup grid:* a grid of small context cards. Five required items: (a) the
+     agent's role in one plain-English sentence; (b) the specific input the agent was given
+     for this run (the actual topics, parameters, queries, or whatever inputs the agent
+     consumed); (c) the success rule (the goal in lay English — what counts as "done"); (d)
+     the hard cap or safety limit imposed by us, naming who imposed it (so the student knows
+     it wasn't the agent's choice); (e) the tools the agent had available (lay names, not SDK
+     names). One optional item when applicable: (f) a caveat about the data world the agent
+     operated in — e.g., mock-vs-real, sandbox-vs-production, or any other context the
+     student needs to interpret outcomes correctly.
+     *Bottom half — Result snapshot:* the runtime snapshot card. Iterations used, key outcome
+     metric (e.g., topics covered, coverage met, goal reached), termination reason in plain
+     English ("the agent decided it was done" / "the agent hit its safety cap" / "the agent
+     escalated"), cost (tokens in/out + dollar estimate where present), and total elapsed
+     time.
+     *Visual contract:* setup cards use a calm/informational treatment (cards or chips,
+     muted accent); the snapshot uses a high-contrast dashboard with color-coded warn/ok
+     cells so the result reads at a glance. The two halves are visually distinguished and
+     separated by a sub-heading or divider. **Rationale:** Ram's cold-read audit
+     (2026-06-07) found that the prior §1 (snapshot only) left a cold reader unable to
+     interpret outcome numbers — they saw "10/10 tries" without knowing 10 was a cap we
+     set, and "0/3 topics" without knowing what the three topics were.
+  2. **Was this really an agent? Here's the proof** — most prominent section. Three
+     functional questions answered with quoted runtime evidence:
+     • "Did the agent decide when it was done?" → quote one `[GOAL PREDICATE]` line.
+     • "Did the agent choose its own next move?" → quote one `[MODEL DECISION]` line.
+     • "Did the agent learn from what it saw?" → quote one `[LOOP FEEDBACK]` line.
+     One plain-English verdict per question (e.g., "Yes — the agent ran a check each step
+     and reported what it found"). Gate codes (G1/G2/G3) are NOT used in the question
+     text or verdict prose — only in §11's glossary.
+  3. **Why this goal counted as a real check** — depth on the fact that the agent's goal
+     was a *computable test* the agent ran on itself at every step, not a fuzzy aspirational
+     outcome. Explains in plain English the difference between a "did-it-finish check" (the
+     agent computes a yes/no verdict from its current state) and a wish-based stopping
+     condition (which can't be honestly verified). Anchored to one quoted
+     `📐 [GOAL PREDICATE]` line — the literal moment the agent evaluated itself. One short
+     section, ≤4 paragraphs. **This section's job is to make the verifiability of the goal
+     feel concrete, not to restate what the goal was** — the goal content moved into §1's
+     setup grid in the cold-read restructure. The lay framing of this section connects
+     directly to the first core trait ("it knows what done means") and explains why a
+     real verifiable check is what separates an agent from a hopeful loop.
+  4. **Traits in Action** — **UNCHANGED title and intent.** One card per fired trait:
+     trait name, tier, one quoted output line, one-sentence explanation of why that line
+     demonstrates the trait. (Ram's audit: well-implemented; preserve.)
+  5. **The life of this agent (from wake-up to goodbye)** — visual timeline with
+     non-coder stage names: **Wake up → Plan → Try → Look → Try again → Stop**. Each
+     stage gets one plain-English sentence anchored to a specific runtime output line
+     ("Wake up: 🤖 [AGENT BOOT] — the agent introduces itself"; "Plan: 📋 [PLAN GENERATED]
+     — the agent breaks the goal into steps before doing anything"; etc.). An optional
+     collapsible *"Technical view: the SDK call sequence"* (FR-C10 sidebar) may show
+     `[SDK →]`/`[← SDK]` brackets and loop iterations as a repeating arc for readers
+     who want the under-the-hood view.
+  6. **Did the agent reach its goal? (the progress trace)** — `📐 [GOAL PREDICATE]`
+     from every iteration as a progress strip (False → True or cap hit), with one
+     plain-English line of narration beside each verdict explaining what the agent
+     checked at that step.
+  7. **Agent Spectrum Placement** — **UNCHANGED title and intent.** Horizontal scale
+     (Workflow → Simple Agent → Multi-Step Agent → Autonomous Agent); "If this were a
+     workflow" contrast callout citing the `[MODEL DECISION]` line as the difference
+     marker. (Ram's audit: well-implemented; preserve.)
+  8. **Flashcards** — 5–8 flip-on-click; front: term in plain English; back: definition
+     anchored to *this agent's specific runtime behavior*, not a generic definition.
+  9. **Quick self-check** — 3–5 MCQ inline-reveal with one-line explanations; ≥1
+     question tests agent/workflow distinction; wrong answers explain why they're
+     wrong. Phrased functionally (e.g., "When the agent's first search came back empty,
+     what did it do?") — no gate codes in question text.
+  10. **What you could build next** — 3–5 daily-life use-case suggestions; each names
+      in plain English the new capability it would exercise beyond this agent
+      (e.g., "An agent that remembers what you asked yesterday" rather than "rung 3 —
+      `session_id`").
+  11. **Provenance footer + glossary** — agent slug, run date, SDK rungs introduced,
+      G1–G5 verdicts, Part 1 companion file, log source (Option A or Option B).
+      **Glossary block:** maps functional aliases (FR-C10 §3) to their G1–G5 codes for
+      readers who want the technical mapping. **This is the ONLY student-facing surface
+      where G1–G5 codes appear.**
 - FR-C7: **`prompt.md` blueprint** — written **before any Python code**, into the agent's
   folder. Self-contained: a cold Claude session reading only this file plus CLAUDE.md
   must be able to regenerate the Python agent without any other context. Required
@@ -420,6 +510,38 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
   ```
   This coexists with (does not replace) the existing `# TRAIT[]`, `# GATE[]`, `# GOTCHA[]`
   inline markers — both are required.
+- FR-C10: **Audience Register.** All student-facing artifacts (the two `.html` files, runtime
+  banners visible in the agent's stdout, Professor narration in chat, Phase F and Phase F2
+  probes, README prose) are written **lay-first**: a non-coder reads the body and understands
+  what the agent does and what just happened. Three hard constraints:
+  1. **Body register** — plain English. No SDK or framework vocabulary in body prose
+     (`query()`, `predicate`, `SDK rung`, `permission_mode`, `MessageLens`, etc.).
+     Define-on-first-use for any retained domain term.
+  2. **Deeper-dive sidebars** — technical content (SDK names, code anchors, gate codes) lives
+     in clearly marked optional callouts: `<aside class="deep-dive">` in HTML, or a
+     "Deeper dive (skip if not curious):" prefix in chat. Skippable without losing
+     comprehension of the body.
+  3. **G1–G5 codes** — appear in code annotations (`# GATE[Gn]: ...`), in the FR-D4 grep
+     contract, and in the insights file's §11 provenance-footer glossary only. Never in body
+     prose, runtime banners visible to Ram, probes spoken to Ram, or section titles of any
+     student-facing artifact. Functional aliases used in student-facing surfaces:
+     "did-it-finish check" (G1), "model's own choice" (G2), "learning from what it saw" (G3),
+     "principled stop" (G4), "independent check" (G5).
+  Code annotations (`TRAIT[]`/`GATE[]`/`GOTCHA[]` inline markers in `main.py`) are exempt —
+  they teach the SDK and are read by Ram in code-reading mode, not by laypersons.
+  **Enforcement (Translator persona):** every student-facing artifact is reviewed before
+  delivery in Phase D under FR-D3. Any sentence requiring a coding background to parse is
+  a defect and goes back. The phrase "if a non-coder couldn't read it over coffee and
+  understand what the agent does, it goes back" is the working test.
+- FR-C11: **HTML backup-then-rewrite.** When regenerating either HTML artifact for an
+  existing agent (e.g., remediation pass under a new register, register refinement, or any
+  rewrite that produces a new lay-first version), the prior version MUST be renamed to
+  `<filename>_<reason>-v<n>.html` before the new version is written. Examples:
+  `study-prep_learning-guide_technical-v1.html` preserves the original technical version
+  when rewriting under FR-C10's lay-first register; `study-prep_learning-insights_v2.html`
+  preserves a previous lay-first iteration before a refinement pass. Honors the no-delete
+  folder protocol (CLAUDE.md). Never overwrite an existing HTML artifact in
+  `agents/<slug>/` — always rename-then-write.
 
 ### Phase D — QA before delivery (by Claude, in the sandbox)
 - FR-D1: Claude runs the generated `smoke_test.py` in its sandbox (LLM mocked) and must
@@ -508,12 +630,38 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
 - FR-F1: **Trigger & bound.** Immediately after delivery (Phase D green), Claude offers
   a Professor session: ~10 minutes, four parts. Ram may skip or end it at any time
   ("skip professor" / "done"). Conversational behavior only — no new files, no tooling.
-- FR-F2: **Shape.** (1) *Opening* ~2 min: what this agent is, the goal in one sentence,
-  what Ram will see when it runs — intuition first. (2) *Core* ~3 min: the 2–3 ideas
-  that matter for this agent — control plane, centerpiece traits/gates, the one gotcha
-  it guards against. (3) *Probe* ~4 min: 2–3 comprehension questions targeting
-  mechanism, not recall, drawn from the trait/gate map and the agent's annex-§5 gotchas.
+- FR-F2: **Shape.** All four sub-phases follow FR-C10 (lay-first body, no gate codes
+  spoken to Ram). When the Professor session immediately follows lock + green QA, the
+  opening and handoff sub-phases use the FR-F7 checkpoint templates verbatim.
+  (1) *Opening* ~2 min: what this agent is, the goal in one sentence, what Ram will see
+  when it runs — intuition first. **Delivered via the Post-lock briefing template
+  (FR-F7 Checkpoint 1)** when timing permits; otherwise its own opening narration in
+  the same lay register.
+  (2) *Core* ~3 min: the 2–3 ideas that matter for this agent — the control plane (who
+  owns each decision, in plain English), the centerpiece traits in functional language
+  ("this agent's did-it-finish check is `is_coverage_met()`" — NOT "G1 verifier"), and
+  the one gotcha it guards against (named in lay terms).
+  (3) *Probe* ~4 min: 2–3 comprehension questions targeting mechanism, not recall.
+  **Probe text uses FR-C10 functional language; gate codes (G1–G5) NEVER appear in what
+  Ram hears.** Each probe MUST be introduced by the Pre-probe context Professor
+  checkpoint (FR-F7 Checkpoint 4) — quote a specific code line or runtime-output label,
+  then state the functional question. Example probes (mirror FR-F5's shape, anchored
+  pre-run to code rather than runtime output):
+  - *Goal predicate function (`is_coverage_met()`)* → "Look at the function that decides
+    when the agent is done. What would happen if it returned True too early? What would
+    the agent miss?" *(probes did-it-finish check / G1)*
+  - *Model-decision dispatch site* → "Find the line in the loop where the agent
+    dispatches the model's choice. What would change if we hard-coded the tool here
+    instead?" *(probes model's own choice / G2)*
+  - *State injection at iteration start* → "The agent injects its current state into
+    the prompt at the top of every iteration. Why does it have to do that? What would
+    the model 'know' without this injection?" *(probes learning from what it saw / G3)*
+  - *Safety cap constant and exit branch* → "There are two ways this agent can exit.
+    Find both in the code. Why do we need both?" *(probes principled stop / G4)*
   (4) *Handoff* ~1 min: reading order, what to watch in the first run, registry note.
+  **Delivered via the Pre-run framing template (FR-F7 Checkpoint 2)** when the run is
+  imminent — names the three labeled output lines Ram should watch and the conditions
+  for the agent to stop.
 - FR-F3: **Repair protocol (bounded).** On a wrong/shaky answer: attempt 1 — one
   Socratic counter-question; attempt 2 — brief targeted re-explanation pointing to the
   exact briefing section or code line; then move on. Never loops, never scores, never
@@ -528,25 +676,41 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
   the agent in PyCharm)*. Triggered when Ram says "I ran it" or equivalent. Separate
   from Phase F (which is pre-run). Purpose: reinforce agentic concepts anchored to *actual
   runtime output* rather than code alone — the difference between understanding code and
-  understanding the agent in motion.
+  understanding the agent in motion. **All probes follow FR-C10 (lay-first body, no gate
+  codes in probe text) and are preceded by the Post-run debrief and Pre-probe context
+  Professor checkpoints (FR-F7).**
   - **Shape:** 3–5 probes, conversational. No four-part structure required (shorter than F).
-    Each probe MUST anchor to a specific labeled output line from the runtime log.
-  - **Probe types (Claude picks from these, selecting what fired in Ram's actual run):**
-    1. `[GOAL PREDICATE]` line → "What does this verdict tell you about G1? Could it be
-       wrong?" (tests G1 understanding beyond the code definition)
-    2. `[MODEL DECISION]` line → "Which options did the model see here? What would have
-       happened if it chose differently?" (tests G2 ownership vs. scripted dispatch)
-    3. `[LOOP FEEDBACK]` delta → "How did the plan/action change after this observation?
-       What would a *workflow* have done instead?" (tests G3 O→R→A cycle as observed)
-    4. `[ERROR: STRUCTURAL]` or `[ERROR: POLICY]` (if present) → "Why is this structural
-       rather than transient? What would the fix require?" (tests LO-12 failure taxonomy)
-    5. `[PLAN REVISED]` or `[PLAN PROGRESS]` → "Who decided to revise the plan here —
-       the code or the model?" (tests autonomy vs. hard-coded branching)
-    6. `[SDK →]` / `[← SDK]` pair → "What Python code is between these two lines? What
-       is the LLM doing during that gap?" (tests LLM boundary visibility, LO-7)
-    7. Usage summary line → "What does this credit draw mean for subscription billing?
-       How would you budget this agent for daily use?" (tests cost awareness, §7.2)
-  - **Repair:** same bounded two-attempt Socratic repair as FR-F3.
+    Each probe MUST anchor to a specific labeled output line from the runtime log AND
+    MUST be introduced by the Pre-probe context template (FR-F7). The Post-run debrief
+    (FR-F7 Checkpoint 3) is delivered ONCE before the first probe and explains in plain
+    English what happened in the run.
+  - **Probe types (Claude picks from these, selecting what fired in Ram's actual run).
+    Probe text is written in functional language; gate codes in parentheses are spec
+    traceability only and NEVER appear in the probe spoken to Ram:**
+    1. `[GOAL PREDICATE]` line → "The agent itself decided whether it was done yet at this
+       step. How did it make that call? What would happen if it didn't check?" *(probes the
+       did-it-finish check / G1)*
+    2. `[MODEL DECISION]` line → "The model picked one tool out of several at this moment.
+       What were the alternatives? Why did this one win — and could it have gone
+       differently next time?" *(probes the model's own choice / G2)*
+    3. `[LOOP FEEDBACK]` delta → "Look at what the agent did in step N versus step N+1.
+       What changed because of what it saw? A non-agent script would have repeated the
+       same thing — what made this run different?" *(probes learning from what it saw / G3)*
+    4. `[ERROR: STRUCTURAL]` or `[ERROR: POLICY]` (if present) → "Something broke here.
+       Was it a temporary blip, a real bug in how the agent was set up, or a permission
+       issue? How can you tell from this line?" *(probes failure classification / LO-12)*
+    5. `[PLAN REVISED]` or `[PLAN PROGRESS]` → "The plan changed mid-run. Who decided to
+       change it — your code, or the model in the moment? How can you tell from the
+       output?" *(probes autonomy)*
+    6. `[SDK →]` / `[← SDK]` pair → "These two lines mark where your code hands off to the
+       LLM and where it gets the answer back. What's happening in that gap? Why does it
+       matter that you can see those moments?" *(probes LLM boundary visibility / LO-7)*
+    7. Usage summary line → "This run cost about N tokens / X cents. If you ran this every
+       morning, what would the monthly cost look like? What would you change to keep it
+       cheap?" *(probes cost awareness / §7.2)*
+  - **Repair:** same bounded two-attempt Socratic repair as FR-F3. Repair language also
+    follows FR-C10 — counter-questions and re-explanations use functional aliases, never
+    gate codes.
   - **Memory:** writes `post_run_notes` subobject to the registry (FR-E1). If skipped,
     records `{"skipped": true}`. Does NOT re-trigger `INSIGHTS.md` regeneration (that
     happens at end of Phase F). If Phase F was also skipped and this is the only
@@ -581,6 +745,61 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
   - **Registry dependency:** Phase 0 reads `report_card` (FR-E6) and `gotchas_mastered[]`
     (FR-E6). If these fields are absent (cycle 1 edge case), skip Phase 0 gracefully and
     note that warm-up will begin at cycle 2.
+
+- FR-F7: **Professor Checkpoints (enforced).** The Professor persona (CLAUDE.md
+  "The Professor — Voice and Character") stops being aspirational. Four named checkpoints
+  fire at fixed moments in the operating cycle and are gate requirements, not stylistic
+  guidance. Each has a ≤5-sentence template; the Professor MUST deliver the checkpoint
+  before proceeding to the next step. All templates follow FR-C10 (lay-first body, no
+  gate codes). The templates are scaffolding; the delivery is conversational and in
+  voice — never bullet points or status updates.
+
+  **Checkpoint 1 — Post-lock briefing** *(fires immediately after Ram types
+  `lock <candidate>`; before any file is written; before operating cycle step 3.5).*
+  ≤5 sentences, all in plain English:
+  1. "Locked: [agent name]. Here's what we're building and why."
+  2. "In plain English, this agent will [goal in lay language]."
+  3. "The traits to watch as we build: [trait 1], [trait 2], [trait 3] — explained
+     in one sentence each."
+  4. "The one thing that might surprise you: [unexpected behavior or gotcha in plain
+     English]."
+  5. "Files will arrive in one continuous pass. I'll narrate the salient line(s) as
+     each file lands."
+
+  **Checkpoint 2 — Pre-run framing** *(fires after all 8 files are written and the
+  smoke test is green; before Ram is directed to PyCharm).* ≤5 sentences:
+  1. "Ready for your first run."
+  2. "What you should see in the terminal, roughly: [output flow in one plain-English
+     sentence]."
+  3. "The three moments worth watching: [labeled output line 1], [line 2], [line 3]
+     — these are where the did-it-finish check, the model's own choice, and learning
+     from what it saw become real."
+  4. "The agent will stop when [goal predicate condition in plain English] OR when it
+     hits its safety cap at [N iterations]."
+  5. "If anything looks weird, that's actually [what it might be teaching]."
+
+  **Checkpoint 3 — Post-run debrief** *(fires when Ram says "I ran it" or pastes
+  terminal output; BEFORE any Phase F2 probe; replaces "the Professor just started
+  asking questions" failure mode from Cycle 1).* ≤5 sentences:
+  1. "Here's what just happened, in plain English."
+  2. "The agent [one-sentence narrative summary of the run]."
+  3. "The two output lines worth re-reading are: [line 1 with one-line gloss], [line 2
+     with one-line gloss]."
+  4. "Functional verdict: did the agent finish? did it own its choices? did it learn
+     from what it saw? — answered in plain English with the run's evidence."
+  5. "I have [3–5] probes to check what you noticed. Want me to start, or do you have
+     questions about what you saw?"
+
+  **Checkpoint 4 — Pre-probe context** *(fires before EACH Phase F2 probe; immediately
+  precedes the probe text).* ≤2 sentences:
+  1. "Quoting the line from your run: [exact line, indented]."
+  2. "What I'm asking: [functional question in plain English]."
+
+  **Enforcement:** A cycle that skips a checkpoint is incomplete and must be repaired.
+  Checkpoint delivery is in conversational voice — the templates above are the *content*
+  contract, not the *form* contract. Phase F (pre-run Professor session, FR-F2) and
+  Phase F2 (post-run, FR-F5) probes inherit the same FR-C10 register — functional
+  language, no gate codes spoken to Ram.
 
 ### Phase E — Registry & bookkeeping (additions)
 - FR-E6: **Cross-cycle registry fields** — written at the end of every cycle (step 8 of
