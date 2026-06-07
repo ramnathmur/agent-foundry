@@ -1,0 +1,99 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d2237"/>
+      <stop offset="50%" stop-color="#0f1117"/>
+      <stop offset="100%" stop-color="#1a1038"/>
+    </linearGradient>
+    <linearGradient id="accentBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9b72e8"/>
+      <stop offset="50%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 Z" fill="#5a657a"/>
+    </marker>
+  </defs>
+
+  <!-- Background gradient -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Subtle dot scatter (decorative, low opacity) -->
+  <g opacity="0.10" fill="#9b72e8">
+    <circle cx="100" cy="90" r="3"/>
+    <circle cx="160" cy="140" r="2"/>
+    <circle cx="80" cy="180" r="2"/>
+    <circle cx="220" cy="80" r="2"/>
+    <circle cx="1200" cy="100" r="3"/>
+    <circle cx="1140" cy="60" r="2"/>
+    <circle cx="1180" cy="170" r="2"/>
+    <circle cx="100" cy="540" r="2"/>
+    <circle cx="180" cy="580" r="3"/>
+    <circle cx="1180" cy="540" r="3"/>
+    <circle cx="1120" cy="580" r="2"/>
+  </g>
+
+  <!-- Title: AGENT FOUNDRY -->
+  <text x="640" y="220" text-anchor="middle"
+        font-family="'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif"
+        font-size="98" font-weight="800" fill="url(#titleGrad)" letter-spacing="-2">
+    AGENT FOUNDRY
+  </text>
+
+  <!-- Accent bar -->
+  <rect x="490" y="248" width="300" height="6" fill="url(#accentBar)" rx="3"/>
+
+  <!-- Tagline -->
+  <text x="640" y="316" text-anchor="middle"
+        font-family="'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif"
+        font-size="32" font-weight="400" fill="#b8c2d4">
+    Learn how AI agents work — by building one.
+  </text>
+
+  <!-- Sub-tagline -->
+  <text x="640" y="358" text-anchor="middle"
+        font-family="'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif"
+        font-size="17" font-weight="400" fill="#6d7990" letter-spacing="1.5">
+    A PERSONAL LEARNING SYSTEM  ·  AN AI TUTOR AT YOUR SIDE
+  </text>
+
+  <!-- 4-stage loop visualization centered at (640, 450) -->
+  <g transform="translate(640, 450)">
+    <!-- Stage labels above dots -->
+    <text x="-270" y="-26" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="15" font-weight="700" fill="#a8b3c4" letter-spacing="0.5">GOAL</text>
+    <text x="-90"  y="-26" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="15" font-weight="700" fill="#a8b3c4" letter-spacing="0.5">TRY</text>
+    <text x="90"   y="-26" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="15" font-weight="700" fill="#a8b3c4" letter-spacing="0.5">LOOK</text>
+    <text x="270"  y="-26" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="15" font-weight="700" fill="#a8b3c4" letter-spacing="0.5">STOP</text>
+
+    <!-- 4 dots with project palette -->
+    <circle cx="-270" cy="0" r="14" fill="#9b72e8"/>
+    <circle cx="-90"  cy="0" r="14" fill="#2dd4bf"/>
+    <circle cx="90"   cy="0" r="14" fill="#fbbf24"/>
+    <circle cx="270"  cy="0" r="14" fill="#4ade80"/>
+
+    <!-- Forward arrows -->
+    <line x1="-254" y1="0" x2="-108" y2="0" stroke="#5a657a" stroke-width="1.8" marker-end="url(#arrowhead)"/>
+    <line x1="-74"  y1="0" x2="72"   y2="0" stroke="#5a657a" stroke-width="1.8" marker-end="url(#arrowhead)"/>
+    <line x1="106"  y1="0" x2="252"  y2="0" stroke="#5a657a" stroke-width="1.8" marker-end="url(#arrowhead)"/>
+
+    <!-- Loop-back arc: Look (90) → Try (-90) -->
+    <path d="M 90 18 Q 90 70 0 70 Q -90 70 -90 18"
+          fill="none" stroke="#9b72e8" stroke-width="1.8" stroke-dasharray="6 4" opacity="0.75"
+          marker-end="url(#arrowhead)"/>
+    <text x="0" y="88" text-anchor="middle" font-family="'Segoe UI', sans-serif"
+          font-size="13" fill="#9b72e8" font-style="italic" opacity="0.9">
+      if not done — go around again
+    </text>
+  </g>
+
+  <!-- GitHub URL -->
+  <text x="640" y="572" text-anchor="middle"
+        font-family="'Cascadia Code', 'Consolas', 'Courier New', monospace"
+        font-size="20" fill="#7d8aa3">
+    github.com/ramnathmur/agent-foundry
+</text>
+</svg>

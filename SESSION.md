@@ -1,22 +1,20 @@
 # SESSION.md — Agent Foundry fast-start state
 
-cycle: 1
-step: PAUSED — application changes before resuming
-locked_candidate: study-prep
-locked_date: 2026-06-07
-domain: learning-research
-sdk_rungs: 1 + 2
-learning_position: FORWARD
+cycle: 2 (about to begin)
+prior_cycle: 1 (study-prep) — CLOSED 2026-06-07
+step: AWAITING_CYCLE_2_BRAINSTORM
+next_action: deliver Phase 0 warm-up (FR-F6) → start brainstorm for SDK rung 3
 
-last_action: Cycle 1 run complete · insights written · Phase F2 paused · RAM requests app changes
-next_action: New session — Ram describes fundamental changes → implement → decide resume or restart
+cycle_2_target_rung: 3 (ClaudeSDKClient multi-turn + session_id capture/resume)
+cycle_2_position: FORWARD
+cycle_2_planning_ref: GitHub issue #4
 
-run_result: cap_reached  # G4 fired correctly; 0/3 topics; mock_perception_trap root cause
-phase_f: skipped
-phase_f2: paused (0/5 probes answered)
-learning_object_written: false   # registry not updated yet — pending after app changes
+cycle_1_run: cap_reached (G4 fired correctly; 0/3 topics; mock-DB perception trap)
+cycle_1_phase_f: skipped
+cycle_1_phase_f2: skipped (mid-cycle redirect → spec rewrite + lay-first HTMLs instead of probes)
 
-agents_built: 1
-full_reload: false
+prd_version: v9 + FR-C10 / FR-C11 / FR-F7 (added 2026-06-07)
 
-# Trigger: paste fresh-session prompt → Professor reads this file → ask Ram for change details
+full_reload: true   # significant context change in prior session — read HANDOFF.md + foundry_registry.json + INSIGHTS.md too
+
+# Trigger: "begin the brainstorm" or "new agent" → Phase 0 warm-up (FR-F6) → brainstorm
