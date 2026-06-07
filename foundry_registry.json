@@ -73,8 +73,8 @@
           "name": "Study Prep Agent",
           "domain": "learning-research",
           "gates": "G1–G5 all pass",
-          "decision": "available",
-          "notes": "Slightly richer planning step than Morning Spark; viable cycle 1 alternative"
+          "decision": "locked",
+          "notes": "Locked 2026-06-07 Cycle 1. FORWARD — introduces rungs 1+2. Goal predicate: is_coverage_met(coverage_map). Tools: search_web + fetch_page (mocked). max_iterations=10."
         },
         {
           "name": "Focus Booster",
@@ -84,7 +84,7 @@
           "notes": "G3 weak — environment unchanged between iterations; fix: add probe_log(question) tool so model's question shapes what it observes next"
         }
       ],
-      "locked": null
+      "locked": "Study Prep Agent"
     }
   ]
 }

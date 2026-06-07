@@ -1,0 +1,332 @@
+
+======================================================================
+RUN: 2026-06-07T17:35:39.523650 | Study Prep Agent v1
+======================================================================
+🔬 [PREFLIGHT] checking environment...
+  ✓ Python 3.12
+  ✓ claude_agent_sdk importable
+  ✓ preflight passed
+
+🤖 [AGENT BOOT] Study Prep Agent v1 · rungs: 1+2
+📖 [OUTPUT GUIDE] each emoji-labelled line is a teaching element
+
+🎯 [GOAL SET] Collect ≥2 sources per topic: python_asyncio, agent_loops, sdk_rung2_patterns
+   GATE[G1]: is_coverage_met() evaluated after every iteration
+
+📋 [PLAN GENERATED]
+   ○ python_asyncio
+   ○ agent_loops
+   ○ sdk_rung2_patterns
+
+───────────────────────────────────────────────────────
+📍 [STEP 1]  iteration 1/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 0
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio official documentation tutorial 
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.3142
+━━━ [← SDK] +13707 in / +193 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial event loop coroutines"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 1/10 (10%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 1/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 2]  iteration 2/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 13900
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio official documentation tutorial"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1915
+━━━ [← SDK] +13707 in / +222 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 2/10 (20%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 2/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 3]  iteration 3/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 27829
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio tutorial official documentation"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1913
+━━━ [← SDK] +13707 in / +215 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio tutorial official documentation"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 3/10 (30%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 3/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 4]  iteration 4/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 41751
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: The request maps cleanly to coverage-improvement. All three topics have zero cov
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1878
+━━━ [← SDK] +13707 in / +75 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 4/10 (40%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 4/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 5]  iteration 5/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 55533
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio tutorial event loop coroutines"}
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1903
+━━━ [← SDK] +13707 in / +176 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio tutorial event loop coroutines"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 5/10 (50%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 5/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 6]  iteration 6/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 69416
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio tutorial official documentation"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1867
+━━━ [← SDK] +13707 in / +31 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio tutorial official documentation"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 6/10 (60%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 6/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 7]  iteration 7/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 83154
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio official documentation tutorial"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1907
+━━━ [← SDK] +13707 in / +192 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 7/10 (70%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 7/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 8]  iteration 8/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 97053
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio tutorial event loop coroutines"}
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1904
+━━━ [← SDK] +13707 in / +178 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio tutorial event loop coroutines"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 8/10 (80%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 8/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 9]  iteration 9/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 110938
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio official documentation tutorial"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1867
+━━━ [← SDK] +13707 in / +31 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 9/10 (90%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 9/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+───────────────────────────────────────────────────────
+📍 [STEP 10]  iteration 10/10
+
+👁 [OBSERVE] coverage_map → python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+━━━ [SDK →] claude-opus-4-8 · accumulated tokens: 124676
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ HookEventMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ SystemMessage
+  ┆ AssistantMessage: (no text blocks)
+  ┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio official documentation tutorial"
+  ┆ RateLimitEvent
+  ┆ ResultMessage[ok] · $0.1890
+━━━ [← SDK] +13707 in / +125 out tokens
+🎲 [MODEL DECISION] selected: search_web · alternative: fetch_page
+🔧 [TOOL CALL] search_web({"query": "python asyncio official documentation tutorial"})
+📥 [TOOL RESULT] 2 chars · preview: []…
+💾 [SESSION MEMORY] coverage_map └─ python_asyncio: 0 urls  agent_loops: 0 urls  sdk_rung2_patterns: 0 urls
+🔄 [LOOP FEEDBACK] 0 new urls — model should shift topic or reformulate query next step
+📐 [GOAL PREDICATE] is_coverage_met() → False
+🔍 [TERMINATION CHECK] iter 10/10 (100%) · coverage: 0/3 topics met
+  📋 [PLAN PROGRESS] step 10/10
+     · python_asyncio                 ○○  (0/2)
+     · agent_loops                    ○○  (0/2)
+     · sdk_rung2_patterns             ○○  (0/2)
+
+🏁 EXIT: cap reached — 10/10 iterations consumed
+
+════════════════════════════════════════════════════════════
+📊 [POST-RUN SUMMARY]
+  Exit reason  : 🏁 EXIT: cap reached — 10/10 iterations consumed
+  Iterations   : 10/10
+  Goal met     : NO ✗
+  Topics met   : 0/3
+  Tokens in/out: 137070 / 1438
+
+  TRAIT / GATE MAP (where each fired this run)
+  ─────────────────────────────────────────────
+  G1 goal-directedness : preflight() + is_coverage_met() every step
+  G2 autonomy          : [MODEL DECISION] line — model chose tool + query
+  G3 observe-reason-act: coverage_map re-injected into system_prompt each iter
+  G4 termination       : 🏁 EXIT: cap reached — 10/10 iterations consumed
+  G5                   : N/A (rung 1-2; verifier arrives at rung 7)
+
+  WHAT TO LOOK FOR IN PART 2 (learning-insights.html)
+  ─────────────────────────────────────────────────────
+  · Which topics lagged — where did [LOOP FEEDBACK] shift focus?
+  · Did the circuit breaker fire? (cap = model needed more iterations)
+  · How many duplicate URLs did the dedup guard catch?
+
+💡 [LESSON] The while loop wrapping call_llm() is the agency boundary.
+   Remove it → smart search function. Add loop + goal predicate +
+   model-owned decision + loop feedback → G1+G2+G3+G4 = agent.
+   No single part is enough. All four together are.
+════════════════════════════════════════════════════════════

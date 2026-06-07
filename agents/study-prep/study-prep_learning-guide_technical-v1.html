@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Prep Agent — Learning Guide Part 1</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --border:#2e3252;
+    --text:#e2e8f0; --muted:#8892a4;
+    --purple:#9b72e8; --purple-dim:#3d2e6b;
+    --blue:#60a5fa; --blue-dim:#1e3a5f;
+    --green:#4ade80; --green-dim:#1a3a29;
+    --orange:#fb923c; --orange-dim:#3d2010;
+    --teal:#2dd4bf; --teal-dim:#0d3030;
+    --red:#f87171; --yellow:#fbbf24; --yellow-dim:#3d2e0a;
+    --font:'Segoe UI',system-ui,sans-serif; --mono:'Cascadia Code','Fira Code',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.65;font-size:15px;}
+  .hero{background:linear-gradient(135deg,#1a1038 0%,#0f1117 50%,#0d2237 100%);border-bottom:1px solid var(--border);padding:48px 40px 36px;max-width:960px;margin:0 auto;}
+  .badge{display:inline-block;background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple);border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;margin-bottom:14px;}
+  .hero h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;}
+  .hero p{color:var(--muted);font-size:16px;margin-bottom:20px;}
+  .meta{display:flex;gap:20px;flex-wrap:wrap;}
+  .chip{font-size:13px;color:var(--muted);}
+  .chip b{color:var(--text);}
+  main{max-width:960px;margin:0 auto;padding:0 40px 80px;}
+  .section{margin-top:52px;}
+  .sh{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+  .snum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+  .sh h2{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.01em;}
+  .stag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:12px;margin-left:auto;flex-shrink:0;}
+  .s1 .snum,.s1 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s2 .snum,.s2 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s3 .snum,.s3 .stag{background:var(--green-dim);color:var(--green);}
+  .s4 .snum,.s4 .stag{background:var(--teal-dim);color:var(--teal);}
+  .s5 .snum,.s5 .stag{background:var(--blue-dim);color:var(--blue);}
+  .s6 .snum,.s6 .stag{background:var(--green-dim);color:var(--green);}
+  .s7 .snum,.s7 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s8 .snum,.s8 .stag{background:var(--orange-dim);color:var(--orange);}
+  .s9 .snum,.s9 .stag{background:var(--yellow-dim);color:var(--yellow);}
+  .s10 .snum,.s10 .stag{background:var(--teal-dim);color:var(--teal);}
+  .s11 .snum,.s11 .stag{background:var(--purple-dim);color:var(--purple);}
+  .s12 .snum,.s12 .stag{background:var(--green-dim);color:var(--green);}
+  .s13 .snum{background:var(--surface2);color:var(--muted);}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;}
+  .card h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .card p,.card li{font-size:14px;color:var(--muted);line-height:1.6;}
+  .card ul{padding-left:18px;}
+  .card li{margin-bottom:4px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  code.i{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:12px;color:var(--teal);font-family:var(--mono);}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.04em;}
+  .pass{background:var(--green-dim);color:var(--green);border:1px solid #2a6e42;}
+  .na{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .trait-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .tc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .tier{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+  .core{color:var(--purple);} .ess{color:var(--blue);} .enh{color:var(--teal);}
+  .tc h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;}
+  .tc p{font-size:12px;color:var(--muted);}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;}
+  th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--surface2);}
+  .callout{border-radius:8px;padding:13px 17px;margin-bottom:14px;font-size:14px;border-left:3px solid;display:flex;gap:10px;}
+  .ci{flex-shrink:0;font-size:16px;}
+  .cb{flex:1;}
+  .cb b{display:block;margin-bottom:3px;}
+  .info{background:var(--blue-dim);border-color:var(--blue);color:#a8c8f8;}
+  .warn{background:var(--orange-dim);border-color:var(--orange);color:#fbd0a8;}
+  .ok{background:var(--green-dim);border-color:var(--green);color:#a8f0c0;}
+  .ins{background:var(--purple-dim);border-color:var(--purple);color:#c8b0f8;}
+  pre{background:#070b10;border:1px solid var(--border);border-radius:8px;padding:14px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.8;margin-bottom:14px;}
+  .kw{color:var(--purple);} .fn{color:var(--blue);} .st{color:var(--green);} .cm{color:#6e7c8f;} .em{color:var(--teal);}
+  .out{background:#070b10;border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.9;overflow-x:auto;margin-bottom:14px;}
+  .ol{color:var(--teal);font-weight:700;} .oc{color:var(--muted);} .og{color:var(--green);font-size:11px;} .os{color:#9b72e8;}
+  .gotcha{background:var(--orange-dim);border:1px solid #6b3010;border-radius:10px;padding:15px 19px;margin-bottom:12px;}
+  .gtag{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--orange);background:rgba(251,146,60,.15);padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:6px;}
+  .gotcha h4{font-size:14px;font-weight:700;color:var(--orange);margin-bottom:6px;}
+  .gotcha p{font-size:13px;color:#fbd0a8;}
+  .gotcha code{font-family:var(--mono);font-size:12px;}
+  .steps{counter-reset:s;}
+  .step{display:flex;gap:14px;margin-bottom:14px;counter-increment:s;}
+  .sn{width:28px;height:28px;background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:2px;}
+  .sn::before{content:counter(s);}
+  .sb{flex:1;}
+  .sb b{color:var(--text);display:block;margin-bottom:2px;}
+  .sb p{font-size:14px;color:var(--muted);}
+  .mcq{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:12px;}
+  .mq{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;}
+  .mopts{display:flex;flex-direction:column;gap:7px;}
+  .mopt{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 13px;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s;color:var(--text);text-align:left;width:100%;}
+  .mopt:hover{border-color:var(--purple);background:var(--purple-dim);}
+  .mopt.ok2{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+  .mopt.no{background:#3d1515;border-color:var(--red);color:var(--red);}
+  .mex{margin-top:9px;padding:9px 13px;background:var(--surface2);border-radius:6px;font-size:13px;color:var(--muted);display:none;}
+  .mex.show{display:block;}
+  .chk{list-style:none;padding:0;}
+  .chk li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--muted);}
+  .chk li:last-child{border-bottom:none;}
+  .ck{color:var(--green);font-size:16px;flex-shrink:0;}
+  .diag{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;text-align:center;overflow-x:auto;}
+  footer{max-width:960px;margin:48px auto 0;padding:20px 40px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+  @media(max-width:680px){main,.hero,footer{padding-left:20px;padding-right:20px;}.trait-grid{grid-template-columns:1fr 1fr;}.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Part 1 · Pre-Run Learning Guide</div>
+  <h1>Study Prep Agent</h1>
+  <p>Read this <em>before</em> running the code — it explains why this is an agent, not just a script.</p>
+  <div class="meta">
+    <div class="chip">📚 Domain: <b>learning-research</b></div>
+    <div class="chip">🔧 SDK Rungs: <b>1 + 2</b></div>
+    <div class="chip">🧠 Position: <b>FORWARD</b></div>
+    <div class="chip">⏱ Read: <b>~8 min</b></div>
+    <div class="chip">📅 Cycle: <b>1 · 2026-06-07</b></div>
+  </div>
+</div>
+
+<main>
+
+<!-- §1 USE CASE -->
+<section class="section s1">
+  <div class="sh"><div class="snum">1</div><h2>Use Case &amp; Objective</h2><span class="stag">What &amp; Why</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>What the agent does</h3>
+      <p>Given three study topics — <code class="i">python_asyncio</code>, <code class="i">agent_loops</code>, <code class="i">sdk_rung2_patterns</code> — the agent searches the web and fetches pages until every topic has at least two distinct source URLs. Then it stops.</p>
+    </div>
+    <div class="card">
+      <h3>🎯 The goal as code</h3>
+      <p>The stopping condition is a Python function, not a sentence:</p>
+      <pre style="margin-top:10px"><span class="kw">def</span> <span class="fn">is_coverage_met</span>(coverage_map) <span class="kw">→ bool</span>:
+    <span class="cm"># True when ALL topics have ≥2 URLs</span></pre>
+    </div>
+  </div>
+  <div class="callout info">
+    <div class="ci">💡</div>
+    <div class="cb"><b>Why an agent and not a loop you'd write yourself?</b>
+    The model decides <em>which topic to prioritise</em> and <em>whether to search or fetch</em> based on what it observes mid-run. That model-owned decision is what makes this an agent.</div>
+  </div>
+</section>
+
+<!-- §2 LOOP SVG -->
+<section class="section s2">
+  <div class="sh"><div class="snum">2</div><h2>The Agent Loop</h2><span class="stag">Architecture</span></div>
+  <div class="diag">
+    <svg width="840" height="300" viewBox="0 0 840 300" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--font);max-width:100%;height:auto;">
+      <defs>
+        <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#6e7c8f"/></marker>
+        <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#4ade80"/></marker>
+        <marker id="ao" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#fb923c"/></marker>
+      </defs>
+      <!-- BOOT -->
+      <rect x="10" y="110" width="100" height="58" rx="7" fill="#1e2a4a" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="60" y="132" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="700">🤖 BOOT</text>
+      <text x="60" y="147" text-anchor="middle" fill="#8892a4" font-size="10">preflight · goal</text>
+      <text x="60" y="160" text-anchor="middle" fill="#8892a4" font-size="10">plan · init map</text>
+      <!-- BOOT→OBS -->
+      <line x1="110" y1="139" x2="148" y2="139" stroke="#6e7c8f" stroke-width="1.5" marker-end="url(#a)"/>
+      <!-- OBSERVE -->
+      <rect x="150" y="110" width="100" height="58" rx="7" fill="#1a2a1a" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="200" y="132" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="700">👁 OBSERVE</text>
+      <text x="200" y="147" text-anchor="middle" fill="#8892a4" font-size="10">inject</text>
+      <text x="200" y="160" text-anchor="middle" fill="#8892a4" font-size="10">coverage_map</text>
+      <!-- OBS→SDK -->
+      <line x1="250" y1="139" x2="288" y2="139" stroke="#6e7c8f" stroke-width="1.5" marker-end="url(#a)"/>
+      <!-- SDK BOX -->
+      <rect x="290" y="98" width="120" height="82" rx="7" fill="#241a3d" stroke="#9b72e8" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="350" y="118" text-anchor="middle" fill="#9b72e8" font-size="10" font-weight="700">━━ [SDK →]</text>
+      <text x="350" y="132" text-anchor="middle" fill="#c8b0f8" font-size="10">🧠 REASON</text>
+      <text x="350" y="146" text-anchor="middle" fill="#8892a4" font-size="10">model picks topic</text>
+      <text x="350" y="160" text-anchor="middle" fill="#8892a4" font-size="10">+ tool in JSON</text>
+      <text x="350" y="174" text-anchor="middle" fill="#9b72e8" font-size="10" font-weight="700">[← SDK] ━━</text>
+      <!-- SDK→ACT -->
+      <line x1="410" y1="139" x2="448" y2="139" stroke="#6e7c8f" stroke-width="1.5" marker-end="url(#a)"/>
+      <!-- ACT -->
+      <rect x="450" y="110" width="100" height="58" rx="7" fill="#0d3030" stroke="#2dd4bf" stroke-width="1.5"/>
+      <text x="500" y="132" text-anchor="middle" fill="#2dd4bf" font-size="10" font-weight="700">⚡ ACT</text>
+      <text x="500" y="147" text-anchor="middle" fill="#8892a4" font-size="10">search_web or</text>
+      <text x="500" y="160" text-anchor="middle" fill="#8892a4" font-size="10">fetch_page</text>
+      <!-- ACT→UPDATE -->
+      <line x1="550" y1="139" x2="588" y2="139" stroke="#6e7c8f" stroke-width="1.5" marker-end="url(#a)"/>
+      <!-- UPDATE -->
+      <rect x="590" y="110" width="100" height="58" rx="7" fill="#1d1a0d" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="640" y="130" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700">💾 UPDATE</text>
+      <text x="640" y="145" text-anchor="middle" fill="#8892a4" font-size="10">coverage_map</text>
+      <text x="640" y="160" text-anchor="middle" fill="#8892a4" font-size="10">deduplicate</text>
+      <!-- UPDATE→EVAL -->
+      <line x1="690" y1="139" x2="728" y2="139" stroke="#6e7c8f" stroke-width="1.5" marker-end="url(#a)"/>
+      <!-- EVAL -->
+      <rect x="730" y="110" width="85" height="58" rx="7" fill="#1a1d27" stroke="#f87171" stroke-width="1.5"/>
+      <text x="773" y="133" text-anchor="middle" fill="#f87171" font-size="10" font-weight="700">📐 EVAL</text>
+      <text x="773" y="148" text-anchor="middle" fill="#8892a4" font-size="10">is_coverage</text>
+      <text x="773" y="161" text-anchor="middle" fill="#8892a4" font-size="10">_met() ?</text>
+      <!-- LOOP BACK (FALSE) -->
+      <path d="M773,168 Q773,245 350,245 Q200,245 200,168" fill="none" stroke="#4ade80" stroke-width="1.5" marker-end="url(#ag)" stroke-dasharray="5,3"/>
+      <text x="490" y="263" text-anchor="middle" fill="#4ade80" font-size="11">→ False · next iteration · [LOOP FEEDBACK] fired</text>
+      <!-- TRUE EXIT -->
+      <line x1="773" y1="110" x2="773" y2="58" stroke="#fb923c" stroke-width="1.5" marker-end="url(#ao)"/>
+      <rect x="710" y="28" width="125" height="28" rx="6" fill="#2a1208" stroke="#fb923c" stroke-width="1"/>
+      <text x="773" y="47" text-anchor="middle" fill="#fb923c" font-size="11" font-weight="700">🏁 GOAL MET</text>
+      <!-- CAP NOTE -->
+      <text x="490" y="290" text-anchor="middle" fill="#6e7c8f" font-size="11">cap: iter ≥ 10 → 🏁 EXIT: cap reached</text>
+    </svg>
+  </div>
+  <div class="callout ins" style="margin-top:14px">
+    <div class="ci">🔑</div>
+    <div class="cb"><b>The dashed box is the LLM boundary.</b>
+    Everything inside is the model's world. The dashed border is exactly where <code class="i">━━━ [SDK →]</code> and <code class="i">━━━ [← SDK]</code> print in the terminal output.</div>
+  </div>
+</section>
+
+<!-- §3 TRAITS -->
+<section class="section s3">
+  <div class="sh"><div class="snum">3</div><h2>High-Level Trait Summary</h2><span class="stag">9 Traits</span></div>
+  <div class="pills">
+    <span class="pill pass">G1 Goal Predicate ✓</span>
+    <span class="pill pass">G2 Model Decision ✓</span>
+    <span class="pill pass">G3 Loop Feedback ✓</span>
+    <span class="pill pass">G4 Termination ✓</span>
+    <span class="pill na">G5 N/A (rung 7)</span>
+  </div>
+  <div class="trait-grid">
+    <div class="tc"><div class="tier core">Core</div><h4>Goal-Directedness</h4><p><code class="i">is_coverage_met()</code> evaluates the goal every iteration — the agent knows when to stop.</p></div>
+    <div class="tc"><div class="tier core">Core</div><h4>Autonomy</h4><p>Model picks which topic and which tool each step. Python never pre-selects.</p></div>
+    <div class="tc"><div class="tier core">Core</div><h4>Observe–Reason–Act</h4><p>Observe <code class="i">coverage_map</code> → reason about gaps → act with search/fetch. Prior results change next action.</p></div>
+    <div class="tc"><div class="tier ess">Essential</div><h4>Perception</h4><p><code class="i">search_web()</code> and <code class="i">fetch_page()</code> ingest external (mocked) data — the agent's world-model grows.</p></div>
+    <div class="tc"><div class="tier ess">Essential</div><h4>Planning</h4><p>Topic list at boot. Live <code class="i">📋 [PLAN PROGRESS]</code> board updates every step.</p></div>
+    <div class="tc"><div class="tier ess">Essential</div><h4>Memory</h4><p><code class="i">coverage_map</code> persists across iterations within the run. Discarded at exit (session memory).</p></div>
+    <div class="tc"><div class="tier ess">Essential</div><h4>Tool Selection</h4><p>Model outputs JSON tool choice; <code class="i">dispatch_tool()</code> routes it. Model owns the decision.</p></div>
+    <div class="tc"><div class="tier enh">Enhancing</div><h4>Sequential Action</h4><p>Steps counted 1→10 in order. <code class="i">📍 [STEP N]</code> marks each iteration.</p></div>
+    <div class="tc"><div class="tier enh">Enhancing</div><h4>Termination Criterion</h4><p>Dual exit: goal-predicate fires <em>or</em> the cap hits. The agent cannot run forever.</p></div>
+  </div>
+</section>
+
+<!-- §4 TRAIT-TO-CODE MAP -->
+<section class="section s4">
+  <div class="sh"><div class="snum">4</div><h2>Trait-to-Code Map</h2><span class="stag">Where in main.py</span></div>
+  <table>
+    <thead><tr><th>Trait</th><th>Function / Block</th><th>Annotation tag</th><th>What to look for in output</th></tr></thead>
+    <tbody>
+      <tr><td>Goal-directedness</td><td><code class="i">preflight()</code>, <code class="i">is_coverage_met()</code></td><td><code class="i">TRAIT[goal-directedness]</code></td><td>Agent refuses bad env; <code class="i">📐 [GOAL PREDICATE]</code> fires every step</td></tr>
+      <tr><td>Autonomy</td><td>After <code class="i">call_llm()</code> returns</td><td><code class="i">TRAIT[autonomy]</code></td><td><code class="i">🎲 [MODEL DECISION] selected: X · alternatives: Y</code></td></tr>
+      <tr><td>Observe–reason–act</td><td><code class="i">agent_loop()</code> body</td><td><code class="i">TRAIT[observe-reason-act]</code></td><td><code class="i">👁 [OBSERVE]</code> / <code class="i">🧠 [REASON]</code> / <code class="i">⚡ [ACT]</code> triad</td></tr>
+      <tr><td>Perception</td><td><code class="i">search_web()</code>, <code class="i">fetch_page()</code></td><td><code class="i">TRAIT[perception]</code></td><td><code class="i">📥 [TOOL RESULT] N results returned</code></td></tr>
+      <tr><td>Planning</td><td>Boot + <code class="i">print_plan_progress()</code></td><td><code class="i">TRAIT[planning]</code></td><td><code class="i">📋 [PLAN GENERATED]</code> once; <code class="i">📋 [PLAN PROGRESS]</code> every step</td></tr>
+      <tr><td>Memory</td><td><code class="i">coverage_map</code> dict</td><td><code class="i">TRAIT[memory]</code></td><td><code class="i">💾 [SESSION MEMORY] coverage_map</code></td></tr>
+      <tr><td>Tool selection</td><td><code class="i">dispatch_tool()</code></td><td><code class="i">TRAIT[tool-use]</code></td><td><code class="i">🔧 [TOOL CALL]</code>, <code class="i">📥 [TOOL RESULT]</code></td></tr>
+      <tr><td>Sequential action</td><td><code class="i">while</code> loop header</td><td><code class="i">TRAIT[sequential-action]</code></td><td><code class="i">📍 [STEP 1]</code>, <code class="i">📍 [STEP 2]</code>, …</td></tr>
+      <tr><td>Termination criterion</td><td>Loop exits, <code class="i">tee_to_log()</code></td><td><code class="i">TRAIT[termination]</code></td><td><code class="i">🔍 [TERMINATION CHECK] N/10</code>; final <code class="i">🏁</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- §5 READING ORDER -->
+<section class="section s5">
+  <div class="sh"><div class="snum">5</div><h2>Guided Reading Order</h2><span class="stag">Read in this order</span></div>
+
+  <div class="card" style="border-color:var(--yellow);background:var(--yellow-dim);">
+    <h3 style="color:var(--yellow)">🐍 Python Reading Primer (2 min)</h3>
+    <p style="color:#e8d090;margin-bottom:10px">You need to <em>recognise</em> these patterns, not write them:</p>
+    <table style="margin-bottom:0">
+      <thead><tr><th>Pattern</th><th>Example</th><th>Plain-English meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code class="i">def</code></td><td><code class="i">def is_coverage_met(m):</code></td><td>Define a reusable named block of steps</td></tr>
+        <tr><td><code class="i">while</code></td><td><code class="i">while not done and n &lt; 10:</code></td><td>Keep repeating as long as condition is true</td></tr>
+        <tr><td><code class="i">if / else</code></td><td><code class="i">if url not in seen:</code></td><td>If condition is true, do A — otherwise do B</td></tr>
+        <tr><td><code class="i">print()</code></td><td><code class="i">print("🎯 [GOAL SET]")</code></td><td>Show this text in the terminal</td></tr>
+        <tr><td><code class="i">async / await</code></td><td><code class="i">async for msg in query(...):</code></td><td>Pause here until the SDK responds; the loop iterates over each message it returns</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card"><h3>① <code class="i">constants + MOCK_SEARCH_DB</code></h3><p>Top of file. See <code class="i">STUDY_TOPICS</code>, <code class="i">MAX_ITERATIONS = 10</code>, and the mock result database. These are the agent's world.</p></div>
+  <div class="card"><h3>② <code class="i">preflight()</code></h3><p>Environment check. Verifies Python 3.12+, SDK import, CLI login. Fails fast with a fix-it message. Demonstrates <b>goal-directedness</b> — the agent won't start without preconditions met.</p></div>
+  <div class="card"><h3>③ <code class="i">is_coverage_met()</code></h3><p>Short function, huge concept. G1 — the goal as a predicate. Note it returns <code class="i">bool</code>, not a string. That single difference separates an agent from a workflow.</p></div>
+  <div class="card"><h3>④ <code class="i">search_web()</code> + <code class="i">fetch_page()</code></h3><p>Mock tools. Note the <b>trust fence</b> inside <code class="i">fetch_page()</code> — external content is wrapped before it can reach the LLM prompt. It cannot be skipped.</p></div>
+  <div class="card"><h3>⑤ <code class="i">call_llm()</code></h3><p>The only function that touches <code class="i">claude_agent_sdk</code>. It calls <code class="i">query()</code> as an async iterator, collects <code class="i">AssistantMessage</code> and <code class="i">ResultMessage</code>, and returns the text + token counts. Mock this in smoke_test.py.</p></div>
+  <div class="card"><h3>⑥ <code class="i">agent_loop()</code> — the <code class="i">while</code> loop</h3><p>The heart of the agent. Read the OBSERVE / REASON / ACT comments. Notice how <code class="i">coverage_map</code> is injected into the system prompt at the START of every iteration — this is how a stateless <code class="i">query()</code> "sees" prior results.</p></div>
+  <div class="card"><h3>⑦ <code class="i">print_summary()</code></h3><p>Runs unconditionally at exit. Connects every trait and gate to specific output lines from the run that just completed.</p></div>
+</section>
+
+<!-- §6 RUN IT -->
+<section class="section s6">
+  <div class="sh"><div class="snum">6</div><h2>Run It First</h2><span class="stag">Hands-On</span></div>
+  <div class="callout ok"><div class="ci">▶</div><div class="cb"><b>Run the smoke test and then main.py before reading any code.</b> Seeing the output first makes the code much easier to follow.</div></div>
+  <div class="steps">
+    <div class="step"><div class="sn"></div><div class="sb"><b>Open in PyCharm</b><p>File → Open → <code class="i">agents/study-prep</code> · Set Python 3.12+ interpreter</p></div></div>
+    <div class="step"><div class="sn"></div><div class="sb"><b>Install + verify</b><p>Terminal: <code class="i">pip install -r requirements.txt</code> · then: <code class="i">claude auth status</code></p></div></div>
+    <div class="step"><div class="sn"></div><div class="sb"><b>Run smoke test</b><p>Right-click <code class="i">smoke_test.py</code> → Run. All tests green before proceeding.</p></div></div>
+    <div class="step"><div class="sn"></div><div class="sb"><b>Run the agent</b><p>Right-click <code class="i">main.py</code> → Run. Watch the emoji-labelled output stream.</p></div></div>
+  </div>
+  <h3 style="font-size:15px;color:var(--text);margin:18px 0 10px;font-weight:700">Expected output — first few lines</h3>
+  <div class="out">
+<span class="em">🤖 </span><span class="ol">[AGENT BOOT]</span><span class="oc"> Study Prep Agent v1 · rungs: 1+2</span>  <span class="og">← once, after preflight()</span>
+<span class="em">📖 </span><span class="ol">[OUTPUT GUIDE]</span><span class="oc"> each labeled line is a teaching element</span>
+<span class="em">🎯 </span><span class="ol">[GOAL SET]</span><span class="oc"> Collect ≥2 sources per topic: python_asyncio, agent_loops, sdk_rung2_patterns</span>  <span class="og">← G1 declared</span>
+<span class="em">📋 </span><span class="ol">[PLAN GENERATED]</span>
+<span class="oc">   ○ python_asyncio  ○ agent_loops  ○ sdk_rung2_patterns</span>
+<span class="os">━━━ </span><span class="ol">[SDK →]</span><span class="os"> claude-opus-4-8 · ~520 prompt tokens</span>  <span class="og">← Python hands off to LLM</span>
+  <span style="color:#6e7c8f">┆ AssistantMessage: {"tool": "search_web", "query": "python asyncio tutorial"}…</span>
+  <span style="color:#6e7c8f">┆ ResultMessage[success]: {"tool": "search_web"... · $0.0041</span>
+<span class="os">━━━ </span><span class="ol">[← SDK]</span><span class="os"> 1.4s · +89 output tokens</span>  <span class="og">← LLM returns to Python</span>
+<span class="em">🎲 </span><span class="ol">[MODEL DECISION]</span><span class="oc"> selected: search_web · alternatives: fetch_page</span>  <span class="og">← G2: model owns this</span>
+<span class="em">🔧 </span><span class="ol">[TOOL CALL]</span><span class="oc"> search_web({"query": "python asyncio tutorial"})</span>
+<span class="em">📥 </span><span class="ol">[TOOL RESULT]</span><span class="oc"> 3 results returned</span>
+<span class="em">💾 </span><span class="ol">[SESSION MEMORY]</span><span class="oc"> coverage_map └─ python_asyncio: 2 urls, agent_loops: 0, sdk_rung2_patterns: 0</span>
+<span class="em">📐 </span><span class="ol">[GOAL PREDICATE]</span><span class="oc"> is_coverage_met() → False</span>  <span class="og">← G1 evaluated</span>
+<span class="em">🔍 </span><span class="ol">[TERMINATION CHECK]</span><span class="oc"> 1/10 (10%) — coverage: 1/3 topics met</span>
+  </div>
+  <div class="callout info"><div class="ci">👁</div><div class="cb">The <code class="i">┆</code>-prefixed lines are <b>MessageLens</b> output — raw SDK traffic made visible. After the run, find <code class="i">study-prep_run_output.log</code> in the same folder — every run is appended there.</div></div>
+</section>
+
+<!-- §7 LEARNING INSIGHTS -->
+<section class="section s7">
+  <div class="sh"><div class="snum">7</div><h2>Learning Insights</h2><span class="stag">Key concepts</span></div>
+  <div class="card"><h3>🔄 The loop is the unit of agency</h3><p>A single <code class="i">call_llm()</code> call is a workflow step — input in, output out. The <code class="i">while</code> loop wrapping it is what makes it an agent: observe result → update coverage_map → new observation next iteration. Remove the loop and all you have is a smart search call.</p></div>
+  <div class="card"><h3>🧠 State lives in Python, not the LLM</h3><p>Every <code class="i">query()</code> call in this agent is <b>stateless</b> — each starts a fresh LLM conversation with no memory of prior turns. <code class="i">coverage_map</code> is Python state, re-injected into the system prompt at the start of every iteration so the model can "see" history. <b>SDK rung 3</b> (<code class="i">session_id</code> in <code class="i">ClaudeAgentOptions</code>) changes this: it gives the LLM a persistent conversation thread so you no longer need manual re-injection.</p></div>
+  <div class="card"><h3>📂 Your run log accumulates</h3><p><code class="i">study-prep_run_output.log</code> is written in append mode — every run adds a timestamped section. This file is the primary input for <code class="i">study-prep_learning-insights.html</code> (Part 2), generated after you run the agent.</p></div>
+  <div class="card"><h3>🎲 The <code class="i">[MODEL DECISION]</code> line is the agent/workflow boundary</h3><p>That line marks the moment where <em>the model</em> decided which tool to call, not your code. Replace it with <code class="i">if topic == "x": search_web()</code> and you'd have a workflow. The LLM choosing at runtime is what separates the two. G2 passes because of that one decision point.</p></div>
+</section>
+
+<!-- §8 GOTCHAS -->
+<section class="section s8">
+  <div class="sh"><div class="snum">8</div><h2>Gotchas</h2><span class="stag">Common traps</span></div>
+  <div class="gotcha"><div class="gtag">GOTCHA</div><h4>Counting duplicate URLs inflates coverage</h4><p>If <code class="i">search_web</code> returns a URL already in <code class="i">coverage_map[topic]</code>, adding it again makes <code class="i">is_coverage_met()</code> fire too early. Guard: <code>if url not in coverage_map[topic]: coverage_map[topic].append(url)</code></p></div>
+  <div class="gotcha"><div class="gtag">GOTCHA</div><h4>Hardcoding the tool sequence breaks G2</h4><p>If your code always calls <code class="i">search_web</code> first then <code class="i">fetch_page</code>, the model's decision is overridden. G2 fails — it's a workflow masquerading as an agent. Parse the model's response; never pre-select the tool in Python.</p></div>
+  <div class="gotcha"><div class="gtag">GOTCHA</div><h4>Treating a ConnectionError as structural</h4><p>A network timeout is <em>transient</em> (temporary). Letting it propagate crashes the loop and loses all collected sources. Classify as <code class="i">⚠ [ERROR: TRANSIENT]</code>, skip that URL, continue. Only halt on STRUCTURAL errors (bug in your code).</p></div>
+  <div class="gotcha"><div class="gtag">GOTCHA</div><h4>ANTHROPIC_API_KEY routing bypass</h4><p>If set in your shell, the SDK may route calls through the paid API instead of your Max plan CLI. <code class="i">preflight()</code> detects and strips it from the child-process env only — never from the global shell.</p></div>
+  <div class="gotcha"><div class="gtag">GOTCHA</div><h4>Testing only the happy path leaves G4 unverified</h4><p>The cap-reached exit is just as important as goal-met. Without a test for it, a runaway loop bug goes undetected. Both exits need their own fixture in <code class="i">smoke_test.py</code>.</p></div>
+  <div class="callout warn" style="margin-top:14px"><div class="ci">📝</div><div class="cb"><b>Why <code class="i">[PLAN REVISED]</code> doesn't fire here:</b> The study plan is linear — 3 fixed topics. The model searches them without needing to restructure. You'll first see <code class="i">[PLAN REVISED]</code> in cycle 3, when the model encounters an unexpected tool result and rearranges the remaining steps on its own.</div></div>
+</section>
+
+<!-- §9 CONTROL PLANE -->
+<section class="section s9">
+  <div class="sh"><div class="snum">9</div><h2>Control Plane</h2><span class="stag">Agent vs Workflow</span></div>
+  <div class="grid2">
+    <div class="card"><h3 style="color:var(--blue)">🐍 Python owns</h3><ul><li>Loop structure (<code class="i">while</code> condition)</li><li>Tool implementations (mock functions)</li><li>Session memory (<code class="i">coverage_map</code>)</li><li>Goal predicate (<code class="i">is_coverage_met</code>)</li><li>Circuit breaker (<code class="i">MAX_ITERATIONS</code>)</li></ul></div>
+    <div class="card"><h3 style="color:var(--purple)">🤖 Model owns</h3><ul><li>Which topic to prioritise next</li><li>Which tool to call (<code class="i">search_web</code> vs <code class="i">fetch_page</code>)</li><li>The search query string</li><li>Whether to reformulate on duplicates</li></ul></div>
+  </div>
+  <table style="margin-top:14px">
+    <thead><tr><th>Decision</th><th>In this agent</th><th>In a workflow equivalent</th></tr></thead>
+    <tbody>
+      <tr><td>Which topic?</td><td style="color:var(--green)">Model picks based on coverage_map</td><td style="color:var(--muted)">Code iterates topics[0], [1], [2]</td></tr>
+      <tr><td>search or fetch?</td><td style="color:var(--green)">Model decides per iteration</td><td style="color:var(--muted)">Code always calls search, then fetch</td></tr>
+      <tr><td>Reformulate query?</td><td style="color:var(--green)">Model detects duplicates and adapts</td><td style="color:var(--muted)">Explicit duplicate-check logic in code</td></tr>
+      <tr><td>When to stop?</td><td>Predicate + cap (agent)</td><td style="color:var(--muted)">Fixed iteration count (workflow)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- §10 GLOSSARY -->
+<section class="section s10">
+  <div class="sh"><div class="snum">10</div><h2>SDK Glossary</h2><span class="stag">Terms</span></div>
+  <table>
+    <thead><tr><th>Term</th><th>Definition for this agent</th></tr></thead>
+    <tbody>
+      <tr><td><code class="i">query()</code></td><td>Async generator. Yields <code class="i">AssistantMessage</code>, <code class="i">ResultMessage</code>, and other messages. Stateless — no memory between calls.</td></tr>
+      <tr><td><code class="i">ClaudeAgentOptions</code></td><td>Config: <code class="i">system_prompt</code>, <code class="i">model</code>, <code class="i">max_turns=1</code> for rung 1, <code class="i">env</code> (strips API key), <code class="i">permission_mode</code>.</td></tr>
+      <tr><td><code class="i">AssistantMessage</code></td><td>The model's response. <code class="i">.content</code> is a list of <code class="i">TextBlock | ToolUseBlock | ThinkingBlock</code>. Read <code class="i">TextBlock.text</code> for text.</td></tr>
+      <tr><td><code class="i">ResultMessage</code></td><td>Final message in the stream. <code class="i">.result</code> = combined text output. <code class="i">.usage</code> = dict with token counts. <code class="i">.total_cost_usd</code> = float.</td></tr>
+      <tr><td>Goal predicate</td><td>Python function returning <code class="i">bool</code>. Called every iteration. The testable, unambiguous stopping condition.</td></tr>
+      <tr><td>Circuit breaker</td><td><code class="i">MAX_ITERATIONS = 10</code>. Hard cap — fires regardless of goal state. Prevents infinite loops.</td></tr>
+      <tr><td>Session memory</td><td>State in Python RAM for one run. <code class="i">coverage_map</code> here. Discarded at exit.</td></tr>
+      <tr><td>Trust fence</td><td>Wrapper around external content before LLM injection. Prevents prompt injection from web pages.</td></tr>
+      <tr><td><code class="i">tee_to_log()</code></td><td>Context manager that mirrors every <code class="i">print()</code> to a log file (append, never overwrite). Input for Part 2.</td></tr>
+      <tr><td><code class="i">MessageLens</code></td><td>Helper that renders each SDK message as one <code class="i">  ┆</code>-prefixed console line. Makes raw SDK traffic visible.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- §11 MCQ -->
+<section class="section s11">
+  <div class="sh"><div class="snum">11</div><h2>MCQ Self-Check</h2><span class="stag">Test yourself</span></div>
+
+  <div class="mcq">
+    <div class="mq">1. Why does the agent re-inject <code class="i">coverage_map</code> into the system prompt at the start of every iteration?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="ans(this,false)">A) To give the model persistent memory across restarts</button>
+      <button class="mopt" onclick="ans(this,true)">B) Because each <code>query()</code> is stateless — the model starts fresh and needs current state re-injected</button>
+      <button class="mopt" onclick="ans(this,false)">C) To speed up the SDK call by caching the prompt</button>
+    </div>
+    <div class="mex">Correct. Every <code>query()</code> is stateless — no memory of prior calls. <code>coverage_map</code> is Python-side state. Re-injection is how the model "observes" history. SDK rung 3 (<code>session_id</code> in <code>ClaudeAgentOptions</code>) replaces this pattern.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">2. What would happen if you removed the duplicate-URL guard from the <code class="i">coverage_map</code> update?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="ans(this,false)">A) The agent would crash with a KeyError</button>
+      <button class="mopt" onclick="ans(this,true)">B) The goal predicate would fire too early — GOAL MET with fewer than 2 real distinct sources</button>
+      <button class="mopt" onclick="ans(this,false)">C) Nothing — duplicates don't affect list length</button>
+    </div>
+    <div class="mex">Correct. Without the guard, the same URL counted twice makes <code>len(sources) >= 2</code> return True after only one real source. False positive goal-met.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">3. What is the single clearest difference between this agent and a workflow that does the same task?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="ans(this,false)">A) The agent runs faster because it uses async/await</button>
+      <button class="mopt" onclick="ans(this,true)">B) In the agent, the model decides which topic and tool to use next at runtime; in a workflow, that sequence is hardcoded in Python</button>
+      <button class="mopt" onclick="ans(this,false)">C) The agent has more code — that's what makes it more capable</button>
+    </div>
+    <div class="mex">Correct. The <code>🎲 [MODEL DECISION]</code> line is the proof: the model selects <code>search_web</code> or <code>fetch_page</code> based on current coverage state — a decision that couldn't be hardcoded in advance.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">4. The agent runs 10 iterations and <code class="i">is_coverage_met()</code> still returns False. Which exit fires?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="ans(this,false)">A) <code>🏁 GOAL MET</code></button>
+      <button class="mopt" onclick="ans(this,true)">B) <code>🏁 EXIT: cap reached</code></button>
+      <button class="mopt" onclick="ans(this,false)">C) The agent keeps running until the goal is met</button>
+    </div>
+    <div class="mex">Correct. The circuit breaker overrides the goal predicate. <code>MAX_ITERATIONS = 10</code> is a hard cap — the agent exits with <code>EXIT: cap reached</code> regardless of coverage state. This is G4: principled termination requires BOTH a goal exit AND a hard cap.</div>
+  </div>
+
+  <div class="mcq">
+    <div class="mq">5. Why is the trust fence applied inside <code class="i">fetch_page()</code> rather than at the call site?</div>
+    <div class="mopts">
+      <button class="mopt" onclick="ans(this,false)">A) It reduces the character count of the prompt</button>
+      <button class="mopt" onclick="ans(this,true)">B) So it cannot be accidentally skipped — every caller gets the fence whether they think about it or not</button>
+      <button class="mopt" onclick="ans(this,false)">C) It's a performance optimisation that runs once per URL</button>
+    </div>
+    <div class="mex">Correct. Applying the fence at the source (inside the function) means no caller can forget it. If the fence were at the call site, a future developer calling <code>fetch_page()</code> from a new code path might skip it, opening a prompt-injection vulnerability.</div>
+  </div>
+</section>
+
+<!-- §12 CHECKLIST -->
+<section class="section s12">
+  <div class="sh"><div class="snum">12</div><h2>Takeaway &amp; Ready-Gate</h2><span class="stag">Before you run</span></div>
+  <div class="callout ok"><div class="ci">🎓</div><div class="cb"><b>Core takeaway from rungs 1+2:</b> An agent is a goal-driven loop where the model owns at least one branching decision per iteration and prior observations change subsequent actions. The circuit breaker ensures it terminates. Remove any of these four properties and you have a workflow.</div></div>
+  <ul class="chk">
+    <li><span class="ck">✓</span>I can describe what <code class="i">is_coverage_met()</code> does and why it returns <code class="i">bool</code></li>
+    <li><span class="ck">✓</span>I understand that each <code class="i">query()</code> is stateless — <code class="i">coverage_map</code> must be re-injected each call</li>
+    <li><span class="ck">✓</span>I can name what the model decides vs what Python decides</li>
+    <li><span class="ck">✓</span>I know why both exit paths must be tested in <code class="i">smoke_test.py</code></li>
+    <li><span class="ck">✓</span>I understand what the trust fence prevents and where it lives</li>
+    <li><span class="ck">✓</span>I know where <code class="i">study-prep_run_output.log</code> appears and what it's for</li>
+  </ul>
+  <div class="callout info" style="margin-top:14px"><div class="ci">▶</div><div class="cb"><b>You're ready.</b> Open PyCharm, follow §6, and watch the output. After your run, say "I ran it" and we'll generate Part 2 from the log.</div></div>
+</section>
+
+<!-- §13 PROVENANCE -->
+<section class="section s13">
+  <div class="sh"><div class="snum">13</div><h2>Provenance</h2></div>
+  <div class="card" style="font-size:13px;color:var(--muted)">
+    <table style="margin-bottom:0">
+      <tr><td style="width:160px;padding:5px 0">Slug</td><td style="color:var(--text)"><code class="i">study-prep</code></td></tr>
+      <tr><td style="padding:5px 0">Cycle / date</td><td style="color:var(--text)">1 · 2026-06-07</td></tr>
+      <tr><td style="padding:5px 0">SDK rungs</td><td style="color:var(--text)">1 (query + message anatomy) · 2 (goal predicate + loop + circuit breaker)</td></tr>
+      <tr><td style="padding:5px 0">Learning position</td><td style="color:var(--text)">FORWARD (both rungs new)</td></tr>
+      <tr><td style="padding:5px 0">Gate verdicts</td><td style="color:var(--text)">G1 ✓ G2 ✓ G3 ✓ G4 ✓ G5 N/A</td></tr>
+      <tr><td style="padding:5px 0">SDK version</td><td style="color:var(--text)">claude-agent-sdk 0.2.93 (verified)</td></tr>
+      <tr><td style="padding:5px 0">Companion</td><td style="color:var(--text)"><code class="i">study-prep_learning-insights.html</code> (Part 2, post-run)</td></tr>
+      <tr><td style="padding:5px 0">Spec</td><td style="color:var(--text)">CLAUDE.md FR-C5 · PRD v8 FINAL</td></tr>
+    </table>
+  </div>
+</section>
+</main>
+
+<script>
+function ans(btn,correct){
+  const item=btn.closest('.mcq');
+  item.querySelectorAll('.mopt').forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'ok2':'no');
+  if(!correct) item.querySelectorAll('.mopt').forEach(o=>{if(o.getAttribute('onclick').includes('true'))o.classList.add('ok2');});
+  item.querySelector('.mex').classList.add('show');
+}
+</script>
+</body>
+</html>
