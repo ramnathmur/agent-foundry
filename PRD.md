@@ -1,6 +1,6 @@
-# PRD — Agent Foundry v8 (FINAL)
+# PRD — Agent Foundry v9 (FINAL)
 
-**Status:** v8 FINAL — lock-ready
+**Status:** v9 FINAL — lock-ready
 **Date:** 2026-06-07
 **Owner:** Ram | **Author:** Claude | **Reviewers:** Claude (adversarial), OpenAI (external), Senior Product Manager persona (traceability), Ram (architecture)
 
@@ -530,6 +530,56 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
     records `{"skipped": true}`. Does NOT re-trigger `INSIGHTS.md` regeneration (that
     happens at end of Phase F). If Phase F was also skipped and this is the only
     structured record, trigger `INSIGHTS.md` regeneration here instead.
+
+- FR-F6: **Phase 0 — Session Warm-Up** *(new in v9; mandatory cycle 2+, skippable cycle 1)*
+  Fires automatically at every "begin the brainstorm" / "new agent" trigger after cycle 1,
+  immediately after Claude reads the four session state files and before any brainstorm
+  question is asked. Ram bypasses with "skip warm-up."
+  - **Part A — Brief (target 2–3 minutes, one-way):** Structured in-chat block with labeled
+    sections delivered in this order: (1) Report card — drawn from `report_card` registry
+    object: agents built, SDK rungs introduced, domains covered, gates ever demonstrated.
+    (2) Complexity arc — one sentence per prior cycle showing how agents grew in
+    sophistication. (3) Top 2 active gaps — from latest agent's `learning.gaps[]`, with
+    source cycle noted. (4) Gotchas mastered — plain-English summary of `gotchas_mastered[]`
+    accumulated across all cycles. (5) Forward seed — names the specific next SDK rung and
+    one sentence on what it unlocks for future agents. Format: emoji-labeled block using the
+    standard layout defined in the Phase 0 prompt spec (🧠 header, ━━━ dividers, per-item
+    emoji labels 📊 📈 🔍 ⚠️ 🔮).
+  - **Part B — Interrogation (target 3–5 minutes, Socratic dialogue):** 2–3 recall questions,
+    one at a time. Sources: `recall_question_next_cycle` from most recent agent, active
+    `learning.gaps[]`, and (when present) a specific labeled output line from `post_run_notes`.
+    Claude waits for Ram's answer before proceeding. On a correct answer: one-sentence
+    validation, move on. On a partial answer: one Socratic counter-question anchored to a
+    specific code line (file:line) or runtime output line label (e.g. `[MODEL DECISION]`);
+    then give the explanation. Maximum one counter per question — never loops. After all
+    questions, one forward-looking sentence connecting what was recalled to what the brainstorm
+    will explore. Never ask more than 3 questions in Part B.
+  - **Hard rules:** Never score or grade. Never exceed 8 minutes total. Never draw recall
+    questions from generic agent knowledge — only from this project's registry artifacts.
+    Part A always completes before Part B begins. Phase 0 ends before brainstorm starts.
+  - **Registry dependency:** Phase 0 reads `report_card` (FR-E6) and `gotchas_mastered[]`
+    (FR-E6). If these fields are absent (cycle 1 edge case), skip Phase 0 gracefully and
+    note that warm-up will begin at cycle 2.
+
+### Phase E — Registry & bookkeeping (additions)
+- FR-E6: **Cross-cycle registry fields** — written at the end of every cycle (step 8 of
+  Operating Cycle), after Phase F2 or after Phase F if F2 is skipped:
+  - **`gotchas_mastered[]`** (top-level array, cumulative): append this agent's `GOTCHA[]`
+    annotations in plain English, one entry per annotation. Never duplicate an existing
+    entry. Source: grep `GOTCHA[` from `main.py`, extract the trap name and plain-English
+    description. This array is the input for Phase 0 Part A item (4).
+  - **`report_card`** (top-level object, regenerated each cycle from full `agents[]`):
+    ```json
+    {
+      "agents_understood": ["slug1", "slug2"],
+      "sdk_rungs_introduced": [1, 2, 3],
+      "gate_verdicts_summary": {"G1": "demonstrated", "G2": "demonstrated", "G3": "demonstrated", "G4": "demonstrated", "G5": "N/A"},
+      "domain_coverage": {"morning-briefing": 1, "learning-research": 1},
+      "top_active_gaps": ["gap concept 1 (cycle N)", "gap concept 2 (cycle N)"]
+    }
+    ```
+    Overwrite the previous value on every cycle. This object is the input for Phase 0
+    Part A item (1) and is the "report card" delivered in the session warm-up.
 
 ## 6. Non-Goals (explicit)
 

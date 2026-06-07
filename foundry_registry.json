@@ -18,6 +18,14 @@
     "7_independent_verifier": "not_started",
     "8_subagents_compaction": "not_started"
   },
+  "gotchas_mastered": [],
+  "report_card": {
+    "agents_understood": [],
+    "sdk_rungs_introduced": [],
+    "gate_verdicts_summary": {},
+    "domain_coverage": {},
+    "top_active_gaps": []
+  },
   "_agent_schema_note": {
     "description": "Schema for each entry in agents[]. Written at end of cycle.",
     "fields": {
@@ -41,6 +49,11 @@
         "next_cycle_expectation": "string — what Ram predicts the next SDK rung will unlock",
         "skipped": "boolean — true if Phase F2 was skipped without any interaction"
       }
+    },
+    "_cross_cycle_fields_note": {
+      "description": "Top-level fields written/updated at the end of every cycle (step 8). Used by Phase 0 Session Warm-Up.",
+      "gotchas_mastered": "top-level array — cumulative plain-English GOTCHA[] annotations across all agents; appended each cycle, never overwritten",
+      "report_card": "top-level object — regenerated each cycle from full agents[]; fields: agents_understood[], sdk_rungs_introduced[], gate_verdicts_summary{}, domain_coverage{}, top_active_gaps[]"
     }
   },
   "agents": [],

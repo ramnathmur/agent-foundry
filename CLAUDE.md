@@ -34,6 +34,23 @@ python main.py
 **Session start — read these files before doing anything:**
 `HANDOFF.md` → `INSIGHTS.md` → `foundry_registry.json` (agents + brainstorm_sessions + preferences) → `ROADMAP.md`
 
+0. **Session Warm-Up** (Phase 0 — skippable on cycle 1; mandatory cycle 2+) — after reading the
+   session state files, before the brainstorm begins: deliver the two-part Professor warm-up.
+   Ram may bypass at any time with "skip warm-up." Full spec in PRD.md FR-F6.
+   **Part A — Brief (target 2–3 min, one-way):** (1) report card drawn from `report_card`
+   object in registry (agents built, rungs introduced, domains, gates ever demonstrated),
+   (2) complexity arc — one sentence per prior cycle, (3) top 2 active gaps from latest
+   agent's `learning.gaps[]`, (4) gotchas mastered — plain-English summary from
+   `gotchas_mastered[]` in the registry, (5) forward seed — next SDK rung and what it unlocks.
+   **Part B — Interrogation (target 3–5 min, Socratic dialogue):** 2–3 recall questions drawn
+   from `recall_question_next_cycle`, `learning.gaps[]`, and a specific runtime output line
+   from `post_run_notes` (if present). One question at a time; wait for Ram's answer before
+   proceeding. On a partial answer, give one counter-question anchored to a specific code line
+   or output line; then give the explanation. End Phase 0 with a forward-looking sentence
+   connecting what was recalled to what the upcoming brainstorm will explore.
+   **Rules:** Never score or grade. Never ask more than 3 questions in Part B. Total ≤ 8 min.
+   Draw all recall questions only from registry artifacts — never from generic agent knowledge.
+
 1. **Brainstorm** — adaptive Q&A (daily-life scope), 9-trait scorecard + G1–G5 gate verdict
    per candidate. For every candidate, compute and display its **Learning Position** label
    before the gate verdict:
@@ -90,7 +107,13 @@ python main.py
    §6 (Recommended focus) must follow the **5-cycle synthesis arc template in PRD.md FR-E4**
    — do not write it as free-form prose. The template provides the synthesis statement,
    cross-agent link, and opening recall question for each cycle number.
-8. **Update** `ROADMAP.md` and `HANDOFF.md`.
+8. **Update** `ROADMAP.md`, `HANDOFF.md`, and registry cross-cycle fields:
+   - Append this agent's `GOTCHA[]` annotations (plain English, one bullet each) to
+     `gotchas_mastered[]` at the top level of `foundry_registry.json`. Never duplicate
+     an entry already present — check for an exact or near-exact match before appending.
+   - Regenerate `report_card` object from the full `agents[]` array:
+     `{agents_understood[], sdk_rungs_introduced[], gate_verdicts_summary,
+     domain_coverage[], top_active_gaps[]}`. Overwrite the previous value.
 8.5 **Phase F2 — post-run Professor session** (skippable) — triggered by Ram saying "I ran it"
    or equivalent after running `main.py` in PyCharm. Purpose: reinforce agentic concepts
    anchored to actual runtime output lines (not code alone). Ask 3–5 probes drawn from:
