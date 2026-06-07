@@ -1,13 +1,11 @@
 <div align="center">
 
-# 🏭 Agent Foundry
+![Agent Foundry — Feynman quote banner](docs/feynman-banner.svg)
 
 [![PRD Version][prd-shield]][prd-link]
 [![Python][python-shield]][python-link]
 [![Platform][platform-shield]][platform-link]
 [![Status][status-shield]][status-link]
-
-_You don't learn to cook by reading recipes. You learn by cooking._
 
 **Agent Foundry teaches you how AI agents work by having you build one — in every session, with an AI tutor at your side. You describe an idea. Claude builds the agent, explains it to you, and then quizzes you on what you saw when it ran. No coding experience required to get started.**
 

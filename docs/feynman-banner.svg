@@ -1,0 +1,65 @@
+<svg viewBox="0 0 960 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent Foundry — Feynman quote banner">
+  <defs>
+    <!-- Divider gradient: fades to transparent at top and bottom -->
+    <linearGradient id="divider" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0"/>
+      <stop offset="20%"  stop-color="#3b82f6" stop-opacity="0.8"/>
+      <stop offset="80%"  stop-color="#3b82f6" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Left-edge accent bar gradient -->
+    <linearGradient id="left-accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1d4ed8" stop-opacity="0"/>
+      <stop offset="30%"  stop-color="#3b82f6" stop-opacity="1"/>
+      <stop offset="70%"  stop-color="#3b82f6" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Right panel subtle glow behind project name -->
+    <radialGradient id="right-glow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"   stop-color="#1e3a5f" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#1e293b" stop-opacity="1"/>
+    </radialGradient>
+    <style>
+      .serif  { font-family: Georgia, 'Times New Roman', serif; }
+      .sans   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- ── Left panel — quote ── -->
+  <rect x="0"   y="0" width="590" height="280" fill="#0f172a"/>
+  <!-- Left edge accent bar -->
+  <rect x="0"   y="0" width="3"   height="280" fill="url(#left-accent)"/>
+
+  <!-- Decorative oversized opening quote mark -->
+  <text x="54" y="150" font-size="130" fill="#3b82f6" opacity="0.12" class="serif">"</text>
+
+  <!-- Quote line 1 -->
+  <text x="78" y="138" font-size="24" fill="#f1f5f9" font-style="italic" class="serif">What I cannot create,</text>
+  <!-- Quote line 2 -->
+  <text x="78" y="172" font-size="24" fill="#f1f5f9" font-style="italic" class="serif">I do not understand.</text>
+
+  <!-- Closing quote mark (small, inline-style) -->
+  <text x="433" y="172" font-size="24" fill="#3b82f6" opacity="0.5" class="serif">"</text>
+
+  <!-- Attribution line -->
+  <text x="80" y="212" font-size="13" fill="#475569" class="serif">— Richard Feynman</text>
+
+  <!-- ── Divider ── -->
+  <rect x="589" y="0" width="2" height="280" fill="url(#divider)"/>
+
+  <!-- ── Right panel — project identity ── -->
+  <rect x="591" y="0" width="369" height="280" fill="url(#right-glow)"/>
+
+  <!-- Factory emoji -->
+  <text x="775" y="114" font-size="38" text-anchor="middle" class="sans">🏭</text>
+
+  <!-- Project name -->
+  <text x="775" y="152" font-size="21" fill="#f8fafc" font-weight="700" text-anchor="middle" letter-spacing="0.5" class="sans">Agent Foundry</text>
+
+  <!-- Thin rule under project name -->
+  <line x1="726" y1="163" x2="824" y2="163" stroke="#3b82f6" stroke-width="1" opacity="0.45"/>
+
+  <!-- Tagline — mirrors the Feynman structure -->
+  <text x="775" y="186" font-size="13" fill="#60a5fa" text-anchor="middle" class="sans">Build it.  Understand it.</text>
+
+</svg>
