@@ -7,43 +7,230 @@
 [![Platform][platform-shield]][platform-link]
 [![Status][status-shield]][status-link]
 
-_Learn agents by building them — one daily-life idea per session, one runnable Python agent per cycle._
+_You don't learn to cook by reading recipes. You learn by cooking._
 
-**Agent Foundry is a personal learning system that turns brainstormed ideas into fully annotated, runnable AI agents. Claude Desktop generates the code; PyCharm is where you read and run it. No separate application to install. No API keys. The code is the curriculum.**
+**Agent Foundry teaches you how AI agents work by having you build one — in every session, with an AI tutor at your side. You describe an idea. Claude builds the agent, explains it to you, and then quizzes you on what you saw when it ran. No coding experience required to get started.**
 
 </div>
+
+---
+
+![Agent Foundry Learning Cycle](docs/cycle-diagram.svg)
+
+---
 
 <details>
 <summary><kbd>Table of Contents</kbd></summary>
 
-- [What It Is](#-what-it-is)
-- [How One Cycle Works](#-how-one-cycle-works)
-- [SDK Concept Ladder](#-sdk-concept-ladder)
-- [What Each Cycle Produces](#-what-each-cycle-produces)
-- [Agency Gates](#-agency-gates-g1g5)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Project Structure](#-project-structure)
-- [After Five Cycles](#-after-five-cycles)
-- [Honest Caveats](#-honest-caveats)
+- [What is an AI agent?](#-what-is-an-ai-agent)
+- [What does Agent Foundry do?](#-what-does-agent-foundry-do)
+- [Your AI tutor](#-your-ai-tutor-the-professor)
+- [What you will produce](#-what-you-will-produce)
+- [What you will learn](#-what-you-will-learn-by-the-end)
+- [What one session looks like](#-what-one-session-looks-like)
+- [Is this for me?](#-is-this-for-me)
+- [What you need](#-what-you-need)
+- [How to start](#-how-to-start)
+- [Honest caveats](#-honest-caveats)
 
 </details>
 
 ---
 
-## 🎯 What It Is
+## 🤖 What is an AI agent?
 
-Most learning about AI agents is theoretical — articles, slides, and explanations that describe what agents *should* do. Agent Foundry forces a different approach: you build one, watch it run, and explain from a specific code line or output line exactly why it behaves the way it does.
+Most people know AI as something that answers questions — you ask, it replies. An **AI agent** is different. It can:
 
-Every session (one "cycle") follows the same arc:
+- **Set itself a goal** — like "find and summarise the top three tech stories today"
+- **Decide what to do next** — not following a fixed script, but choosing based on what it finds
+- **Use tools** — search the web, read files, call APIs
+- **Check whether it's finished** — and keep going until it is
+
+The difference between a chatbot and an agent is like the difference between a vending machine and a personal assistant. The vending machine does exactly what you press. The assistant figures out what you need and takes steps to get it done.
+
+Agent Foundry builds you one of these. Then it explains, step by step, exactly what the agent did and why.
+
+<div align="right">
+
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 🏗️ What does Agent Foundry do?
+
+It turns your daily-life ideas into real, running AI agents — and teaches you what makes them tick.
+
+Here is the experience in plain English:
+
+1. **You describe an idea.** Something from daily life: "I want an agent that reads the top tech news each morning and gives me a three-sentence summary." No technical spec needed.
+
+2. **Claude proposes it back to you — with an honest evaluation.** It tells you whether your idea qualifies as a true agent (with reasons), and suggests 3–4 candidates ranked by how much new learning each one would introduce.
+
+3. **Claude builds everything.** All the code, all the tests, all the documentation. You do not write a single line. A full "learning kit" of 8 files lands in your project folder.
+
+4. **You read the guide first, then run the agent.** A visual guide (an HTML file you open in your browser) explains what you are about to see — in plain English — before you run anything. Then you run the agent in PyCharm with one click.
+
+5. **Your AI tutor checks in.** Before your run, the Professor explains the key ideas. After your run, the Professor asks you questions about specific lines from your output — not from memory, from evidence you can point to on screen.
+
+6. **A second guide is generated from your actual run.** It quotes lines from what your agent printed and explains why each one proves the agent was thinking, deciding, and working toward a goal — not just following a script.
+
+> Every session builds on the last. By your fifth session, you have five agents, each more capable than the one before, and a growing ability to look at *any* agent and explain what it is doing and why.
+
+<div align="right">
+
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 🎓 Your AI Tutor — The Professor
+
+Every session includes a built-in AI tutor called the Professor. It has two jobs.
+
+### Before you run — the preview conversation
+
+The Professor explains what you are about to see:
+
+- What goal the agent is trying to reach
+- What decisions the agent will make on its own (versus what the code forces it to do)
+- One or two things to watch for in the output
+- What was discussed in your last session — a quick "what do you remember?" before you start something new
+
+This takes about 5–10 minutes. It is a conversation, not a lecture. You can skip it if you are in a hurry.
+
+### After you run — the debrief
+
+After you say **"I ran it"** in Claude Desktop, the Professor comes back.
+
+This time, every question is anchored to your actual output:
+
+> *"Find the line that says* `[MODEL DECISION]` *in your terminal. Who made that choice — your Python code, or the AI? How do you know?"*
+
+You are not being asked to recite a definition. You are being asked to point to evidence. This is why the post-run conversation is usually more useful than the pre-run one — you have something real to look at.
+
+The Professor never scores you. There are no grades, no pass/fail, no rubrics. If you get something wrong, you get one follow-up question pointing you to the right line. Then the explanation. Then you move on.
+
+<div align="right">
+
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 📦 What you will produce
+
+Every session generates a complete "learning kit" in a folder. Here is what you get, in plain English:
+
+| What it is | What it does |
+|---|---|
+| 📄 **The blueprint** (`prompt.md`) | The plain-English spec Claude used to build your agent. Read this first if you want to understand the design decisions. |
+| 📖 **The pre-run guide** (`_learning-guide.html`) | A beautifully formatted HTML file you open in your browser. Explains what the agent does, why it qualifies as an agent, and what to watch for when it runs. Includes a short quiz. |
+| 🐍 **The agent itself** (`main.py`) | The Python program that runs your agent. One click in PyCharm. |
+| 🧪 **The test** (`smoke_test.py`) | An automated test Claude runs to make sure the agent works before handing it over. You don't need to touch this. |
+| 📋 **The run log** (`_run_output.log`) | Everything your agent printed when it ran — saved automatically. The post-run guide is built from this file. |
+| ✨ **The post-run insights** (`_learning-insights.html`) | Generated after your first run. Quotes actual lines from your log to prove — with evidence — that your agent was genuinely making decisions, not just following a script. Includes flashcards and a quiz built from *your specific run*. |
+
+After five sessions you will have five complete kits, each introducing a new capability.
+
+<div align="right">
+
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 🧭 What you will learn by the end
+
+You do not need to become a programmer to get value from Agent Foundry. Here is what you will be able to do after five sessions, in plain English:
+
+**After session 1:**
+You can explain, from your actual terminal output, what your agent was trying to do, when it made a decision, and when the Python code made the decision instead.
+
+**After session 2:**
+You can describe the difference between an agent that starts fresh every time it calls the AI versus one that remembers what it said before.
+
+**After session 3:**
+You can point to a line in the output called `[MODEL DECISION]` and explain exactly why the AI — not the code — chose that action. You can articulate why this matters.
+
+**After session 4:**
+You can explain what it means for an agent to verify its own work using a separate AI call, and why that is different from just checking your own answer.
+
+**After session 5:**
+You can look at any agent you encounter — in a product, an article, or a job interview — and identify whether it is a real agent or just a script with an AI label on it. You will have a framework and the vocabulary to back your judgment up.
+
+<div align="right">
+
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 🗓️ What one session looks like
+
+A typical session takes 30–60 minutes depending on how deeply you engage with the Professor.
 
 ```
-Brainstorm → Lock → Generate 8 files → Read guide → Run in PyCharm → Professor Q&A → Insights
+You open Claude Desktop and say: "new agent"
+         │
+         ▼
+🧠  The Professor recaps what you built last time
+    and asks you 2–3 questions about it
+         │
+         ▼
+💭  Claude proposes 3–4 agent ideas based on your interests
+    You pick one (or bring your own idea)
+         │
+         ▼
+⚙️  Claude builds all 8 files — you watch, ask questions
+    Claude runs its own tests before handing over
+         │
+         ▼
+📖  You read the pre-run guide in your browser (≈10 min)
+         │
+         ▼
+🎓  Optional: the Professor explains what you're about to see
+         │
+         ▼
+▶   You run the agent in PyCharm with one click
+    Your terminal fills with labeled, annotated output
+    The result appears at the end
+         │
+         ▼
+🎓  You say "I ran it" — the Professor asks 3–5 questions
+    about lines from your actual output
+         │
+         ▼
+✨  Claude generates your post-run insights guide
+    from your real run log
 ```
 
-Each new agent introduces at least one Claude Agent SDK concept the previous one did not. By cycle 5, you have built five agents across eight SDK rungs and can apply the same acceptance framework to any agent you encounter in the wild.
+<div align="right">
 
-**The key architectural decision:** Claude Desktop is the Foundry. There is no application to install. All brainstorming, gating, code generation, and QA happen in this chat. PyCharm is exclusively where you read and run generated agents.
+[back to top](#-agent-foundry)
+
+</div>
+
+---
+
+## 🙋 Is this for me?
+
+**You will get the most out of Agent Foundry if:**
+- You are genuinely curious about AI agents and want more than a surface-level explanation
+- You are comfortable running a program from a menu — the equivalent of pressing Play
+- You are willing to have a 10-minute conversation with an AI tutor about what you just saw
+- You do not need to build agents yourself right now — you want to understand how they work
+
+**You will not get much out of it if:**
+- You want to be guided passively — the Professor will ask you questions, and you need to engage with them
+- You want to modify or extend the generated agents — that requires Python knowledge this project does not teach
+
+**On coding:** You do not need to know Python to run the agents or follow the guides. The pre-run guide includes a "Python Reading Primer" — five concepts you need to recognise (not write) to follow the code. If you can read a recipe, you can follow the guide.
 
 <div align="right">
 
@@ -53,137 +240,18 @@ Each new agent introduces at least one Claude Agent SDK concept the previous one
 
 ---
 
-## 🔄 How One Cycle Works
+## 🔧 What you need
 
-<details>
-<summary>Expand to see all eight phases</summary>
-
-### Phase 0 — Session Warm-Up *(mandatory from cycle 2)*
-The Professor briefs you on what you built last cycle: report card, complexity arc, active gaps, gotchas you've caught, and what the next SDK rung will unlock. Then 2–3 recall questions anchored to your actual runtime output. No scoring. ≤ 8 minutes. Skip with `skip warm-up`.
-
-### Phase A — Brainstorm
-Claude reads your learning state and proposes 3–4 candidates, each with:
-- A **Learning Position label** — `FORWARD` (new SDK rung), `FOUNDATIONAL` (targets your weakest gap), `LATERAL-RIGHT` (new domain), `DIAGNOSTIC` (deliberately fails a gate — offered every 2–3 cycles)
-- A **G1–G5 Agency Gate verdict**
-- A **9-trait scorecard**
-
-You can also shortcut the brainstorm entirely:
-- `Others: I want an agent that does X` — Claude gates-checks your idea directly
-- `Others: C:\path\to\spec.md` — Claude reads your spec file and runs the gate check
-
-### Phase B — Lock
-Type `lock <candidate name>`. Zero files are written before this. Claude shows a one-page mini-spec (goal predicate, tools, loop, termination, SDK rungs) and asks for a second confirmation.
-
-### Phase C — Generate
-Claude writes **8 mandated files** into `agents/<slug>/`, runs the smoke test (LLM mocked) in its sandbox, and repairs failures up to 3 times — narrating each fix. Hands over only on green.
-
-### Phase C (ordered) — Read the Learning Guide First
-The Part 1 HTML guide is delivered **before** `main.py`. It explains why this agent is an agent, maps each agentic trait to a function, shows annotated expected output, and includes a Python Reading Primer. Read it before opening PyCharm.
-
-### Phase F — Professor Session *(skippable, pre-run)*
-A ~10-minute Socratic conversation. The Professor asks 2–3 questions anchored to the code you just read. Probes target mechanism, not recall. One counter-question on a wrong answer, then a targeted explanation pointing to the exact code line.
-
-### Your Run
-Open PyCharm. Right-click `main.py` → Run. The agent prints 24+ labeled output lines — every SDK call boundary, every model decision, every goal predicate evaluation. The output is saved automatically to `<slug>_run_output.log`.
-
-### Phase F2 — Post-Run Professor Session *(skippable, triggered by "I ran it")*
-The more useful of the two Professor sessions. Every probe starts from a specific line in your runtime log — not the code. You explain real evidence, not recalled definitions.
-
-</details>
-
-<div align="right">
-
-[back to top](#-agent-foundry)
-
-</div>
-
----
-
-## 🪜 SDK Concept Ladder
-
-Each cycle introduces at least one new rung. Rungs are tracked in the registry so the brainstorm always builds forward.
-
-| Rung | SDK Concept | Enables |
-|------|-------------|---------|
-| **1** | `query()` + message anatomy (`SystemMessage`, `AssistantMessage`, `ResultMessage`, `usage`) | Basic agent loop; watching the LLM boundary |
-| **2** | Goal predicate + agent loop + circuit breaker | G1/G3/G4 in code; principled termination |
-| **3** | `ClaudeSDKClient` multi-turn + `session_id` capture/resume | Persistent context across SDK calls |
-| **4** | Custom tools (`@tool`) — model-owned tool selection | G2 fully demonstrable; `[MODEL DECISION]` acquires meaning |
-| **5** | `allowed_tools` / `permission_mode` | Dialling autonomy precisely; four documented modes |
-| **6** | Hooks: `PreToolUse` guard, `PostToolUse` audit + JSONL span trace | Intercept and audit every tool call |
-| **7** | Independent verifier — separate critic call, fresh context | G5 satisfied; trust as an architectural concern |
-| **8** | Subagents + context compaction | Multiple agents, bounded context, shared goal |
-
-<div align="right">
-
-[back to top](#-agent-foundry)
-
-</div>
-
----
-
-## 📦 What Each Cycle Produces
-
-Eight files are generated into `agents/<use-case-slug>/`. Nothing is left partial.
-
-| File | Purpose | When |
-|------|---------|------|
-| `prompt.md` | Blueprint — self-contained spec; a cold session can regenerate the agent from this alone | Before any Python |
-| `<slug>_learning-guide.html` | **Part 1** — pre-run reading artifact; 13 sections, MCQs, SVG loop diagram, Python Reading Primer | Before `main.py` |
-| `main.py` | Runnable agent — 24-element annotated runtime output | After Part 1 confirmed open |
-| `agent.py` | Agent loop / SDK wiring (only if `main.py` > ~150 lines) | With `main.py` |
-| `smoke_test.py` | QA tests with mocked LLM — must exit 0 before handover | With `main.py` |
-| `requirements.txt` | Pinned, verified-current packages | With `main.py` |
-| `README.md` | PyCharm run instructions only (mechanics, no concepts) | With `main.py` |
-| `<slug>_run_output.log` | Auto-saved runtime log via `tee_to_log()` — input for Part 2 | On first PyCharm run |
-| `<slug>_learning-insights.html` | **Part 2** — post-run reinforcement; 11 sections; agency proved from quoted output lines | After first run |
-
-<div align="right">
-
-[back to top](#-agent-foundry)
-
-</div>
-
----
-
-## ✅ Agency Gates G1–G5
-
-Every generated agent is accepted or rejected against five formal gates. **G1–G3 are mandatory** — if any fail, the artifact is labeled a workflow and a minimal fix is proposed.
-
-| Gate | Name | Pass Criterion |
-|------|------|----------------|
-| **G1** | Goal is a predicate | `goal_met(state) -> bool` called in code; verdict computed, not narrated |
-| **G2** | Model owns a real decision | At least one branch chosen by the model at run-time, visible in `[MODEL DECISION]` output |
-| **G3** | Closed observe→reason→act loop | Agent reads a tool result and a *subsequent* action demonstrably differs — proved by `[LOOP FEEDBACK]` line |
-| **G4** | Principled termination | Goal-predicate exit **and** hard cap/budget/timeout; both paths reachable |
-| **G5** | Verification is independent | Pass/fail from a deterministic predicate or separate critic call with fresh context *(introduced at rung 7)* |
-
-The gates are the same framework you apply to evaluate any agent you encounter outside this project.
-
-<div align="right">
-
-[back to top](#-agent-foundry)
-
-</div>
-
----
-
-## 🔧 Prerequisites
-
-- **Claude Desktop** with a [Claude Max plan](https://claude.ai) subscription (no API key — auth is via Claude Code CLI)
-- **PyCharm** (Community or Professional) on Windows
-- **Python 3.12+**
-- **Claude Code CLI** installed and logged in: `claude auth status`
-
-```bash
-# Verify your setup before starting cycle 1
-claude --version
-claude auth status
-python --version   # must be 3.12+
-```
+| Requirement | Details |
+|---|---|
+| **Claude Desktop** | Free to download — [claude.ai](https://claude.ai). Requires a **Claude Max plan** subscription (the agents authenticate through your account — no separate API key) |
+| **Claude Code CLI** | The command-line tool Claude uses to run agents. Install it from Claude Desktop settings. Verify with `claude auth status` in your terminal |
+| **PyCharm** | Free (Community edition). Where you run the generated agents — one right-click, then Run |
+| **Python 3.12+** | Free. Install from [python.org](https://www.python.org/downloads/) |
+| **Windows** | The agents are tested on Windows. macOS would likely work but is not officially supported here |
 
 > [!IMPORTANT]
-> This project **never** reads, sets, or asks for `ANTHROPIC_API_KEY`. All LLM calls go through `claude-agent-sdk` → Claude Code CLI → your Max plan subscription. If the key is set in your environment, the generated agent will warn and strip it from the child process — it will never use it.
+> This project never uses a paid API key. Everything runs through your Claude Max subscription. If you see something asking for `ANTHROPIC_API_KEY`, something has gone wrong — the generated agents will warn you and stop.
 
 <div align="right">
 
@@ -193,26 +261,30 @@ python --version   # must be 3.12+
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to start
 
-**Step 1 — Clone and open in Claude Desktop**
+**Step 1 — Get the project**
 
 ```bash
 git clone https://github.com/ramnathmur/agent-foundry.git
 ```
 
-Open the cloned folder as a project in Claude Desktop. Claude reads the session state files automatically.
+Or download the ZIP from the green **Code** button above.
 
-**Step 2 — Start the brainstorm**
+**Step 2 — Open it in Claude Desktop**
 
-Say `begin the brainstorm` or `new agent`. Claude reads `HANDOFF.md`, `INSIGHTS.md`, and the registry before responding. On cycle 1 you go straight to brainstorm; from cycle 2, the Professor warm-up fires first.
+Open Claude Desktop. Go to **Settings → Projects → New Project** and point it at the folder you just downloaded. Claude reads the project files automatically when the project opens.
 
-**Step 3 — Read Part 1, then run in PyCharm**
+**Step 3 — Say two words**
 
-After Claude hands over the files, double-click `<slug>_learning-guide.html` and read it before opening PyCharm. Then right-click `main.py` → **Run 'main'**. Come back to Claude and say `I ran it`.
+```
+new agent
+```
+
+That's it. Claude takes it from there — reading your learning history (if any), warming you up, and asking what kind of agent you want to build today.
 
 > [!NOTE]
-> The first run prints 24+ labeled output lines before the agent's actual result appears. This is intentional — each line is a teaching element mapped to a section in the learning guide. Part 1 shows you what to look for.
+> On your very first session there is no history to warm up on, so you go straight to the brainstorm. From session 2 onward, the Professor starts every session with a 5-minute recap of what you built and learned last time.
 
 <div align="right">
 
@@ -222,70 +294,17 @@ After Claude hands over the files, double-click `<slug>_learning-guide.html` and
 
 ---
 
-## 📁 Project Structure
+## ⚠️ Honest caveats
 
-```
-agent-foundry/
-├── agents/                          # All generated agents (one folder per cycle)
-│   └── <use-case-slug>/
-│       ├── prompt.md
-│       ├── main.py
-│       ├── smoke_test.py
-│       ├── requirements.txt
-│       ├── README.md
-│       ├── <slug>_learning-guide.html
-│       ├── <slug>_run_output.log
-│       └── <slug>_learning-insights.html
-├── reference/
-│   ├── agent_traits_chef_guide_v2.html      # 9-trait, 3-tier agentic framework
-│   └── Master-Guide-to-Create-Learning-Applications_v3.md
-├── CLAUDE.md                        # Operating guide for Claude (session instructions)
-├── PRD.md                           # Governing product spec (v9) — PRD wins on conflicts
-├── AGENT_LEARNING_AND_AGENCY_GATES.md  # Binding acceptance annex (G1–G5 definitions)
-├── HANDOFF.md                       # Session continuity — rewritten every cycle
-├── INSIGHTS.md                      # Learning synthesis — regenerated every cycle
-├── ROADMAP.md                       # One-line index of all agents built
-├── foundry_registry.json            # Structured learning record + cross-cycle state
-├── PROJECT.md                       # Machine-readable manifest for AI/tool access
-└── AgentFoundry_Project-Overview_v1.html  # Visual project overview (self-contained HTML)
-```
+**This is a personal learning project, not a product.** It was built for one person (Ram) and one setup (Windows + PyCharm + Claude Desktop). If something does not work on your machine, you are on your own — there is no support channel, no issue tracker, no community.
 
-<div align="right">
+**The agents do real things.** The generated agents can call public web APIs, read and write files, and run in loops. They are designed with safety limits (they always have a maximum number of steps and will stop) but you should understand what each agent does before running it. Read the pre-run guide.
 
-[back to top](#-agent-foundry)
+**The AI tutor is an AI.** The Professor is not a human. It will not notice if you are confused in ways you cannot articulate. If something is not clicking, the most effective thing to do is say so directly: "I don't understand what [LOOP FEEDBACK] means" — and the Professor will explain from your specific output.
 
-</div>
+**You need Claude Max.** The agents use the Claude Agent SDK, which requires a Max plan subscription. There is no free tier option for running the agents.
 
----
-
-## 📈 After Five Cycles
-
-| After cycle | New SDK rungs | What you can do |
-|-------------|---------------|-----------------|
-| 1 | 1–2 | Explain the O→R→A loop from a runtime output line; describe what happens between `[SDK →]` and `[← SDK]` |
-| 2 | 3 | Contrast stateless `query()` calls vs. persistent session context; explain why `session_id` matters |
-| 3 | 4–5 | Point to a `[MODEL DECISION]` line and explain why Python could not have predicted that choice |
-| 4 | 6–7 | Design a hook that intercepts tool calls; explain why G5 requires fresh context |
-| 5 | 8 | Describe subagent context boundaries; design a multi-agent system from requirements |
-
-By cycle 5 you can read any Python agent and identify — from the code — which Agency Gates it satisfies and why, or why it is actually a workflow.
-
-<div align="right">
-
-[back to top](#-agent-foundry)
-
-</div>
-
----
-
-## ⚠️ Honest Caveats
-
-- **Not a Python course.** You read code, not write it. The learning guide includes a 5-concept Python Reading Primer. To modify generated agents, you will need Python fundamentals from another source.
-- **Not a product for others.** This is designed for one student (Ram), one machine, one learning style. If you adapt it, you are on your own.
-- **Claude Max plan required.** No API key option. The agents authenticate via Claude Code CLI and your subscription.
-- **Windows + PyCharm only (tested).** The agents are standard `asyncio` Python and would likely work on macOS, but this is not part of the spec.
-- **The runtime output is intentionally verbose.** 24 labeled lines per iteration is a teaching instrument, not production logging. Agents built for real use would log differently.
-- **Simulation ≠ running.** The smoke test mocks the LLM. The only way to see real model decisions, real `[LOOP FEEDBACK]` deltas, and real goal predicate evaluations is to run `main.py` in PyCharm.
+**The learning compounds slowly.** Session 1 teaches you relatively little — there is not much to compare to. The real value starts at session 3, when you can contrast what you are building now against what you built before. Commit to at least three sessions before deciding whether this is working for you.
 
 <div align="right">
 
@@ -297,9 +316,9 @@ By cycle 5 you can read any Python agent and identify — from the code — whic
 
 <div align="center">
 
-**PRD v9 · Python 3.12+ · Claude Max plan · Windows + PyCharm**
+Want to understand AI agents from the inside out? **Say `new agent` in Claude Desktop.**
 
-Built with [Claude Code](https://claude.ai/code) · 2026
+_Built with [Claude Code](https://claude.ai/code) · Personal project · 2026_
 
 </div>
 
