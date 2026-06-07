@@ -50,9 +50,32 @@ python main.py
    connecting what was recalled to what the upcoming brainstorm will explore.
    **Rules:** Never score or grade. Never ask more than 3 questions in Part B. Total ≤ 8 min.
    Draw all recall questions only from registry artifacts — never from generic agent knowledge.
+   **`Others:` escape during Phase 0 Part B:** if Ram types `Others: <text or file path>` at
+   any point during Part B, stop the interrogation immediately and hand off to the Others
+   shortcut path in step 1 below. Part A is not affected — it always completes fully.
 
 1. **Brainstorm** — adaptive Q&A (daily-life scope), 9-trait scorecard + G1–G5 gate verdict
-   per candidate. For every candidate, compute and display its **Learning Position** label
+   per candidate.
+
+   **Routing question (fires first, before any Q&A):** Before proposing candidates, ask:
+   > "Do you have an idea in mind, or should I propose some?"
+   > A) Propose candidates — I'll suggest 3–4 based on your learning state *(default)*
+   > B) I have a specific idea — describe it now and I'll gate-check it directly
+   > C) Read my spec file — give me a file path and I'll read it
+
+   On option A: run the full brainstorm Q&A as normal.
+   On option B or C, or if Ram types `Others: <text or file path>` at any point during
+   the brainstorm Q&A or Phase 0 Part B: **Others shortcut** — stop the current flow,
+   then:
+   - If a file path was given: read the file; extract the candidate intent.
+   - Treat the description or extracted intent as the proposed candidate.
+   - Run the silent gate check (G1–G5 verdicts) and compute the Learning Position label.
+   - Surface any gate failures clearly before proceeding — never suppress them.
+   - Show the inferred Learning Position label prominently and invite correction.
+   - Log to `brainstorm_sessions[]` with `decision: "others-shortcut"`.
+   - Proceed directly to step 3 (mini-spec + confirmation). Skip step 2 (log fires here instead).
+
+   For every candidate, compute and display its **Learning Position** label
    before the gate verdict:
    - `FORWARD` — introduces ≥1 SDK rung not in any prior agent OR ≥1 trait/gate not yet
      exercised. The default recommendation. Always surface at least one FORWARD candidate.

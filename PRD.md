@@ -223,6 +223,27 @@ is narrated live in chat so Ram watches a feedback loop work before reading one.
   deliberate "workflow" and then extend it to meet the gates — this is a valid learning cycle.
 - FR-A4: Claude checks `foundry_registry.json` + ROADMAP.md first; no repeat candidates
   unless Ram asks for an iteration on an existing agent.
+- FR-A5: **Brainstorm routing question** — before any Q&A, Claude asks whether Ram wants
+  proposed candidates or has an idea ready. Three options: (A) propose candidates (default),
+  (B) describe idea directly, (C) provide a file path. Options B and C, plus the `Others:`
+  mid-session trigger phrase, activate the **Others shortcut**:
+  - Trigger: Ram types `Others: <description or absolute file path>` at any point during
+    brainstorm Q&A *or* Phase 0 Part B interrogation. Also fires on routing option B or C.
+  - **File path branch:** Claude reads the file and extracts the candidate intent. The file
+    may be any plain-text or markdown document describing the desired agent. It does not need
+    to follow `prompt.md` format.
+  - **Free-text branch:** the description after the colon is treated as the candidate spec.
+  - **Gate check (silent):** Claude runs G1–G5 verdicts and computes the Learning Position
+    label from the supplied spec without Q&A. Gate failures are surfaced explicitly before
+    the mini-spec is shown — never suppressed.
+  - **Learning Position display:** the inferred label (FORWARD / FOUNDATIONAL / etc.) is
+    shown prominently in the mini-spec with an invitation to correct if wrong.
+  - **Registry log:** append to `brainstorm_sessions[]` with `decision: "others-shortcut"`
+    and `source: "free-text"` or `source: "file:<path>"` as applicable.
+  - **Proceed to step 3** (mini-spec + confirmation) directly. The normal brainstorm Q&A
+    and step 2 (log) are replaced by this abbreviated path; the log write happens here.
+  - **Phase 0 edge case:** if `Others:` fires during Phase 0 Part B, Part A is already
+    complete and is not repeated. Part B stops at the current question.
 
 ### Phase B — Lock gate (human approval)
 - FR-B1: Explicit lock required ("lock <candidate>"); zero file writes before it.

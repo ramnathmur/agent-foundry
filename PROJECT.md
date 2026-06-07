@@ -158,11 +158,13 @@ A new Claude Desktop session should recognize these phrases and act accordingly:
 
 | Phrase | Action |
 |---|---|
-| `"begin the brainstorm"` or `"new agent"` | Read session state → Phase 0 warm-up → brainstorm |
-| `"lock <candidate name>"` | Skip brainstorm, go to mini-spec + confirmation |
+| `"begin the brainstorm"` or `"new agent"` | Read session state → Phase 0 warm-up → routing question → brainstorm |
+| `"lock <candidate name>"` | Lock the named brainstorm candidate; go to mini-spec + confirmation |
 | `"I ran it"` | Trigger Phase F2 (post-run Professor session) |
-| `"skip warm-up"` | Bypass Phase 0 and go directly to brainstorm |
+| `"skip warm-up"` | Bypass Phase 0 and go directly to the routing question |
 | `"skip professor"` or `"done"` | End Phase F or F2 immediately |
+| `"Others: <description>"` | Stop current Q&A or Phase 0 Part B; treat description as the candidate spec; run silent gate check; proceed to mini-spec |
+| `"Others: <absolute file path>"` | Stop current Q&A or Phase 0 Part B; read the file; extract candidate intent; run silent gate check; proceed to mini-spec |
 
 ---
 
