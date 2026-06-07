@@ -1,7 +1,8 @@
 {
   "project": "Agent Foundry",
-  "prd_version": "v8",
+  "prd_version": "v9 + FR-C10 Audience Register + FR-C11 HTML backup rule + FR-F7 Professor Checkpoints (added 2026-06-07)",
   "created": "2026-06-07",
+  "last_updated": "2026-06-07 (end of session, post-Cycle-1)",
   "preferences": {
     "domains": ["morning-briefing", "health-habits", "learning-research"],
     "focus_trait": "observe-reason-act feedback loop",
@@ -9,22 +10,41 @@
     "source": "D16 — Ram's brainstorm answers, 2026-06-07"
   },
   "sdk_ladder": {
-    "1_query_message_anatomy": "not_started",
-    "2_goal_predicate_loop_circuit_breaker": "not_started",
-    "3_client_sessions_resume": "not_started",
+    "1_query_message_anatomy": "introduced (study-prep, Cycle 1)",
+    "2_goal_predicate_loop_circuit_breaker": "introduced (study-prep, Cycle 1)",
+    "3_client_sessions_resume": "not_started (Cycle 2 target — FORWARD)",
     "4_custom_tools_mcp": "not_started",
     "5_permissions_allowed_tools": "not_started",
     "6_hooks_span_trace": "not_started",
     "7_independent_verifier": "not_started",
     "8_subagents_compaction": "not_started"
   },
-  "gotchas_mastered": [],
+  "gotchas_mastered": [
+    "duplicate-url — dedup guard before appending a URL to coverage_map (study-prep, main.py:88)",
+    "transient-error — ConnectionError on fetch routed as TRANSIENT → skip, not crash (study-prep, main.py:107)",
+    "api-key-bypass — ANTHROPIC_API_KEY stripped from child-process env; auth via Max plan only (study-prep, main.py:215)",
+    "trust-fence — external content wrapped before reaching the LLM; prevents prompt injection from ingested data (study-prep, main.py:260)"
+  ],
   "report_card": {
-    "agents_understood": [],
-    "sdk_rungs_introduced": [],
-    "gate_verdicts_summary": {},
-    "domain_coverage": {},
-    "top_active_gaps": []
+    "agents_understood": ["study-prep"],
+    "sdk_rungs_introduced": [1, 2],
+    "gate_verdicts_summary": {
+      "G1": "demonstrated (study-prep)",
+      "G2": "demonstrated (study-prep — 10 model decisions captured in run log)",
+      "G3": "demonstrated partial (study-prep — loop closed, model varied queries; but trapped in zero-information feedback state caused by mock-DB perception trap)",
+      "G4": "demonstrated (study-prep — principled stop fired correctly at 10/10)",
+      "G5": "N/A — first appears at rung 7"
+    },
+    "domain_coverage": {
+      "learning-research": 1,
+      "morning-briefing": 0,
+      "health-habits": 0
+    },
+    "top_active_gaps": [
+      "Perception-layer design — what makes a tool starvation-proof for the agent loop (Cycle 1, surfaced by mock-DB trap)",
+      "Phase F/F2 probe readiness — formal probe sequence not yet experienced (Cycle 1 structural)",
+      "G3 zero-information feedback — agent kept varying queries but never escalated to a different strategy (Cycle 1)"
+    ]
   },
   "_agent_schema_note": {
     "description": "Schema for each entry in agents[]. Written at end of cycle.",
@@ -56,7 +76,68 @@
       "report_card": "top-level object — regenerated each cycle from full agents[]; fields: agents_understood[], sdk_rungs_introduced[], gate_verdicts_summary{}, domain_coverage{}, top_active_gaps[]"
     }
   },
-  "agents": [],
+  "agents": [
+    {
+      "slug": "study-prep",
+      "date": "2026-06-07",
+      "domain": "learning-research",
+      "traits_demonstrated": [
+        "goal-directedness",
+        "autonomy",
+        "observe-reason-act",
+        "perception",
+        "planning",
+        "memory (session-only)",
+        "tool-selection",
+        "sequential-action",
+        "principled-stop"
+      ],
+      "gates_passed": ["G1", "G2", "G3 partial", "G4"],
+      "sdk_concepts_introduced": [1, 2],
+      "status": "delivered",
+      "learning_position": "FORWARD",
+      "run_result": {
+        "run_date": "2026-06-07T17:35:39",
+        "exit": "cap_reached",
+        "iterations": "10/10",
+        "goal_met": false,
+        "topics_covered": "0/3",
+        "tokens_in": 137070,
+        "tokens_out": 1438,
+        "cost_usd_approx": 2.10,
+        "root_cause": "mock_perception_trap — MOCK_SEARCH_DB exact-key lookup; model's natural-language queries never matched a stored key; all 10 searches returned empty"
+      },
+      "learning": {
+        "skipped": true,
+        "skipped_reason": "Ram redirected mid-cycle to spec rewrite + lay-first HTML refresh instead of running Phase F probes; comprehension check deferred to behaviour-evidence",
+        "probes_asked": [],
+        "gaps": [
+          "Perception-layer design — what makes a tool starvation-proof for the agent loop",
+          "Phase F2 readiness — formal probe sequence not yet experienced"
+        ],
+        "strengths": [
+          "G4 principled stop — Ram correctly read the cap firing as success-not-failure during the insights HTML cold-read pass",
+          "G1/G2/G3 working model — confirmed by his framing 'the agent worked correctly, the world wasn't cooperating' during the §2 rewrite"
+        ],
+        "recall_question_next_cycle": "When the safety cap fired at 10/10 in your last run, was the agent failing or succeeding? How can the agent tell the difference between an empty search result and an actual structural failure?"
+      },
+      "post_run_notes": {
+        "skipped": true,
+        "skipped_reason": "see learning.skipped_reason",
+        "runtime_surprises": [],
+        "post_run_probes_asked": [],
+        "next_cycle_expectation": "Session memory (rung 3) will let the LLM itself carry context across calls — coverage_map injection no longer needed"
+      },
+      "artifacts": {
+        "code": "agents/study-prep/main.py + smoke_test.py + prompt.md",
+        "learning_guide_v2_lay_first": "agents/study-prep/study-prep_learning-guide.html",
+        "learning_guide_v1_technical": "agents/study-prep/study-prep_learning-guide_technical-v1.html",
+        "insights_v2_lay_first": "agents/study-prep/study-prep_learning-insights.html",
+        "insights_v1_technical": "agents/study-prep/study-prep_learning-insights_technical-v1.html",
+        "run_log": "agents/study-prep/study-prep_run_output.log (333 lines)"
+      }
+    }
+  ],
   "brainstorm_sessions": [
     {
       "date": "2026-06-07",
@@ -67,21 +148,21 @@
           "domain": "morning-briefing",
           "gates": "G1–G5 all pass",
           "decision": "available",
-          "notes": "Recommended for cycle 1 — minimal, clean O-R-A loop, HN API single endpoint"
+          "notes": "Recommended for Cycle 1; deferred. Still eligible for Cycle 2 if extended to rung 3."
         },
         {
           "name": "Study Prep Agent",
           "domain": "learning-research",
           "gates": "G1–G5 all pass",
           "decision": "locked",
-          "notes": "Locked 2026-06-07 Cycle 1. FORWARD — introduces rungs 1+2. Goal predicate: is_coverage_met(coverage_map). Tools: search_web + fetch_page (mocked). max_iterations=10."
+          "notes": "Locked 2026-06-07 Cycle 1. FORWARD — introduces rungs 1+2. Goal predicate: is_coverage_met(coverage_map). Tools: search_web + fetch_page (mocked). max_iterations=10. Delivered 2026-06-07 17:35; cap reached due to mock-DB perception trap (not agent failure)."
         },
         {
           "name": "Focus Booster",
           "domain": "health-habits",
           "gates": "G3 borderline",
           "decision": "needs-fix",
-          "notes": "G3 weak — environment unchanged between iterations; fix: add probe_log(question) tool so model's question shapes what it observes next"
+          "notes": "G3 weak — environment unchanged between iterations. Fix: add probe_log(question) tool so the model's question shapes what it observes next. Eligible for Cycle 2+ if fix applied."
         }
       ],
       "locked": "Study Prep Agent"
