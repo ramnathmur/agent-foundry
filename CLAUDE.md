@@ -12,6 +12,19 @@ teaching artifact, not just working software.
 gating, code generation, and QA happen in this chat. PyCharm is exclusively where Ram reads
 and runs generated agents.
 
+## Project Outputs
+
+**Output folder:** `./outputs/` (relative to this project root)
+
+All project deliverables, documentation, guides, and generated reports belong here. This includes:
+- Documentation of the Foundry learning model
+- Adaptation guides and instantiation examples
+- Project briefs, analysis reports, and reference docs
+- Course materials and teaching artifacts
+
+Do not put project-related outputs in `C:\Claude Cowork\CLAUDE OUTPUTS\` — that folder is for
+non-project work only. All Agent Foundry work stays in this project.
+
 ## Audience Register (PRD FR-C10)
 
 Every student-facing artifact is **lay-first**. A non-coder must be able to read the body and
@@ -168,13 +181,19 @@ mode where the Professor jumped straight into probes without explaining what jus
    questions about what you saw?"
 
 **Checkpoint 4 — Pre-probe context.** Fires before EACH Phase F2 probe (and before each
-Phase F probe), immediately preceding the probe text. ≤2 sentences:
-1. "Quoting the line from your run: [exact line, indented as a blockquote]."
-2. "What I'm asking: [functional question in plain English — no gate codes]."
+Phase F probe), immediately preceding the probe text. Four beats — concept first, code last:
+1. **Concept hook** — one real-world professional scenario (FS consulting, project work,
+   research briefs, approval workflows) that maps to the agentic concept without code vocabulary.
+2. **Why it matters** — one sentence connecting the scenario to what agents do differently
+   from a plain script.
+3. **The moment in your run** — the runtime line, framed as "here's where you saw this"
+   (illustration, not quiz). ≤1 quoted line.
+4. **Concept-level question** — open, non-technical: "what would you change?", "did this
+   work?", "what would break if this wasn't here?" Never "what does this line mean?"
 
 **Inheritance to Phase F.** Phase F (pre-run Professor session, FR-F2) probes also follow
-the Audience Register — functional questions only, gate codes never spoken to Ram, each
-probe preceded by Checkpoint 4's quoted-anchor format.
+the Audience Register and Checkpoint 4's concept-first four-beat structure — functional
+questions only, gate codes never spoken to Ram, professional analogy before code anchor.
 
 ## Operating Cycle (one cycle per "new agent")
 
@@ -280,20 +299,24 @@ probe preceded by Checkpoint 4's quoted-anchor format.
    Register (lay-first body, no gate codes spoken to Ram).** The opening sub-phase delivers
    via the Post-lock briefing template (Checkpoint 1) when timing permits; the handoff
    sub-phase delivers via the Pre-run framing template (Checkpoint 2) when the run is
-   imminent. Every probe MUST anchor to a real briefing section, code line, or runtime
-   label AND MUST be introduced by the Pre-probe context template (Checkpoint 4) —
-   quote the anchor, then state the functional question. Probe text uses functional
-   language (did-it-finish check / model's own choice / learning from what it saw /
-   principled stop), never gate codes. Sample probes (mirror Phase F2 shape but
-   pre-run, anchored to code rather than runtime output):
-   - *`is_coverage_met()` function* → "What would happen if this returned True too early?
-     What would the agent miss?" *(probes G1)*
-   - *Dispatch site in the loop* → "What would change if we hard-coded the tool here
-     instead of letting the model pick?" *(probes G2)*
-   - *State injection at iteration start* → "Why does the agent re-inject its state into
-     the prompt every step? What would the model 'know' without it?" *(probes G3)*
-   - *Both exit branches in the loop* → "Find both ways this agent can stop. Why do we
-     need both?" *(probes G4)*
+   imminent. Every probe MUST follow Checkpoint 4's concept-first four-beat structure —
+   professional analogy before code anchor, runtime line as illustration not quiz. Probe
+   text uses functional language (did-it-finish check / model's own choice / learning from
+   what it saw / principled stop), never gate codes. Sample probes (pre-run; code is the
+   evidence, not the question):
+   - *Did-it-finish check* — "A PM who signs off a project based on gut feeling instead of
+     a checklist — what goes wrong? There's a function in this agent that acts as that
+     checklist. What would the agent miss if it returned 'done' one step too early?" *(probes G1)*
+   - *Model's own choice* — "An analyst who always runs the same playbook regardless of
+     the brief isn't consulting — they're scripting. There's one moment in this agent where
+     the model picks for itself. What would change if we removed that choice and hard-coded
+     the sequence instead?" *(probes G2)*
+   - *Learning from what it saw* — "A researcher who ignores new evidence and writes the
+     same report anyway isn't doing research. What does this agent use from the previous
+     step to decide what to do next?" *(probes G3)*
+   - *Principled stop* — "Every well-run project has two ways it can end: the goal is met,
+     or a governance gate says 'not enough evidence, stop here.' This agent has both. What
+     would happen if it only had the first one?" *(probes G4)*
 6. **Update registry** — write structured `learning` object to the agent's registry entry
    (probes_asked, gaps, strengths, recall_question_next_cycle).
 7. **Regenerate `INSIGHTS.md`** — rewrite all six sections from current registry state.
@@ -312,28 +335,42 @@ probe preceded by Checkpoint 4's quoted-anchor format.
    anchored to actual runtime output lines (not code alone).
    **Mandatory shape (FR-F7):** Checkpoint 3 (Post-run debrief) fires ONCE before the first
    probe — the Professor explains in plain English what just happened in the run before
-   asking anything. Then Checkpoint 4 (Pre-probe context) fires before EACH probe —
-   quoting the exact runtime line and stating the functional question. Probes themselves
-   follow the Audience Register: functional language only, no gate codes spoken to Ram.
+   asking anything. Then Checkpoint 4 (Pre-probe context) fires before EACH probe following
+   the concept-first four-beat structure. Probes follow the Audience Register: functional
+   language only, no gate codes spoken to Ram.
 
    Ask 3–5 probes drawn from the table below (Claude picks based on what actually fired
-   in Ram's run). **Probe text is functional; the gate code in parentheses is spec
-   traceability only and NEVER appears in what Ram hears:**
+   in Ram's run). Each probe follows Checkpoint 4's four beats: concept hook → why it
+   matters → runtime line as illustration → concept-level question. **Gate codes in
+   parentheses are spec traceability only and NEVER appear in what Ram hears.**
 
-   | Anchor line | Probe text spoken to Ram | (Spec — never spoken) |
-   |---|---|---|
-   | `[GOAL PREDICATE]` | "The agent itself decided whether it was done yet at this step. How did it make that call? What would happen if it didn't check?" | probes did-it-finish check / G1 |
-   | `[MODEL DECISION]` | "The model picked one tool out of several at this moment. What were the alternatives? Why did this one win — and could it have gone differently next time?" | probes model's own choice / G2 |
-   | `[LOOP FEEDBACK]` | "Look at what the agent did in step N versus step N+1. What changed because of what it saw? A non-agent script would have repeated the same thing — what made this run different?" | probes learning from what it saw / G3 |
-   | `[ERROR: ...]` (if present) | "Something broke here. Was it a temporary blip, a real bug in how the agent was set up, or a permission issue? How can you tell from this line?" | probes failure classification / LO-12 |
-   | `[PLAN REVISED]` or `[PLAN PROGRESS]` | "The plan changed mid-run. Who decided to change it — your code, or the model in the moment? How can you tell from the output?" | probes autonomy / plan mutability |
-   | `[SDK →]` / `[← SDK]` pair | "These two lines mark where your code hands off to the LLM and where it gets the answer back. What's happening in that gap? Why does it matter that you can see those moments?" | probes LLM boundary / LO-7 |
-   | Usage summary line | "This run cost about N tokens / X cents. If you ran this every morning, what would the monthly cost look like? What would you change to keep it cheap?" | probes cost awareness / §7.2 |
+   **Professional analogy map — draw from this when building probes:**
+
+   | Agentic concept | Professional analogy for Ram |
+   |---|---|
+   | Did-it-finish check | Project sign-off checklist — PM checks every box before the client is briefed; project cannot proceed until all ticked, regardless of team confidence |
+   | Model's own choice | Junior analyst choosing which data source to use — partner didn't specify; analyst used judgment |
+   | Observe→reason→act | Researcher who finds a contradictory report mid-project and changes the recommendation before the final brief |
+   | Principled stop | Project cancelled at a milestone gate — governance enforces the stop, not willpower |
+   | Phase-gated access | Consultant without signing authority on Phase 2 until Phase 1 is formally signed off — system-enforced, not just a reminder |
+   | Session memory | Meeting notes in one person's notebook — useful during the engagement, gone when they leave |
+   | App memory | The CRM record every new engagement manager can read — survives handoffs and restarts |
+   | Predicate vs. text signal | "Feels complete" vs. "signed-off deliverable checklist" — feelings don't satisfy governance gates |
+
+   | Concept (what it teaches) | Runtime evidence | Question spoken to Ram | (Spec — never spoken) |
+   |---|---|---|---|
+   | Did-it-finish check | `📐 [GOAL PREDICATE]` | "A PM who signs off based on gut feeling instead of a checklist — what goes wrong? This agent ran a checklist at every step. What would have happened if it just trusted the model's 'I'm done' statement instead?" | probes G1 |
+   | Model's own choice | `🎲 [MODEL DECISION]` | "The model chose these tools — the code didn't hard-pick them. What's the difference between an agent that picks for itself and a script that always runs the same steps? Did the choice matter in this run?" | probes G2 |
+   | Learning from what it saw | `🔄 [LOOP FEEDBACK]` | "A researcher who ignores new evidence and writes the same report anyway isn't doing research. Between turns, this agent knew something had changed. What did it do differently — and what did it fail to do, that a better version would have?" | probes G3 |
+   | Phase handoff enforcement | `synthesize_recommendation tool is blocked` | "Why enforce a workflow in the system rather than just trusting the agent to follow instructions? What could go wrong if it was only a soft request — 'please don't do this yet'?" | probes rung 5 |
+   | Principled stop | `🏁 EXIT: research cap` | "The agent stopped without a recommendation. Is that a broken agent or a working one? What would have happened if there was no cap at all?" | probes G4 |
+   | LLM boundary | `━━━ [SDK →]` / `[← SDK]` | "These marks show where your Python code hands off to the model and gets the answer back. Why does it matter that you can see this handoff — what would you lose if it was invisible?" | probes LO-7 |
+   | Cost awareness | Usage summary | "This run cost roughly $X. If a research agent like this ran every morning, what would the monthly bill look like? What single change would bring it down the most?" | probes §7.2 |
 
    **Repair** follows FR-F3's bounded two-attempt Socratic protocol. Repair language ALSO
    follows the Audience Register — counter-questions and re-explanations use functional
    aliases, never gate codes. Each repair counter-question is preceded by another
-   Checkpoint 4 (quote a line, state the functional question).
+   Checkpoint 4 (concept hook first, runtime line as evidence).
 
    Update `learning.post_run_notes` in the registry after Phase F2:
    `runtime_surprises[]` (what surprised Ram in the output), `post_run_probes_asked[]`

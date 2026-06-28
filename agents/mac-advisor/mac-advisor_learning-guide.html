@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac Advisor — Learning Guide</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --card: #21253a;
+    --accent: #7b8cde; --accent2: #56c8a0; --warn: #f0a050;
+    --deny: #e05c5c; --allow: #56c8a0;
+    --text: #e8eaf6; --muted: #8b90a8; --border: #2e3350;
+    --code: #1e2235; --code-text: #a8d8a8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif;
+         font-size: 16px; line-height: 1.7; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.3rem; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin: 2.5rem 0 1rem;
+       border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  h3 { font-size: 1.05rem; color: var(--accent2); margin: 1.2rem 0 0.5rem; }
+  p { margin-bottom: 1rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { margin-bottom: 0.4rem; }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+  .callout { background: var(--card); border-left: 4px solid var(--accent);
+             padding: 1rem 1.2rem; border-radius: 6px; margin: 1.2rem 0; }
+  .callout.green  { border-color: var(--accent2); }
+  .callout.orange { border-color: var(--warn); }
+  .callout.red    { border-color: var(--deny); }
+  aside.deep-dive { background: var(--code); border: 1px solid var(--border);
+                    border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0;
+                    font-size: 0.88rem; color: var(--muted); }
+  aside.deep-dive .dd-title { color: var(--accent); font-size: 0.8rem; letter-spacing: 0.05em;
+                               text-transform: uppercase; margin-bottom: 0.6rem; }
+  code, pre { font-family: 'Consolas', 'Courier New', monospace; }
+  pre { background: var(--code); color: var(--code-text); padding: 1rem; border-radius: 6px;
+        overflow-x: auto; font-size: 0.82rem; margin: 0.8rem 0; }
+  .output-line { display: flex; gap: 1rem; padding: 0.25rem 0; }
+  .output-line code { flex: 0 0 auto; color: var(--accent2); font-size: 0.82rem; }
+  .output-line span  { color: var(--muted); font-size: 0.85rem; }
+  .phase-box { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+  .phase-card { flex: 1; min-width: 200px; background: var(--card); border-radius: 8px;
+                padding: 1rem; border-top: 3px solid; }
+  .phase-card.research { border-color: var(--accent2); }
+  .phase-card.synthesis { border-color: var(--accent); }
+  .phase-card h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
+  .tool-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0;
+              font-size: 0.85rem; }
+  .tool-row .badge { padding: 0.1rem 0.5rem; border-radius: 12px; font-size: 0.75rem; }
+  .badge.allow { background: rgba(86,200,160,0.15); color: var(--allow); border: 1px solid var(--allow); }
+  .badge.deny  { background: rgba(224,92,92,0.15);  color: var(--deny);  border: 1px solid var(--deny); }
+  .mcq { background: var(--card); border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .mcq p { font-weight: 500; margin-bottom: 0.5rem; }
+  .mcq-option { cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 4px;
+                background: var(--surface); margin: 0.2rem 0; font-size: 0.9rem;
+                border: 1px solid var(--border); transition: background 0.15s; }
+  .mcq-option:hover { background: var(--card); }
+  .reveal { display: none; margin-top: 0.5rem; font-size: 0.88rem; color: var(--accent2);
+            background: rgba(86,200,160,0.08); padding: 0.5rem 0.8rem; border-radius: 4px; }
+  nav { background: var(--surface); padding: 0.8rem 1rem; border-radius: 8px;
+        margin-bottom: 2rem; font-size: 0.85rem; }
+  nav a { color: var(--accent); text-decoration: none; margin-right: 1rem; }
+  nav a:hover { text-decoration: underline; }
+  .checklist li::before { content: "☐ "; }
+  .checklist li.done::before { content: "✓ "; color: var(--accent2); }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border);
+           font-size: 0.78rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>🖥 Mac Advisor</h1>
+<div class="subtitle">Learning Guide · Part 1 of 2 · Read before running · Cycle 4 · Rung 5</div>
+
+<nav>
+  <a href="#what">1. What it does</a>
+  <a href="#thinks">2. How it thinks</a>
+  <a href="#agent">3. What makes it an agent</a>
+  <a href="#run">6. What to expect</a>
+  <a href="#notice">7. Things to notice</a>
+  <a href="#decisions">9. Who decides</a>
+  <a href="#check">11. Self-check</a>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 1 — What it does -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="what">1. What this agent is for</h2>
+<p>Mac Advisor researches the MacBook Pro M4 lineup and recommends the best model for a
+software developer and AI practitioner working in India. You give it nothing except your
+workload — it goes off and researches specs, pricing, thermal performance under load, and
+head-to-head comparisons entirely on its own. When it hits contradicting information from
+two sources, it detects the conflict and resolves it before drawing any conclusions. When
+the price of its top pick drops mid-research, it notices and updates its reasoning.</p>
+
+<p>By the end of a run, you have a purchase recommendation — with the evidence trail visible
+in your terminal the entire time.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 2 — How it thinks -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="thinks">2. How this agent thinks</h2>
+<svg viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;display:block;margin:1rem 0">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7b8cde"/>
+    </marker>
+  </defs>
+  <!-- Stage boxes -->
+  <g font-family="'Segoe UI',system-ui" font-size="11" fill="#e8eaf6" text-anchor="middle">
+    <!-- Wake up -->
+    <rect x="10" y="30" width="90" height="50" rx="8" fill="#1a1d27" stroke="#56c8a0" stroke-width="1.5"/>
+    <text x="55" y="52" fill="#56c8a0" font-weight="600">Wake up</text>
+    <text x="55" y="67">Load prior</text>
+    <text x="55" y="80">findings</text>
+    <!-- Research -->
+    <rect x="125" y="30" width="90" height="50" rx="8" fill="#1a1d27" stroke="#7b8cde" stroke-width="1.5"/>
+    <text x="170" y="52" fill="#7b8cde" font-weight="600">Research</text>
+    <text x="170" y="67">Pick a tool,</text>
+    <text x="170" y="80">call it</text>
+    <!-- Look -->
+    <rect x="240" y="30" width="90" height="50" rx="8" fill="#1a1d27" stroke="#7b8cde" stroke-width="1.5"/>
+    <text x="285" y="52" fill="#7b8cde" font-weight="600">Look</text>
+    <text x="285" y="67">Read what</text>
+    <text x="285" y="80">came back</text>
+    <!-- React -->
+    <rect x="355" y="30" width="100" height="50" rx="8" fill="#1a1d27" stroke="#f0a050" stroke-width="1.5"/>
+    <text x="405" y="52" fill="#f0a050" font-weight="600">React</text>
+    <text x="405" y="67">Conflict? Flag.</text>
+    <text x="405" y="80">Gap? Keep going.</text>
+    <!-- Synthesise -->
+    <rect x="480" y="30" width="90" height="50" rx="8" fill="#1a1d27" stroke="#7b8cde" stroke-width="1.5"/>
+    <text x="525" y="52" fill="#7b8cde" font-weight="600">Synthesise</text>
+    <text x="525" y="67">One tool left:</text>
+    <text x="525" y="80">recommend</text>
+    <!-- Stop -->
+    <rect x="595" y="30" width="75" height="50" rx="8" fill="#1a1d27" stroke="#e05c5c" stroke-width="1.5"/>
+    <text x="632" y="52" fill="#e05c5c" font-weight="600">Stop</text>
+    <text x="632" y="67">Goal met</text>
+    <text x="632" y="80">or cap hit</text>
+    <!-- Arrows -->
+    <line x1="100" y1="55" x2="123" y2="55" stroke="#7b8cde" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="215" y1="55" x2="238" y2="55" stroke="#7b8cde" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="330" y1="55" x2="353" y2="55" stroke="#7b8cde" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="455" y1="55" x2="478" y2="55" stroke="#7b8cde" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="570" y1="55" x2="593" y2="55" stroke="#7b8cde" stroke-width="1.5" marker-end="url(#arr)"/>
+    <!-- Loop back arrow -->
+    <path d="M 240 80 Q 230 115 170 115 Q 110 115 100 80" fill="none" stroke="#7b8cde" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+    <text x="175" y="128" fill="#8b90a8" font-size="9" text-anchor="middle">research loop (until all areas covered)</text>
+    <!-- Phase change marker -->
+    <line x1="470" y1="20" x2="470" y2="90" stroke="#f0a050" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="470" y="12" fill="#f0a050" font-size="9" text-anchor="middle">tool menu changes here</text>
+  </g>
+</svg>
+<p>The agent loops through the Research → Look → React cycle until it has covered all four
+areas (specs, pricing, thermal, comparison). Only then does the menu change and the Synthesise
+step becomes available. The loop has a safety limit: if research isn't complete within eight
+turns, the agent stops and reports what it found.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 3 — What makes it an agent -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="agent">3. What makes this an "agent"</h2>
+
+<h3>It knows what done means</h3>
+<p>At every step, the agent runs a check on its own state: "Have I researched specs for at
+least two variants? Has at least one price been verified? Has any thermal conflict been
+resolved?" Only when all four research areas pass that check does the agent consider research
+complete. The check is a yes/no calculation — not a vague sense of readiness.</p>
+
+<h3>It owns its own moves</h3>
+<p>You tell the agent the goal (recommend a MacBook for my workload) and the agent decides
+which tool to call at each step. Should it check specs first or pricing? Which variant is
+worth comparing? When it hits a thermal conflict, does it need one more data point or two?
+Those choices belong to the agent, not your code.</p>
+
+<h3>It learns from what it sees</h3>
+<p>When the first thermal source says "no throttling" and the second says "15–20% throttle,"
+the agent doesn't average them or pick one at random. It flags the contradiction, explains
+what it saw, and runs a targeted follow-up before continuing. The second thermal call is
+different from the first precisely because of what the first call returned. That's the
+observe–reason–act loop made visible.</p>
+
+<aside class="deep-dive">
+<div class="dd-title">Deeper dive (skip if not curious): where each trait lives in the code</div>
+<ul>
+  <li><strong>Goal predicate</strong> — <code>is_research_complete()</code> + <code>is_recommendation_ready()</code> in <code>main.py</code>, called after every turn</li>
+  <li><strong>Model decision</strong> — <code>send_turn()</code> and every <code>[MODEL DECISION]</code> line: the model picks which tool to call from the current phase's allowed palette</li>
+  <li><strong>Observe–reason–act</strong> — <code>_mock_state["thermal_conflict_pending"]</code> flagged by <code>_analyze_thermal_impl()</code>; checked and printed in <code>agent_loop()</code> after each turn</li>
+  <li><strong>Rung 5</strong> — <code>build_options(child_env, phase)</code>: <code>allowed_tools=RESEARCH_ALLOWED</code> in research phase; <code>allowed_tools=SYNTHESIS_ALLOWED + disallowed_tools=RESEARCH_ALLOWED</code> in synthesis phase</li>
+</ul>
+</aside>
+
+<aside class="deep-dive">
+<div class="dd-title">Deeper dive (skip if not curious): reading the code — Python primer</div>
+<p>Five things to recognize (you don't need to write them — just read them):</p>
+<ul>
+  <li><strong>def / async def</strong> — defines a function. <code>async def</code> means "this function waits for the SDK."</li>
+  <li><strong>while / for</strong> — repeats steps. The research loop is a <code>while</code> that keeps going until the predicate returns True.</li>
+  <li><strong>if / else</strong> — makes a decision. The phase switch is an <code>if phase == "research":</code> block.</li>
+  <li><strong>print()</strong> — writes one line to your terminal. Every labeled line you see in PyCharm is a <code>print()</code>.</li>
+  <li><strong>await</strong> — "wait here until the SDK responds." Think of it as a pause button that lets other things run while waiting.</li>
+</ul>
+<p>Reading order: start with the constants at the top → read <code>is_research_complete()</code> and <code>is_recommendation_ready()</code> → read <code>build_options()</code> (the rung 5 function) → skim <code>agent_loop()</code> top to bottom.</p>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 6 — What to expect -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="run">6. What to expect when you run it</h2>
+<p>Open a terminal in the <code>agents/mac-advisor/</code> folder and run <code>python main.py</code>.
+You should see a stream of labeled lines. Here are the key moments:</p>
+
+<div class="output-line"><code>🤖 [AGENT BOOT]</code> <span>Agent has started, preflight passed.</span></div>
+<div class="output-line"><code>🎯 [GOAL SET]</code> <span>The agent states what it's trying to achieve before doing anything.</span></div>
+<div class="output-line"><code>📋 [PLAN GENERATED]</code> <span>Five steps displayed — four research, one synthesis.</span></div>
+<div class="output-line"><code>🔬 [PHASE 1 — RESEARCH]</code> <span>The research menu is shown: four tools allowed, synthesize denied.</span></div>
+<div class="output-line"><code>🔧 [TOOL CALL] search_specs(...)</code> <span>Agent picks its first research tool and calls it.</span></div>
+<div class="output-line"><code>⚠ [CONFLICT DETECTED]</code> <span>Two thermal sources disagree. Agent detects the contradiction.</span></div>
+<div class="output-line"><code>── O / R / A ──</code> <span>Observe–reason–act: what was seen, what it means, what happens next.</span></div>
+<div class="output-line"><code>⚠ [PRICE DROP DETECTED]</code> <span>A second price check finds a lower price. The agent updates its reasoning.</span></div>
+<div class="output-line"><code>📐 [GOAL PREDICATE] → False/True</code> <span>The agent's own check: am I done researching yet?</span></div>
+<div class="output-line"><code>🔮 [PHASE 2 — SYNTHESIS]</code> <span>Menu changes — only synthesize_recommendation is now available.</span></div>
+<div class="output-line"><code>🖥 FINAL RECOMMENDATION</code> <span>The purchase recommendation with price, rationale, and trade-offs.</span></div>
+<div class="output-line"><code>🧠 AGENT SUMMARY</code> <span>Post-run report: gates, traits, memory ledger, rung 5 summary.</span></div>
+
+<div class="callout green">
+  <strong>After the run:</strong> check <code>mac-advisor_run_output.log</code> — every run appends to this file.
+  Check <code>research_notes.json</code> — findings are saved so a second run can skip already-researched areas.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 7 — Things worth noticing -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="notice">7. Things worth noticing during the run</h2>
+
+<h3>Each call to the model starts fresh — with one exception</h3>
+<p>Within each phase, the agent uses a persistent conversation — the model remembers what it
+asked and what came back across turns in the same phase. But when the phase switches from
+research to synthesis, a new conversation starts. The model in synthesis only sees what you
+hand it — the summarised research findings. It can't scroll back through the research turns.
+A future capability will let you carry full conversation history across phases — that's not
+this agent.</p>
+
+<h3>The thermal conflict is the best moment to watch</h3>
+<p>When you see <code>⚠ [CONFLICT DETECTED]</code>, notice what happens next. The agent
+doesn't ignore one source or crash. It explains what it observed, reasons about what the
+contradiction means, and makes a different tool call than it otherwise would have. That
+change in behaviour — caused by an observation — is exactly what the observe–reason–act loop
+looks like in practice.</p>
+
+<h3>Your run output will be saved</h3>
+<p>Every run appends to <code>mac-advisor_run_output.log</code>. This file becomes the
+evidence base for Part 2 of this learning set (the Insights document), which you'll generate
+after your first run.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 8 — Watch out for these -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>8. Watch out for these</h2>
+<ul>
+  <li><strong>env dep preflight failure</strong> — if PyCharm can't find <code>claude_agent_sdk</code>, the agent exits immediately with a fix-it message. Check that your virtual environment is activated and <code>pip install -r requirements.txt</code> has been run.</li>
+  <li><strong>no API key needed</strong> — if you see an authentication error mentioning <code>ANTHROPIC_API_KEY</code>, do not set it. The agent uses your Claude Max subscription via the CLI. Run <code>claude auth status</code> to verify your login.</li>
+  <li><strong>handler attribute on decorated tools</strong> — the <code>@tool</code> decorator wraps each function into an object. If you're writing a test and try to call <code>search_specs_tool({"variant": "m4_pro"})</code> directly, it will fail. Use <code>search_specs_tool.handler({"variant": "m4_pro"})</code> instead.</li>
+  <li><strong>two termination paths</strong> — the agent can stop for two different reasons: it finished (recommendation ready) or it hit the safety cap. Both are working correctly. A cap exit isn't a failure — it means the agent respected the limit you set.</li>
+</ul>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 9 — Who's making the decisions -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="decisions">9. Who's making the decisions</h2>
+
+<p>This is the most important section for Cycle 4. The new capability in this agent — rung 5 —
+is about <strong>who controls what the model is allowed to do</strong>.</p>
+
+<h3>What changed from the last agent</h3>
+<p>In the previous agent (recipe-companion), all five tools were registered and the model
+could call any of them at any time. The system prompt said "do these steps in order," and
+the model mostly followed. But "mostly" is the important word: a system prompt is a request,
+not a lock. The model could, in principle, call any tool whenever it felt like it.</p>
+
+<p>In mac-advisor, we've changed something structural. Python controls which tools the model
+is even allowed to call — and that control changes mid-run.</p>
+
+<h3>The two menus</h3>
+<div class="phase-box">
+  <div class="phase-card research">
+    <h4>🔬 Research Phase</h4>
+    <div class="tool-row"><span>search_specs</span>        <span class="badge allow">✓ allowed</span></div>
+    <div class="tool-row"><span>check_price</span>         <span class="badge allow">✓ allowed</span></div>
+    <div class="tool-row"><span>analyze_thermal</span>     <span class="badge allow">✓ allowed</span></div>
+    <div class="tool-row"><span>compare_variants</span>    <span class="badge allow">✓ allowed</span></div>
+    <div class="tool-row"><span>synthesize_recommendation</span> <span class="badge deny">✗ denied</span></div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.6rem">The model cannot commit to a recommendation yet — the tool doesn't exist from its point of view.</p>
+  </div>
+  <div class="phase-card synthesis">
+    <h4>🔮 Synthesis Phase</h4>
+    <div class="tool-row"><span>search_specs</span>        <span class="badge deny">✗ denied</span></div>
+    <div class="tool-row"><span>check_price</span>         <span class="badge deny">✗ denied</span></div>
+    <div class="tool-row"><span>analyze_thermal</span>     <span class="badge deny">✗ denied</span></div>
+    <div class="tool-row"><span>compare_variants</span>    <span class="badge deny">✗ denied</span></div>
+    <div class="tool-row"><span>synthesize_recommendation</span> <span class="badge allow">✓ allowed</span></div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.6rem">The model cannot keep researching indefinitely — the only move available is to produce the recommendation.</p>
+  </div>
+</div>
+
+<h3>Why this matters more than a system prompt</h3>
+<p>If you only used a system prompt to say "don't call synthesize_recommendation during
+research," the model would usually comply — but nothing in the code would stop it from
+slipping. With <code>allowed_tools</code> and <code>permission_mode="dontAsk"</code>, the
+SDK enforces the boundary. If the model attempts to call a denied tool, the call is blocked.
+The model is not asked nicely — it simply has nothing to call.</p>
+
+<p>This is how production agents enforce workflow ordering without writing brittle
+if/elif/else control flow in Python. The model owns the decisions within each phase;
+your code owns the boundary between phases.</p>
+
+<div class="callout orange">
+  <strong>The workflow-to-agent distinction for this agent:</strong> a workflow would hard-code
+  "first call search_specs, then check_price, then analyze_thermal." This agent lets the model
+  decide the research sequence — it just can't commit to a recommendation until research is done.
+  That's the difference between giving the model a script and giving it a goal with guardrails.
+</div>
+
+<aside class="deep-dive">
+<div class="dd-title">Deeper dive (skip if not curious): the three rung 5 SDK parameters</div>
+<ul>
+  <li><code>allowed_tools=["mcp__advisor__search_specs", ...]</code> — the list of tools the model is permitted to call. In the research phase, this is the four research tools.</li>
+  <li><code>disallowed_tools=["mcp__advisor__search_specs", ...]</code> — an explicit block list. In the synthesis phase, both <code>allowed_tools</code> and <code>disallowed_tools</code> are set — belt-and-suspenders.</li>
+  <li><code>permission_mode="dontAsk"</code> — the rule for anything not in <code>allowed_tools</code>: deny immediately, don't prompt. Compare to <code>"bypassPermissions"</code> from the previous agent, which allowed everything.</li>
+</ul>
+<p>All three are set in <code>build_options(child_env, phase)</code> in <code>main.py</code>.</p>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 10 — SDK glossary (sidebar) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<aside class="deep-dive">
+<div class="dd-title">Deeper dive — SDK glossary (section 10)</div>
+<ul>
+  <li><strong>claude-agent-sdk</strong> — the Python library that handles communication between your code and the Claude model. Used in every Foundry agent.</li>
+  <li><strong>ClaudeSDKClient</strong> — the conversational client. Holds a running conversation (turns) so the model remembers what happened before.</li>
+  <li><strong>@tool / create_sdk_mcp_server</strong> — how custom tools are registered. The model can call them natively; Python doesn't dispatch them manually.</li>
+  <li><strong>allowed_tools / disallowed_tools</strong> — rung 5. Set in <code>ClaudeAgentOptions</code>; controls which registered tools the model can actually call.</li>
+  <li><strong>permission_mode="dontAsk"</strong> — rung 5. Any tool not in <code>allowed_tools</code> is denied without prompting.</li>
+  <li><strong>query()</strong> — sends one message to the model and waits for a response (which may include tool calls).</li>
+</ul>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 11 — Self-check questions -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="check">11. A few self-check questions</h2>
+
+<div class="mcq">
+  <p>1. During the research phase, the model tries to call <code>synthesize_recommendation</code> early. What happens?</p>
+  <div class="mcq-option" onclick="reveal(this,'r1a')">A) The model gets an error message explaining why it failed.</div>
+  <div class="mcq-option" onclick="reveal(this,'r1b')">B) The call is blocked by the SDK — the tool isn't in <code>allowed_tools</code>.</div>
+  <div class="mcq-option" onclick="reveal(this,'r1c')">C) The system prompt tells the model to stop, and it does.</div>
+  <div id="r1a" class="reveal">Not quite — it's not an error message. The SDK blocks the call at the permission level.</div>
+  <div id="r1b" class="reveal">Correct. <code>permission_mode="dontAsk"</code> means the call is denied, not prompted. The model doesn't see the tool at all during the research phase.</div>
+  <div id="r1c" class="reveal">This is how a workflow would handle it — using instructions. An agent using rung 5 enforces it structurally, not via text.</div>
+</div>
+
+<div class="mcq">
+  <p>2. The agent's goal predicate checks whether the <em>tool-call log</em> shows certain tools were called. Why not just check what the model <em>says</em> it did?</p>
+  <div class="mcq-option" onclick="reveal(this,'r2a')">A) The model's words are accurate, but checking tool logs is faster.</div>
+  <div class="mcq-option" onclick="reveal(this,'r2b')">B) Language is unreliable as a completion signal — the model can say "done" before all conditions are met.</div>
+  <div class="mcq-option" onclick="reveal(this,'r2c')">C) The tool logs are the only place where result data is stored.</div>
+  <div id="r2a" class="reveal">Not quite — the problem is reliability, not speed. The model can say "RESEARCH COMPLETE" before all four areas have been covered.</div>
+  <div id="r2b" class="reveal">Correct. The predicate trusts the tool-call log because it's deterministic. The model's text is a hint, not a guarantee. Both exist in this agent — but only the predicate controls the loop.</div>
+  <div id="r2c" class="reveal">Partially true, but that's not why. The key reason is that language alone can't be trusted as a stopping signal.</div>
+</div>
+
+<div class="mcq">
+  <p>3. Is mac-advisor a workflow or a real agent?</p>
+  <div class="mcq-option" onclick="reveal(this,'r3a')">A) Workflow — the research steps are predetermined.</div>
+  <div class="mcq-option" onclick="reveal(this,'r3b')">B) Agent — the model chooses which research tool to call at each step, and the goal predicate (not a script) controls when phases end.</div>
+  <div class="mcq-option" onclick="reveal(this,'r3c')">C) Neither — it's a pipeline.</div>
+  <div id="r3a" class="reveal">The research <em>areas</em> are predetermined (specs, price, thermal, compare), but the sequence and which tools to call at each step are the model's choice. That's not a workflow — it's a goal with guardrails.</div>
+  <div id="r3b" class="reveal">Correct. The model picks tools, detects conflicts, and decides when enough data has been gathered. The phase gate is code-enforced, but the moves within each phase are model-owned.</div>
+  <div id="r3c" class="reveal">A pipeline would run in a fixed order. This agent adapts based on what it observes — the thermal conflict causes a different tool call sequence than a clean run would.</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 12 — Before you hit Run -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>12. Before you hit Run</h2>
+<ul class="checklist">
+  <li>You know which section of the output to watch for the thermal conflict (section 6).</li>
+  <li>You can describe in one sentence what changes when the phase switches from research to synthesis.</li>
+  <li>You've noticed the two goal predicates in section 3 — one for research, one for recommendation.</li>
+  <li>Virtual environment is active and <code>pip install -r requirements.txt</code> has been run.</li>
+  <li><code>claude auth status</code> shows you're logged in.</li>
+</ul>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 13 — Provenance footer -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<footer>
+  <strong>Provenance</strong><br>
+  Agent slug: mac-advisor · Cycle 4 · Generated: 2026-06-11 · SDK rung introduced: 5<br>
+  Learning position: FORWARD · Domain: consumer-research (new)<br>
+  Companion files: <code>main.py</code> · <code>smoke_test.py</code> · <code>prompt.md</code><br>
+  Part 2: <code>mac-advisor_learning-insights.html</code> (generated after first run)<br>
+  Gate verdicts (pre-run): G1 ✓ (predicate) · G2 ✓ (model picks tools) · G3 ✓ (conflict triggers recalibration) · G4 ✓ (predicate + cap) · G5 N/A (rung 7)<br>
+  Version: v1 · Part 1 of 2
+</footer>
+
+<script>
+function reveal(el, id) {
+  document.querySelectorAll('.reveal').forEach(r => r.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+</script>
+</body>
+</html>

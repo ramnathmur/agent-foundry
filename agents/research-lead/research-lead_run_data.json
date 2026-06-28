@@ -1,0 +1,292 @@
+{
+  "agent": "research-lead",
+  "version": "1.0",
+  "run_date": "2026-06-13T14:07:13",
+  "elapsed_seconds": 0.0,
+  "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+  "selected_angles": [
+    "technical",
+    "user",
+    "contrarian"
+  ],
+  "outcome": "EXIT: subagent cap",
+  "total_sub_researchers": 5,
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0
+  },
+  "estimated_cost_usd": 0.0,
+  "phases": [
+    {
+      "name": "birth",
+      "title": "The Agent Wakes Up",
+      "emoji": "\ud83c\udf05",
+      "start_time": 2.6226043701171875e-06
+    },
+    {
+      "name": "planning",
+      "title": "The Agent Makes a Plan",
+      "emoji": "\ud83d\udccb",
+      "start_time": 0.007492542266845703
+    },
+    {
+      "name": "working",
+      "title": "Dispatching Sub-Researchers",
+      "emoji": "\ud83d\ude80",
+      "start_time": 0.009518861770629883
+    },
+    {
+      "name": "checking",
+      "title": "Collect and Check",
+      "emoji": "\ud83d\udc41",
+      "start_time": 0.018867969512939453
+    },
+    {
+      "name": "followup",
+      "title": "Follow-Up Dispatches",
+      "emoji": "\ud83d\udd04",
+      "start_time": 0.020587682723999023
+    },
+    {
+      "name": "synthesis",
+      "title": "Verdict",
+      "emoji": "\ud83c\udfc1",
+      "start_time": 0.025490522384643555
+    },
+    {
+      "name": "termination",
+      "title": "Verdict",
+      "emoji": "\ud83c\udfc1",
+      "start_time": 0.027292490005493164
+    }
+  ],
+  "events": [
+    {
+      "time": 0.005174160003662109,
+      "type": "boot",
+      "label": "AGENT BOOT",
+      "detail": "Research Project Lead v1.0",
+      "narrative": "The agent introduces itself \u2014 it knows its limits before it starts.",
+      "phase": "birth"
+    },
+    {
+      "time": 0.006005525588989258,
+      "type": "goal_set",
+      "label": "GOAL SET",
+      "detail": "confidence >= 0.7",
+      "narrative": "Success criteria declared as a computable checklist.",
+      "phase": "birth"
+    },
+    {
+      "time": 0.0074863433837890625,
+      "type": "app_memory",
+      "label": "APP MEMORY",
+      "detail": "first run \u2014 empty",
+      "narrative": "",
+      "phase": "birth"
+    },
+    {
+      "time": 0.008697032928466797,
+      "type": "model_decision",
+      "label": "MODEL DECISION",
+      "detail": "selected: technical, user, contrarian",
+      "narrative": "Model picked 3 from 6 available angles.",
+      "phase": "planning",
+      "alternatives": [
+        "market",
+        "regulatory",
+        "historical"
+      ]
+    },
+    {
+      "time": 0.009267807006835938,
+      "type": "plan",
+      "label": "PLAN GENERATED",
+      "detail": "3 dispatch + collect + synthesize",
+      "narrative": "",
+      "phase": "planning"
+    },
+    {
+      "time": 0.010564804077148438,
+      "type": "dispatch",
+      "label": "TOOL CALL",
+      "detail": "spawn_researcher(technical)",
+      "narrative": "Sub-researcher #1 enters its own isolated context.",
+      "phase": "working"
+    },
+    {
+      "time": 0.014087915420532227,
+      "type": "dispatch",
+      "label": "TOOL CALL",
+      "detail": "spawn_researcher(user)",
+      "narrative": "Sub-researcher #2 enters its own isolated context.",
+      "phase": "working"
+    },
+    {
+      "time": 0.016715526580810547,
+      "type": "dispatch",
+      "label": "TOOL CALL",
+      "detail": "spawn_researcher(contrarian)",
+      "narrative": "Sub-researcher #3 enters its own isolated context.",
+      "phase": "working"
+    },
+    {
+      "time": 0.020330190658569336,
+      "type": "loop_feedback",
+      "label": "LOOP FEEDBACK",
+      "detail": "3 gaps found \u2192 dispatching follow-ups",
+      "narrative": "The agent read the reports and found something missing \u2014 it's adapting.",
+      "phase": "checking"
+    },
+    {
+      "time": 0.025487899780273438,
+      "type": "goal_predicate",
+      "label": "GOAL PREDICATE",
+      "detail": "is_goal_met \u2192 False",
+      "narrative": "",
+      "phase": "checking"
+    }
+  ],
+  "sub_researchers": [
+    {
+      "angle": "technical",
+      "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+      "report": {
+        "angle": "technical",
+        "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+        "findings": [
+          {
+            "source_id": "tech-001",
+            "title": "Leitner System: Algorithm Design and Performance",
+            "key_finding": "The Leitner system's O(n) sorting is simple but lacks adaptive scheduling. Cards are grouped by box, not by individual difficulty curves. Works well for vocabulary but struggles with conceptual programming topics where partial knowledge is common.",
+            "confidence_note": "Well-established algorithm with 50+ years of research backing."
+          },
+          {
+            "source_id": "tech-002",
+            "title": "SM-2 and SuperMemo: Interval Scheduling Mathematics",
+            "key_finding": "SM-2 is the foundation of most modern spaced-repetition software (Anki uses a modified SM-2). The algorithm is deterministic \u2014 same inputs always produce the same schedule. Weakness: the easiness factor can collapse to minimum for difficult cards, creating review pile-ups. SM-17/18 address this with statistical models but are proprietary.",
+            "confidence_note": "SM-2 is open and well-understood. SM-17+ are closed-source; findings based on published papers only."
+          }
+        ],
+        "summary": "Sub-researcher encountered an error: query() got an unexpected keyword argument 'max_tokens'",
+        "confidence": 0.3,
+        "gap_flagged": true,
+        "gap_description": "Error during technical research: query() got an unexpected keyword argument 'max_tokens'"
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "is_followup": false
+    },
+    {
+      "angle": "user",
+      "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+      "report": {
+        "angle": "user",
+        "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+        "findings": [
+          {
+            "source_id": "usr-001",
+            "title": "Learning Outcomes: SRS vs Traditional Study for Programming",
+            "key_finding": "SRS excels at declarative knowledge (API names, syntax patterns, error codes) but underperforms for procedural knowledge (algorithm design, debugging strategies). Students who combined SRS with project-based practice outperformed both pure-SRS and pure-project groups by 28%. The optimal ratio appears to be ~30% SRS / 70% active coding.",
+            "confidence_note": "Meta-analysis quality varies; individual study sizes were 20-80 participants."
+          },
+          {
+            "source_id": "usr-002",
+            "title": "User Experience Research: Why Learners Abandon SRS",
+            "key_finding": "The 'review debt' problem is the #1 UX failure of current SRS tools for programming. When a learner misses 3 days, returning to 200+ pending reviews feels overwhelming. Successful long-term users (>1yr) all reported the same coping strategy: ruthless deck pruning and a 'max 20 min/day' hard cap.",
+            "confidence_note": "Self-reported survey data; potential survivorship bias in the 'successful users' subgroup."
+          }
+        ],
+        "summary": "Sub-researcher encountered an error: query() got an unexpected keyword argument 'max_tokens'",
+        "confidence": 0.3,
+        "gap_flagged": true,
+        "gap_description": "Error during user research: query() got an unexpected keyword argument 'max_tokens'"
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "is_followup": false
+    },
+    {
+      "angle": "contrarian",
+      "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+      "report": {
+        "angle": "contrarian",
+        "question": "What's the most effective spaced-repetition algorithm for learning a programming language \u2014 and what are the trade-offs vs alternatives?",
+        "findings": [
+          {
+            "source_id": "con-001",
+            "title": "Against Spaced Repetition for Programming: A Critical Review",
+            "key_finding": "The core argument: you don't get better at programming by remembering more facts \u2014 you get better by solving more problems. SRS optimizes for recall, but programming fluency requires transfer (applying knowledge in novel contexts). No SRS system effectively tests transfer. The author proposes 'spaced practice' (revisiting problem types at intervals) as superior to 'spaced repetition' (reviewing cards at intervals). Key distinction: practice generates knowledge; repetition preserves it.",
+            "confidence_note": "Position paper, not empirical study. Arguments are well-constructed but unverified experimentally."
+          }
+        ],
+        "summary": "Sub-researcher encountered an error: query() got an unexpected keyword argument 'max_tokens'",
+        "confidence": 0.3,
+        "gap_flagged": true,
+        "gap_description": "Error during contrarian research: query() got an unexpected keyword argument 'max_tokens'"
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "is_followup": false
+    },
+    {
+      "angle": "technical",
+      "question": "Follow up on the 'technical' angle: Error during technical research: query() got an unexpected keyword argument 'max_tokens'",
+      "report": {
+        "angle": "technical",
+        "question": "Follow up on the 'technical' angle: Error during technical research: query() got an unexpected keyword argument 'max_tokens'",
+        "findings": [
+          {
+            "source_id": "tech-001",
+            "title": "Leitner System: Algorithm Design and Performance",
+            "key_finding": "The Leitner system's O(n) sorting is simple but lacks adaptive scheduling. Cards are grouped by box, not by individual difficulty curves. Works well for vocabulary but struggles with conceptual programming topics where partial knowledge is common.",
+            "confidence_note": "Well-established algorithm with 50+ years of research backing."
+          },
+          {
+            "source_id": "tech-002",
+            "title": "SM-2 and SuperMemo: Interval Scheduling Mathematics",
+            "key_finding": "SM-2 is the foundation of most modern spaced-repetition software (Anki uses a modified SM-2). The algorithm is deterministic \u2014 same inputs always produce the same schedule. Weakness: the easiness factor can collapse to minimum for difficult cards, creating review pile-ups. SM-17/18 address this with statistical models but are proprietary.",
+            "confidence_note": "SM-2 is open and well-understood. SM-17+ are closed-source; findings based on published papers only."
+          }
+        ],
+        "summary": "Sub-researcher encountered an error: query() got an unexpected keyword argument 'max_tokens'",
+        "confidence": 0.3,
+        "gap_flagged": true,
+        "gap_description": "Error during technical research: query() got an unexpected keyword argument 'max_tokens'"
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "is_followup": true
+    },
+    {
+      "angle": "user",
+      "question": "Follow up on the 'user' angle: Error during user research: query() got an unexpected keyword argument 'max_tokens'",
+      "report": {
+        "angle": "user",
+        "question": "Follow up on the 'user' angle: Error during user research: query() got an unexpected keyword argument 'max_tokens'",
+        "findings": [
+          {
+            "source_id": "usr-001",
+            "title": "Learning Outcomes: SRS vs Traditional Study for Programming",
+            "key_finding": "SRS excels at declarative knowledge (API names, syntax patterns, error codes) but underperforms for procedural knowledge (algorithm design, debugging strategies). Students who combined SRS with project-based practice outperformed both pure-SRS and pure-project groups by 28%. The optimal ratio appears to be ~30% SRS / 70% active coding.",
+            "confidence_note": "Meta-analysis quality varies; individual study sizes were 20-80 participants."
+          },
+          {
+            "source_id": "usr-002",
+            "title": "User Experience Research: Why Learners Abandon SRS",
+            "key_finding": "The 'review debt' problem is the #1 UX failure of current SRS tools for programming. When a learner misses 3 days, returning to 200+ pending reviews feels overwhelming. Successful long-term users (>1yr) all reported the same coping strategy: ruthless deck pruning and a 'max 20 min/day' hard cap.",
+            "confidence_note": "Self-reported survey data; potential survivorship bias in the 'successful users' subgroup."
+          }
+        ],
+        "summary": "Sub-researcher encountered an error: query() got an unexpected keyword argument 'max_tokens'",
+        "confidence": 0.3,
+        "gap_flagged": true,
+        "gap_description": "Error during user research: query() got an unexpected keyword argument 'max_tokens'"
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "is_followup": true
+    }
+  ]
+}

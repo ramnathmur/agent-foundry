@@ -1,20 +1,23 @@
 # SESSION.md — Agent Foundry fast-start state
 
-cycle: 2 (about to begin)
-prior_cycle: 1 (study-prep) — CLOSED 2026-06-07
-step: AWAITING_CYCLE_2_BRAINSTORM
-next_action: deliver Phase 0 warm-up (FR-F6) → start brainstorm for SDK rung 3
+cycle: 6 (morning-spark) — CLOSED 2026-06-25
+cycle_7: Habit Streak + Accountability — READY TO BRAINSTORM
+prior_cycle: 5 (research-lead) — CLOSED 2026-06-13
+step: 8 — cycle 6 complete; all artifacts delivered; Phase F2 done; HANDOFF updated
 
-cycle_2_target_rung: 3 (ClaudeSDKClient multi-turn + session_id capture/resume)
-cycle_2_position: FORWARD
-cycle_2_planning_ref: GitHub issue #4
+cycle_6_slug: morning-spark
+cycle_6_rung: 6
+cycle_6_exit: GOAL MET (run 3, turn 1, $0.71)
+cycle_6_probes: 3 (two-gate problem, PostToolUse proof, act-strategy on 503s)
 
-cycle_1_run: cap_reached (G4 fired correctly; 0/3 topics; mock-DB perception trap)
-cycle_1_phase_f: skipped
-cycle_1_phase_f2: skipped (mid-cycle redirect → spec rewrite + lay-first HTMLs instead of probes)
+cycle_7_slug: habit-streak-accountability
+cycle_7_rung: 6 (FOUNDATIONAL) or 7
+cycle_7_domain: health-habits
+cycle_7_locked: 2026-06-14 (pre-confirmed)
 
-prd_version: v9 + FR-C10 / FR-C11 / FR-F7 (added 2026-06-07)
+next_action: new session → "begin the brainstorm" → Phase 0 warm-up → Cycle 7 brainstorm
+next_rung_target: 6 FOUNDATIONAL (path-dependent predicate) or 7 (independent verifier)
 
-full_reload: true   # significant context change in prior session — read HANDOFF.md + foundry_registry.json + INSIGHTS.md too
+prd_version: v9 + FR-C10 + FR-C11 + FR-F7 (Checkpoint 4 concept-first four-beat structure)
 
-# Trigger: "begin the brainstorm" or "new agent" → Phase 0 warm-up (FR-F6) → brainstorm
+full_reload: false

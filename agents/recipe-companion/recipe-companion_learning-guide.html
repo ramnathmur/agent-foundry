@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipe Companion — Pre-run reading (Part 1)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #fbf7ef;
+    --ink: #2a2a2a;
+    --muted: #6e6557;
+    --accent: #7a4e2d;
+    --accent-soft: #e7d8c4;
+    --rule: #d8cdb8;
+    --aside-bg: #f2ecde;
+    --aside-rule: #c8b890;
+    --good: #2f6a3a;
+    --warn: #a45b00;
+    --code-bg: #fff8ec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: Georgia, "Iowan Old Style", "Source Serif Pro", serif;
+    line-height: 1.65; font-size: 17.5px; -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 32px 96px; }
+  header.title { margin: 0 0 32px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+  header.title .kicker {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    text-transform: uppercase; font-size: 12px; letter-spacing: 0.15em;
+    color: var(--accent); margin: 0 0 12px;
+  }
+  header.title h1 { font-size: 38px; line-height: 1.15; margin: 0 0 8px; font-weight: 700; }
+  header.title .sub { color: var(--muted); font-style: italic; margin-top: 4px; }
+  nav.toc {
+    margin: 24px 0 40px; padding: 18px 22px;
+    background: var(--aside-bg); border-left: 3px solid var(--accent);
+    font-family: -apple-system, sans-serif; font-size: 14px;
+  }
+  nav.toc ol { margin: 6px 0; padding-left: 22px; }
+  nav.toc li { margin: 3px 0; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  nav.toc .dive { color: var(--muted); font-style: italic; }
+  section { margin: 56px 0; scroll-margin-top: 20px; }
+  section h2 {
+    font-size: 26px; font-weight: 700; margin: 0 0 8px;
+    border-bottom: 1px dashed var(--rule); padding-bottom: 10px;
+  }
+  section .section-tag {
+    font-family: -apple-system, sans-serif; text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 6px;
+  }
+  p { margin: 14px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  strong { color: var(--ink); }
+  em { color: var(--muted); }
+  aside.deep-dive {
+    background: var(--aside-bg); border: 1px solid var(--aside-rule);
+    border-radius: 4px; padding: 18px 22px; margin: 20px 0;
+    font-size: 16px; color: var(--muted);
+  }
+  aside.deep-dive .label {
+    font-family: -apple-system, sans-serif;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 6px; font-weight: 600;
+  }
+  aside.deep-dive code { background: rgba(0,0,0,0.04); }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg); padding: 1px 6px; border-radius: 3px; font-size: 0.92em;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.5;
+  }
+  pre code { background: transparent; padding: 0; }
+  .callout {
+    border-left: 4px solid var(--accent); background: #fff;
+    padding: 14px 18px; margin: 18px 0; border-radius: 0 4px 4px 0;
+  }
+  .callout.good { border-left-color: var(--good); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout .label {
+    font-family: -apple-system, sans-serif; text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 4px;
+  }
+  .callout.good .label { color: var(--good); }
+  .callout.warn .label { color: var(--warn); }
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-family: -apple-system, sans-serif; color: var(--accent); font-weight: 700;
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  blockquote {
+    border-left: 3px solid var(--rule); padding: 4px 16px; margin: 16px 0;
+    color: var(--muted); font-style: italic;
+  }
+  .mcq {
+    background: #fff; border: 1px solid var(--rule); border-radius: 6px;
+    padding: 16px 18px; margin: 18px 0;
+  }
+  .mcq .q { font-weight: 700; margin-bottom: 10px; }
+  .mcq label { display: block; padding: 6px 0; cursor: pointer; color: var(--ink); }
+  .mcq label input { margin-right: 8px; }
+  .mcq .reveal {
+    display: none; margin-top: 14px; padding: 12px 14px;
+    background: var(--aside-bg); border-left: 3px solid var(--good);
+    border-radius: 0 4px 4px 0; font-size: 15px;
+  }
+  .mcq.show .reveal { display: block; }
+  .mcq button {
+    margin-top: 10px; padding: 6px 14px;
+    background: var(--accent); color: #fff; border: 0;
+    border-radius: 4px; font-family: -apple-system, sans-serif;
+    font-size: 14px; cursor: pointer;
+  }
+  .checklist { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 18px 22px; }
+  .checklist label { display: block; padding: 4px 0; cursor: pointer; }
+  .checklist input { margin-right: 10px; }
+  .chain-demo {
+    margin: 18px 0; padding: 14px 16px; background: #fff;
+    border: 1px solid var(--rule); border-radius: 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13px;
+    line-height: 1.55;
+  }
+  .chain-demo .arrow { color: var(--accent); font-weight: 700; }
+  .chain-demo .result { color: var(--muted); }
+  footer.provenance {
+    margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--rule);
+    font-family: -apple-system, sans-serif; font-size: 13px; color: var(--muted);
+  }
+  footer.provenance p { margin: 4px 0; }
+  .svg-loop { display: block; margin: 18px auto; max-width: 100%; }
+  hr.section-rule { border: 0; border-top: 1px dashed var(--rule); margin: 36px 0; }
+  @media (max-width: 600px) {
+    main { padding: 32px 18px 60px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header class="title">
+  <p class="kicker">Recipe Companion · Part 1 · Pre-run reading</p>
+  <h1>An agent that calls a chain of tools without ever returning to your code</h1>
+  <p class="sub">Cycle 3 · A ~10-minute read before you hit Run.</p>
+</header>
+
+<nav class="toc">
+  <strong>Sections</strong>
+  <ol>
+    <li><a href="#s1">What this agent is for</a></li>
+    <li><a href="#s2">How this agent thinks</a></li>
+    <li><a href="#s3">What makes this an "agent"</a></li>
+    <li><a href="#s4" class="dive">Deeper dive · Where each trait lives in the code</a></li>
+    <li><a href="#s5" class="dive">Deeper dive · Reading the code (Python primer)</a></li>
+    <li><a href="#s6">What to expect when you run it</a></li>
+    <li><a href="#s7">Things worth noticing during the run</a></li>
+    <li><a href="#s8">Watch out for these</a></li>
+    <li><a href="#s9">Who's making the decisions</a></li>
+    <li><a href="#s10" class="dive">Deeper dive · SDK glossary</a></li>
+    <li><a href="#s11">A few self-check questions</a></li>
+    <li><a href="#s12">Before you hit Run</a></li>
+    <li><a href="#s13">Provenance</a></li>
+  </ol>
+</nav>
+
+<!-- §1 -->
+<section id="s1">
+  <p class="section-tag">§1 · Use case</p>
+  <h2>What this agent is for</h2>
+  <p>Recipe Companion helps you cook one meal end-to-end. You name a recipe — say, <em>spaghetti carbonara</em> — and the agent looks it up, checks each ingredient against the pantry you already have, builds a shopping list for what you're missing, and sets the first cooking timer when you're ready to start. After the first session it remembers your pantry, your favorites, and what's on your shopping list, so the second time you cook the same meal it picks up where you left off.</p>
+  <p>What makes this agent different from the previous two: <strong>it can call a chain of tools without ever returning to your Python code between them.</strong> The model decides to check the pantry for eggs, sees the result, decides to check for flour, sees that, decides to add yeast to the shopping list — all inside what looks like a single "model response" from your code's perspective. You'll see this in the run output as a new label: <code>[TOOL CHAIN] N tool calls in this turn</code>.</p>
+</section>
+
+<!-- §2 -->
+<section id="s2">
+  <p class="section-tag">§2 · Mental model</p>
+  <h2>How this agent thinks</h2>
+  <p>The six-stage shape carries over — but stage 3 ("Try") and stage 4 ("Look") collapse together for the first time in this curriculum. Where Cycle 2 had one try and one look per turn, Cycle 3 can do <em>many</em> tries and looks inside one turn.</p>
+  <svg class="svg-loop" viewBox="0 0 720 160" xmlns="http://www.w3.org/2000/svg" aria-label="Six-stage agent loop with within-turn chain">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#7a4e2d"/>
+      </marker>
+    </defs>
+    <g font-family="-apple-system, sans-serif" font-size="12" fill="#2a2a2a" text-anchor="middle">
+      <g>
+        <rect x="6"   y="55" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="56"  y="77" font-weight="700" fill="#7a4e2d">WAKE UP</text>
+        <text x="56"  y="95">read ledgers</text>
+      </g>
+      <g>
+        <rect x="126" y="55" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="176" y="77" font-weight="700" fill="#7a4e2d">PLAN</text>
+        <text x="176" y="95">ask user, lookup</text>
+      </g>
+      <g>
+        <rect x="246" y="55" width="220" height="50" rx="6" fill="#f7eedb" stroke="#7a4e2d" stroke-width="2"/>
+        <text x="356" y="74" font-weight="700" fill="#7a4e2d">TRY ↔ LOOK ↔ TRY ↔ LOOK</text>
+        <text x="356" y="92" font-style="italic" fill="#6e6557">(many tool calls inside one model turn)</text>
+      </g>
+      <g>
+        <rect x="486" y="55" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="536" y="77" font-weight="700" fill="#7a4e2d">CONFIRM</text>
+        <text x="536" y="95">ask user OK</text>
+      </g>
+      <g>
+        <rect x="606" y="55" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="656" y="77" font-weight="700" fill="#7a4e2d">STOP</text>
+        <text x="656" y="95">save ledgers</text>
+      </g>
+      <line x1="106" y1="80" x2="126" y2="80" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="226" y1="80" x2="246" y2="80" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="466" y1="80" x2="486" y2="80" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="586" y1="80" x2="606" y2="80" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <path d="M536,55 C536,30 356,30 356,55" fill="none" stroke="#7a4e2d" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+      <text x="416" y="22" font-style="italic" fill="#6e6557">loop until done or cap</text>
+      <text x="356" y="138" font-style="italic" fill="#7a4e2d" font-weight="600">↑ this is the new capability — many tries and looks per turn</text>
+    </g>
+  </svg>
+  <p>The dashed loop above runs at most eight times. The <strong>shaded box</strong> is where rung 4's new capability lives: inside any single trip around the loop, the model might call one tool, or eight, or fifteen — your Python code doesn't see any of those individual calls. It only sees what the model has to say after the chain finishes.</p>
+</section>
+
+<!-- §3 -->
+<section id="s3">
+  <p class="section-tag">§3 · The agentic core</p>
+  <h2>What makes this an "agent"</h2>
+  <p>The three core traits are present, but two of them get sharper this cycle.</p>
+
+  <h3 style="margin-top:24px;">Goal-directedness — it knows when the meal is set up</h3>
+  <p>The agent has a real "am I done?" check it runs every turn. Done means: the recipe got looked up, every ingredient got checked against the pantry, the shopping list got updated for whatever was missing, and the first cooking timer was set. When all four of those are true, the agent says it's ready to cook and exits. (You can also tell it to stop at any time by typing <code>stop</code>; or it will stop itself at a safety cap of eight turns.)</p>
+
+  <h3 style="margin-top:24px;">Autonomy — the model picks the chain, not just the next move</h3>
+  <p>In Cycle 2 the model picked one action per turn — "ask," "assess + ask," or "done." Cycle 3 deepens that: the model picks <em>sequences</em> of actions, inside a single response. When you say "I want to cook spaghetti carbonara," the model decides on its own to look up the recipe first, then check each ingredient in turn, then add missing items to the shopping list — and it does all of those things before your Python sees the message come back. The autonomy isn't just "what tool do I pick?" It's "what chain of tools makes sense for this situation?"</p>
+
+  <h3 style="margin-top:24px;">Observe → reason → act, now at three speeds</h3>
+  <p>The loop closes at three different scales this cycle:</p>
+  <ul>
+    <li><strong>Within a single tool chain</strong> (fastest, new this cycle) — the result of <code>check_pantry("eggs")</code> shapes whether the next call is <code>check_pantry("flour")</code> or <code>add_to_shopping_list("eggs")</code>. Both happen inside the same model turn; your Python doesn't see the back-and-forth.</li>
+    <li><strong>Within a session</strong> (carried from Cycle 2) — turn 3's question is shaped by turn 2's user reply.</li>
+    <li><strong>Across sessions</strong> (carried from Cycle 2) — tomorrow's first turn reads yesterday's pantry and favorites.</li>
+  </ul>
+</section>
+
+<!-- §4 — deeper dive sidebar -->
+<section id="s4">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§4 · Where each trait lives in the code</h2>
+    <table>
+      <thead><tr><th>Trait</th><th>File · function</th></tr></thead>
+      <tbody>
+        <tr><td>Goal-directedness</td><td><code>main.py · session_complete()</code></td></tr>
+        <tr><td>Autonomy (model picks tool chains)</td><td><code>main.py · agent_loop()</code> — the <code>async with open_sdk_client</code> block</td></tr>
+        <tr><td>Tool chain visibility</td><td><code>main.py · _tool_observer()</code> — counts ToolUseBlocks per response</td></tr>
+        <tr><td>The 5 tools themselves</td><td><code>main.py</code> — <code>@tool</code>-decorated async functions near the top</td></tr>
+        <tr><td>SDK boundary</td><td><code>main.py · open_sdk_client() / send_turn() / build_options()</code></td></tr>
+        <tr><td>Three-layer memory</td><td><code>main.py · _ledger_path()</code> + the tool implementations + ClaudeSDKClient context</td></tr>
+      </tbody>
+    </table>
+    <p>The gate-code annotations (<code># GATE[G1]</code> through <code># GATE[G5]</code>) are spec traceability — they are not user-facing surfaces.</p>
+  </aside>
+</section>
+
+<!-- §5 — deeper dive sidebar -->
+<section id="s5">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§5 · Reading the code (a tiny Python primer)</h2>
+    <p>You do not need to <em>write</em> Python to read this agent. You need to <em>recognize</em> five constructs (same as last cycle):</p>
+    <ul>
+      <li><code>def name(args): …</code> and <code>async def name(args): …</code> — named recipes; <code>async</code> is the async-flavored one used for tools.</li>
+      <li><code>while CONDITION: …</code> — keep doing the indented block until the condition turns false.</li>
+      <li><code>if … : … else: …</code> — a branch.</li>
+      <li><code>print("…")</code> — show this text in the terminal.</li>
+      <li><code>await something()</code> — wait here until something() comes back. Black box.</li>
+    </ul>
+    <p>One new thing to recognize in this cycle's code: the <code>@tool("name", "description", {...})</code> line that appears just before each async function near the top of <code>main.py</code>. That's a <em>decorator</em> — it's the line that registers a Python function with the SDK as a tool the model can call.</p>
+    <p><strong>Recommended reading order:</strong></p>
+    <ol>
+      <li>Top of <code>main.py</code> — module docstring + constants. Skim the comments labelled <code>PURPOSE</code>.</li>
+      <li>Find the five <code>@tool</code>-decorated functions. Each is short — about 10 lines — and the schema is right there in the decorator. These are your registered tools.</li>
+      <li><code>session_complete()</code> — the goal predicate; 10 lines.</li>
+      <li><code>agent_loop()</code> — the main story. Find the <code>async with open_sdk_client(...) as client:</code> line — everything inside that block is one continuous conversation with the model, with tools wired in.</li>
+      <li><code>_tool_observer()</code> — short, but worth reading: this is where the <code>[TOOL CHAIN] N tool calls in this turn</code> line gets its number.</li>
+      <li>Finish with <code>print_summary()</code> — pure formatting.</li>
+    </ol>
+  </aside>
+</section>
+
+<!-- §6 -->
+<section id="s6">
+  <p class="section-tag">§6 · Expected run</p>
+  <h2>What to expect when you run it</h2>
+  <p>Right-click <code>main.py</code> in PyCharm and choose Run. The agent will boot, read its ledgers from disk (pantry seeded with ~10 common items; shopping list and favorites empty on first run), and then ask you what you want to cook. <strong>Try <code>spaghetti carbonara</code></strong> for the cleanest demo of the chain capability.</p>
+  <p>Here is roughly what the terminal will show — each line is a labeled teaching moment:</p>
+  <pre><code>🤖 [AGENT BOOT] Recipe Companion v1 · rung 4
+🔬 [PREFLIGHT] checking environment...
+  ✓ Python 3.12
+  ✓ claude_agent_sdk importable
+  ✓ preflight passed
+
+🎯 [GOAL SET] Help the user cook one meal end-to-end
+📀 [APP MEMORY] read pantry.json → 10 items · shopping_list → 0 · favorites → 0
+📋 [PLAN GENERATED] ask user what to cook, then orchestrate the prep
+
+❓ What would you like to cook? <em>(you type)</em>
+spaghetti carbonara
+
+━━━ [SDK →] claude-opus-4-8 · turn 1 · 5 tools registered
+  ┆ AssistantMessage: ToolUseBlock(lookup_recipe, {"name": "spaghetti carbonara"})
+  ┆ AssistantMessage: ToolUseBlock(check_pantry, {"ingredient": "spaghetti"})
+  ┆ AssistantMessage: ToolUseBlock(check_pantry, {"ingredient": "eggs"})
+  ┆ AssistantMessage: ToolUseBlock(check_pantry, {"ingredient": "pancetta"})
+  ... more ToolUseBlocks ...
+  ┆ AssistantMessage: TextBlock("Here's what I found. You have everything except pancetta...")
+━━━ [← SDK] +N tokens
+
+🔗 [TOOL CHAIN] 8 tool calls in this turn ← THE rung-4 demo moment
+📀 [APP MEMORY] shopping_list.json updated → added "pancetta"
+💾 [SESSION MEMORY] rung 3 — client holds 1 turn(s) of conversation
+🎲 [MODEL DECISION] orchestrated 8 tool calls; final text proposes confirming and starting
+
+📐 [GOAL PREDICATE] session_complete(state) → False (recipe ✓, ingredients ✓, list ✓, timer ✗)
+🔍 [TERMINATION CHECK] 1/8 turns · 8/20 total tool calls
+
+❓ Ready to start cooking? <em>(you type)</em>
+yes
+
+... model proposes set_timer for boiling water → predicate flips True → exit ...
+
+🏁 GOAL MET — recipe session complete
+╔══ 🧠 AGENT SUMMARY ══╗
+  ... per-trait evidence with quoted runtime lines ...
+╚════════════════════════╝</code></pre>
+  <p>The full log appends to <code>recipe-companion_run_output.log</code> in the same folder. We'll use it to write Part 2 of the learning materials after your run.</p>
+</section>
+
+<!-- §7 -->
+<section id="s7">
+  <p class="section-tag">§7 · Watch for these moments</p>
+  <h2>Things worth noticing during the run</h2>
+  <div class="callout good">
+    <div class="label">The headline moment</div>
+    <p>Look for <code>🔗 [TOOL CHAIN] N tool calls in this turn</code> — that single line is the rung-4 capability landing in plain English. In Cycle 1 and Cycle 2, the number on a comparable line would always have been 1 (or 0). Now it can be 5, 8, 12. Your Python never saw those calls happen — the SDK ran them, fed each result back to the model in the same turn, and only handed control back to your code when the model was done thinking.</p>
+  </div>
+  <div class="callout">
+    <div class="label">Three memory layers, three different labels</div>
+    <p><code>💾 [SESSION MEMORY]</code> is the model's own memory of the conversation (carried from Cycle 2). <code>📀 [APP MEMORY]</code> is the JSON ledgers on disk (carried from Cycle 2). <code>🔗 [TOOL CHAIN]</code> is the new third dimension — the model orchestrating tools without round-tripping to your code. They do different jobs.</p>
+  </div>
+  <div class="callout">
+    <div class="label">Token cost shape is different from Cycle 2</div>
+    <p>In Cycle 2's <code>study-buddy</code> run, turn 1 was huge (~13K input tokens) and turns 2–5 each used about 2 input tokens. This cycle's first turn is also big, but it ALSO does more work — eight tool calls happen inside it. The cost-per-useful-action can actually go DOWN at rung 4 because you stop paying for re-prompting overhead between every tool call. Worth watching the dollar figure at exit and dividing it by total tool calls.</p>
+  </div>
+  <div class="callout">
+    <div class="label">Run it twice on the same recipe</div>
+    <p>On the second run, the pantry will be the same and the shopping list will already have what you needed last time. The agent's first turn will look different — it'll notice it has everything (or remember what's pending) and act accordingly. Same code; behavior changes because of what was saved last time.</p>
+  </div>
+  <div class="callout">
+    <div class="label">The log accumulates</div>
+    <p><code>recipe-companion_run_output.log</code> is appended every run, never overwritten. Useful for cross-run comparison (which you'll do explicitly in later cycles).</p>
+  </div>
+</section>
+
+<!-- §8 -->
+<section id="s8">
+  <p class="section-tag">§8 · Gotchas</p>
+  <h2>Watch out for these</h2>
+  <ol>
+    <li><strong>You type a recipe the demo doesn't know.</strong> The demo DB has a small set (spaghetti carbonara, pancakes, omelette, chicken stir fry, simple salad). If you type something else, <code>lookup_recipe</code> returns a "not found" error and the model is expected to apologize and offer one of the known ones. Watch how it handles the error — that's a real-tool-error moment that wouldn't have looked the same in Cycle 2.</li>
+    <li><strong>Empty pantry on a fresh disk.</strong> The agent ships with <code>pantry.json</code> seeded with about ten common items so the first run isn't pathological. If you delete or empty that file, the agent will report nearly everything as missing — that's not a bug; that's what the agent should do when your pantry is empty.</li>
+    <li><strong>The model takes more than one turn to finish.</strong> A complex recipe might have the model do one big chain in turn 1, then ask you a clarifying question, then chain a few more tools in turn 2 (e.g., "are you OK with the substitutes?"). That's normal — the loop allows up to eight turns and twenty total tool calls.</li>
+    <li><strong>A timer "set" is actually a print.</strong> <code>set_timer</code> doesn't really schedule anything in the OS — it announces and logs the timer. Don't expect a real notification at the 8-minute mark. This is intentional for the demo; production would wire it to a real scheduler.</li>
+    <li><strong>The plan changes mid-run.</strong> If the model sees a tool result that surprises it ("oh, pantry has rare ingredient X"), it may revise the chain and call a different mix of tools than it would have. You'll see a <code>📝 [PLAN REVISED]</code> line. That's autonomy, not a bug.</li>
+  </ol>
+</section>
+
+<!-- §9 -->
+<section id="s9">
+  <p class="section-tag">§9 · Control plane</p>
+  <h2>Who's making the decisions</h2>
+  <table>
+    <thead><tr><th>Decision</th><th>Who owns it</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Which recipe to cook</td><td>You</td><td>You type the recipe name at the start of the run</td></tr>
+      <tr><td>Which tools to call this turn</td><td>The model</td><td>This is the rung-4 autonomy moment — model picks the tool chain</td></tr>
+      <tr><td>How many tools to chain in one response</td><td>The model</td><td>Anywhere from 1 to ~15; bounded by your total cap, but otherwise the model's call</td></tr>
+      <tr><td>Whether to set a timer or just confirm first</td><td>The model</td><td>It can choose to ask "ready?" before timing, or just go</td></tr>
+      <tr><td>Whether to flag a recipe as favorite</td><td>The model</td><td>It can call <code>note_favorite</code> if the user sounds enthusiastic</td></tr>
+      <tr><td>When to stop</td><td>The model (until cap fires)</td><td>The cap is your last word; before that, the model gets to say "ready to cook"</td></tr>
+      <tr><td>When to give up entirely</td><td>You (by typing <code>stop</code>) or the cap</td><td>The agent never overrides a user-stop</td></tr>
+    </tbody>
+  </table>
+  <p>If you replaced the model with a hardcoded sequence ("look up, check 6 ingredients in order, add missing ones, set timer for 8 minutes"), you'd have a recipe-prep program — not an agent. The agency lives in every row where the model owns the call.</p>
+</section>
+
+<!-- §10 — deeper dive sidebar, end-positioned -->
+<section id="s10">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§10 · SDK glossary</h2>
+    <ul>
+      <li><code>@tool(name, description, schema)</code> — Python decorator from the SDK; turns an async function into a registered tool the model can call. The schema is a dict of `{param_name: type}`.</li>
+      <li><code>create_sdk_mcp_server(name, version, tools=[...])</code> — bundles tools into a logical "server" the SDK can wire into the client.</li>
+      <li><code>ClaudeAgentOptions(mcp_servers={key: server}, allowed_tools=["mcp__&lt;key&gt;__&lt;tool_name&gt;", ...])</code> — wires the server into the agent options. The model can only call tools listed in <code>allowed_tools</code>.</li>
+      <li><code>ToolUseBlock</code> — the message-block type the SDK emits when the model asks to call a tool. Your code can observe these as they fire.</li>
+      <li><code>ToolResultBlock</code> — the message-block type the SDK emits when a tool returns a result (handed back into the same response, fed to the model).</li>
+      <li>Rung 4 — the SDK ladder rung introduced by this agent: <em>custom tools via @tool + create_sdk_mcp_server; model-orchestrated tool chains.</em></li>
+    </ul>
+  </aside>
+</section>
+
+<!-- §11 -->
+<section id="s11">
+  <p class="section-tag">§11 · Self-check</p>
+  <h2>A few self-check questions</h2>
+  <p>Three quick questions. Click <em>Reveal</em> for each after you've picked an answer.</p>
+
+  <div class="mcq" id="q1">
+    <div class="q">1. When the model "chains" 8 tool calls inside one response, how many times does control return to your Python code during those 8 calls?</div>
+    <label><input type="radio" name="q1"> 8 times — once per tool call.</label>
+    <label><input type="radio" name="q1"> Zero times — control returns only when the model is done with the whole chain.</label>
+    <label><input type="radio" name="q1"> 7 times — once between each pair of calls.</label>
+    <button onclick="document.getElementById('q1').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>Zero times.</strong> That's the whole point of rung 4. The SDK runs each tool, feeds the result straight back into the model's response in progress, and only returns control to your Python when the model is done. In Cycle 2's JSON-dispatch pattern, you would have had 8 round trips through your Python loop; here you have one.</div>
+  </div>
+
+  <div class="mcq" id="q2">
+    <div class="q">2. If you removed all five <code>@tool</code> decorators but kept the tool function bodies intact, what would happen at run time?</div>
+    <label><input type="radio" name="q2"> Nothing — the SDK would discover them automatically.</label>
+    <label><input type="radio" name="q2"> The model would have no tools to call; it would have to fall back to plain-text responses with no actions taken.</label>
+    <label><input type="radio" name="q2"> Python would refuse to start.</label>
+    <button onclick="document.getElementById('q2').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>The model would have no tools to call.</strong> The decorator is what registers each function with the SDK as a callable tool. Without it, the functions are just plain Python that the model has no way to invoke. The agent would still run, but it would talk in prose rather than taking action.</div>
+  </div>
+
+  <div class="mcq" id="q3">
+    <div class="q">3. You run the agent twice — once on a Monday, once on a Friday — both times for "pancakes." On Friday the agent skips checking flour and eggs and just asks if you want to add maple syrup to the shopping list. Why?</div>
+    <label><input type="radio" name="q3"> The model got smarter between runs.</label>
+    <label><input type="radio" name="q3"> The agent read the pantry ledger on Friday and saw that flour and eggs were already confirmed; it knew not to re-check.</label>
+    <label><input type="radio" name="q3"> Python cached the results from Monday's run.</label>
+    <button onclick="document.getElementById('q3').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>The agent read the pantry ledger on Friday.</strong> This is across-session memory in action (rung 3, carried). The pantry survived between runs as a JSON file; the agent reads it before turn 1 and can avoid redundant work the second time. Python doesn't "cache" in the traditional sense — it just reads what's on disk.</div>
+  </div>
+</section>
+
+<!-- §12 -->
+<section id="s12">
+  <p class="section-tag">§12 · Ready check</p>
+  <h2>Before you hit Run</h2>
+  <p>The single most important thing this cycle is the <code>🔗 [TOOL CHAIN]</code> line. If you see N &gt; 1 on it, the rung-4 capability landed.</p>
+  <div class="checklist">
+    <label><input type="checkbox"> I'll try <code>spaghetti carbonara</code> first — it's the recipe that triggers the cleanest multi-tool chain.</label>
+    <label><input type="checkbox"> I'll watch for <code>🔗 [TOOL CHAIN] N tool calls in this turn</code> and check N is greater than 1 on at least one turn.</label>
+    <label><input type="checkbox"> I know I can type <code>stop</code> at any time to exit.</label>
+    <label><input type="checkbox"> I'll run a second time on the same recipe to see app memory take effect.</label>
+    <label><input type="checkbox"> I know <code>recipe-companion_run_output.log</code> captures everything for the post-run reflection.</label>
+  </div>
+  <p style="margin-top:24px;">When all five are checked, head to PyCharm. After your run, say <em>"I ran it"</em> in the Foundry chat and Part 2 (<code>recipe-companion_learning-insights.html</code>) will be generated from your actual run log.</p>
+</section>
+
+<!-- §13 -->
+<footer class="provenance" id="s13">
+  <p><strong>Agent:</strong> recipe-companion · Cycle 3 · 2026-06-08</p>
+  <p><strong>SDK rung introduced:</strong> 4 (custom tools via <code>@tool</code> + <code>create_sdk_mcp_server</code>)</p>
+  <p><strong>Companion files:</strong> <code>main.py</code> · <code>prompt.md</code> · <code>pantry.json</code> · <code>shopping_list.json</code> · <code>favorites.json</code> · <code>recipe-companion_run_output.log</code> (post-run) · <code>recipe-companion_learning-insights.html</code> (post-run, Part 2)</p>
+  <p><strong>Project:</strong> Agent Foundry · PRD v9 + FR-C10/C11/F7</p>
+  <p><strong>Document version:</strong> v1 · lay-first per FR-C5 / FR-C10 contracts</p>
+</footer>
+
+</main>
+</body>
+</html>

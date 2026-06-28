@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Study Buddy — Pre-run reading (Part 1)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #fbf7ef;
+    --ink: #2a2a2a;
+    --muted: #6e6557;
+    --accent: #7a4e2d;
+    --accent-soft: #e7d8c4;
+    --rule: #d8cdb8;
+    --aside-bg: #f2ecde;
+    --aside-rule: #c8b890;
+    --good: #2f6a3a;
+    --warn: #a45b00;
+    --code-bg: #fff8ec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: Georgia, "Iowan Old Style", "Source Serif Pro", serif;
+    line-height: 1.65;
+    font-size: 17.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 32px 96px; }
+  header.title {
+    margin: 0 0 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  header.title .kicker {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  header.title h1 {
+    font-size: 38px; line-height: 1.15; margin: 0 0 8px; font-weight: 700;
+  }
+  header.title .sub { color: var(--muted); font-style: italic; margin-top: 4px; }
+  nav.toc {
+    margin: 24px 0 40px;
+    padding: 18px 22px;
+    background: var(--aside-bg);
+    border-left: 3px solid var(--accent);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+  }
+  nav.toc ol { margin: 6px 0; padding-left: 22px; }
+  nav.toc li { margin: 3px 0; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  nav.toc .dive { color: var(--muted); font-style: italic; }
+  section { margin: 56px 0; scroll-margin-top: 20px; }
+  section h2 {
+    font-size: 26px; font-weight: 700; margin: 0 0 8px;
+    border-bottom: 1px dashed var(--rule); padding-bottom: 10px;
+  }
+  section .section-tag {
+    font-family: -apple-system, sans-serif; text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.12em; color: var(--accent);
+    margin-bottom: 6px;
+  }
+  p { margin: 14px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  strong { color: var(--ink); }
+  em { color: var(--muted); }
+  aside.deep-dive {
+    background: var(--aside-bg);
+    border: 1px solid var(--aside-rule);
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  aside.deep-dive .label {
+    font-family: -apple-system, sans-serif;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 6px; font-weight: 600;
+  }
+  aside.deep-dive p, aside.deep-dive ul, aside.deep-dive ol { color: var(--muted); }
+  aside.deep-dive code { background: rgba(0,0,0,0.04); }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg); padding: 1px 6px; border-radius: 3px;
+    font-size: 0.92em;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  pre code { background: transparent; padding: 0; }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: #fff;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.good { border-left-color: var(--good); }
+  .callout .label {
+    font-family: -apple-system, sans-serif;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 4px;
+  }
+  .callout.warn .label { color: var(--warn); }
+  .callout.good .label { color: var(--good); }
+  .stage-grid {
+    display: grid; grid-template-columns: 1fr; gap: 12px; margin: 24px 0;
+  }
+  .stage {
+    display: grid; grid-template-columns: 110px 1fr; gap: 16px;
+    align-items: start; padding: 12px 14px;
+    background: #fff; border: 1px solid var(--rule); border-radius: 4px;
+  }
+  .stage .name {
+    font-family: -apple-system, sans-serif; font-weight: 700;
+    color: var(--accent); font-size: 14px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stage .what { color: var(--ink); font-size: 16px; }
+  .stage .what em { font-style: italic; color: var(--muted); font-size: 14px; display: block; margin-top: 4px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 18px 0;
+    font-size: 15px;
+  }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: -apple-system, sans-serif; color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+  blockquote {
+    border-left: 3px solid var(--rule);
+    padding: 4px 16px; margin: 16px 0;
+    color: var(--muted); font-style: italic;
+  }
+  .mcq {
+    background: #fff; border: 1px solid var(--rule); border-radius: 6px;
+    padding: 16px 18px; margin: 18px 0;
+  }
+  .mcq .q { font-weight: 700; margin-bottom: 10px; }
+  .mcq label { display: block; padding: 6px 0; cursor: pointer; color: var(--ink); }
+  .mcq label input { margin-right: 8px; }
+  .mcq .reveal {
+    display: none; margin-top: 14px; padding: 12px 14px;
+    background: var(--aside-bg); border-left: 3px solid var(--good);
+    border-radius: 0 4px 4px 0; font-size: 15px;
+  }
+  .mcq.show .reveal { display: block; }
+  .mcq button {
+    margin-top: 10px; padding: 6px 14px;
+    background: var(--accent); color: #fff; border: 0;
+    border-radius: 4px; font-family: -apple-system, sans-serif;
+    font-size: 14px; cursor: pointer;
+  }
+  .checklist { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 18px 22px; }
+  .checklist label { display: block; padding: 4px 0; cursor: pointer; }
+  .checklist input { margin-right: 10px; }
+  footer.provenance {
+    margin-top: 80px; padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: -apple-system, sans-serif;
+    font-size: 13px; color: var(--muted);
+  }
+  footer.provenance p { margin: 4px 0; }
+  .svg-loop { display: block; margin: 18px auto; max-width: 100%; }
+  hr.section-rule { border: 0; border-top: 1px dashed var(--rule); margin: 36px 0; }
+  @media (max-width: 600px) {
+    main { padding: 32px 18px 60px; }
+    .stage { grid-template-columns: 1fr; }
+    .stage .name { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header class="title">
+  <p class="kicker">Study Buddy · Part 1 · Pre-run reading</p>
+  <h1>An agent that remembers what tripped you up last time</h1>
+  <p class="sub">Cycle 2 · A ~10-minute read before you hit Run.</p>
+</header>
+
+<nav class="toc">
+  <strong>Sections</strong>
+  <ol>
+    <li><a href="#s1">What this agent is for</a></li>
+    <li><a href="#s2">How this agent thinks</a></li>
+    <li><a href="#s3">What makes this an "agent"</a></li>
+    <li><a href="#s4" class="dive">Deeper dive · Where each trait lives in the code</a></li>
+    <li><a href="#s5" class="dive">Deeper dive · Reading the code (Python primer)</a></li>
+    <li><a href="#s6">What to expect when you run it</a></li>
+    <li><a href="#s7">Things worth noticing during the run</a></li>
+    <li><a href="#s8">Watch out for these</a></li>
+    <li><a href="#s9">Who's making the decisions</a></li>
+    <li><a href="#s10" class="dive">Deeper dive · SDK glossary</a></li>
+    <li><a href="#s11">A few self-check questions</a></li>
+    <li><a href="#s12">Before you hit Run</a></li>
+    <li><a href="#s13">Provenance</a></li>
+  </ol>
+</nav>
+
+<!-- §1 -->
+<section id="s1">
+  <p class="section-tag">§1 · Use case</p>
+  <h2>What this agent is for</h2>
+  <p>Study Buddy quizzes you on a topic and <strong>remembers what you struggled with last time</strong>. You name a topic — say, <em>python lists</em> — and it asks you five to eight short questions, one at a time. After every answer it makes a quiet judgment about how confident you sounded on that subtopic and writes a one-line note to a small file on disk. The next time you study the same topic, it opens by drilling whatever was weakest in that file.</p>
+  <p>The first run will feel like a normal quiz. The second run on the same topic — even with no code changes — will give you a <em>different</em> lesson, because the agent has read its own notes from last time. That's the whole point.</p>
+</section>
+
+<!-- §2 -->
+<section id="s2">
+  <p class="section-tag">§2 · Mental model</p>
+  <h2>How this agent thinks</h2>
+  <p>Every agent in this course runs the same six-stage shape. Study Buddy fills them in like this:</p>
+  <svg class="svg-loop" viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" aria-label="Six-stage agent loop">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#7a4e2d"/>
+      </marker>
+    </defs>
+    <g font-family="-apple-system, sans-serif" font-size="12" fill="#2a2a2a" text-anchor="middle">
+      <g>
+        <rect x="6"   y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="56"  y="62" font-weight="700" fill="#7a4e2d">WAKE UP</text>
+        <text x="56"  y="80">read ledger</text>
+      </g>
+      <g>
+        <rect x="126" y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="176" y="62" font-weight="700" fill="#7a4e2d">PLAN</text>
+        <text x="176" y="80">pick a subtopic</text>
+      </g>
+      <g>
+        <rect x="246" y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="296" y="62" font-weight="700" fill="#7a4e2d">TRY</text>
+        <text x="296" y="80">ask question</text>
+      </g>
+      <g>
+        <rect x="366" y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="416" y="62" font-weight="700" fill="#7a4e2d">LOOK</text>
+        <text x="416" y="80">read your answer</text>
+      </g>
+      <g>
+        <rect x="486" y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="536" y="62" font-weight="700" fill="#7a4e2d">TRY AGAIN</text>
+        <text x="536" y="80">next question</text>
+      </g>
+      <g>
+        <rect x="606" y="40" width="100" height="50" rx="6" fill="#fff" stroke="#c8b890"/>
+        <text x="656" y="62" font-weight="700" fill="#7a4e2d">STOP</text>
+        <text x="656" y="80">save ledger</text>
+      </g>
+      <line x1="106" y1="65" x2="126" y2="65" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="226" y1="65" x2="246" y2="65" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="346" y1="65" x2="366" y2="65" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="466" y1="65" x2="486" y2="65" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="586" y1="65" x2="606" y2="65" stroke="#7a4e2d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <path d="M536,40 C536,15 296,15 296,40" fill="none" stroke="#7a4e2d" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+      <text x="416" y="12" font-style="italic" fill="#6e6557">loop until done or cap</text>
+    </g>
+  </svg>
+  <p>Two things to notice in the diagram. First, the dashed arrow that loops <em>Try again</em> back to <em>Try</em> — that's the agent loop, and it can run anywhere from one to eight times. Second, the very first stage (<em>Wake up</em>) reads notes the agent saved on its <em>previous</em> session. That's what gives it memory across days, not just across questions.</p>
+</section>
+
+<!-- §3 -->
+<section id="s3">
+  <p class="section-tag">§3 · The agentic core</p>
+  <h2>What makes this an "agent"</h2>
+  <p>Three traits separate a real agent from a clever script. Study Buddy demonstrates all three.</p>
+
+  <h3 style="margin-top:24px;">Goal-directedness — it knows when it's done</h3>
+  <p>At the end of every question, the agent asks itself: <em>are we done?</em> That check is a real function in the code that returns yes or no. "Done" means: the model has decided enough has been covered, OR you typed <code>stop</code>, OR the safety cap of eight questions has fired. Whichever comes first wins. The agent never just rambles forever; it has an opinion about completion and it checks that opinion every step.</p>
+
+  <h3 style="margin-top:24px;">Autonomy — the model picks the questions, not your code</h3>
+  <p>Your Python doesn't have a hardcoded list like <code>questions = ["What's indexing?", "What's a slice?", …]</code>. Instead, the model is told <em>"here's the topic, here's what was weak last time, ask the user something useful"</em> — and the model picks what to ask, how to phrase it, and what subtopic to drill. Two runs on the same topic produce different questions because the model owns those choices in the moment.</p>
+
+  <h3 style="margin-top:24px;">Observe → reason → act, with memory at <em>two</em> layers</h3>
+  <p>This is where Study Buddy really earns the word "agent." After every answer you give, the model assesses it, updates its picture of where you stand, and uses that to choose the next question. That's the <em>within-session</em> loop — and crucially, the model itself remembers what it just asked you (this is new in Cycle 2; the Cycle 1 agent literally couldn't). On top of that, the agent writes confidence notes to a small file on disk after every question, so when you come back tomorrow, it picks up where you actually were. That's the <em>across-session</em> loop.</p>
+  <p>Both loops are running. Both feed each other. Both are what makes this agent feel <em>aware</em> in a way a quiz script can't.</p>
+</section>
+
+<!-- §4 — deeper dive sidebar -->
+<section id="s4">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§4 · Where each trait lives in the code</h2>
+    <p>For readers who want to follow the trait map straight into Python:</p>
+    <table>
+      <thead><tr><th>Trait</th><th>File · function</th><th>Line range</th></tr></thead>
+      <tbody>
+        <tr><td>Goal-directedness</td><td><code>main.py · session_complete()</code></td><td>~70</td></tr>
+        <tr><td>Autonomy (model owns choice)</td><td><code>main.py · parse_model_response()</code></td><td>~210</td></tr>
+        <tr><td>Within-session memory</td><td><code>main.py · async with ClaudeSDKClient</code></td><td>~330</td></tr>
+        <tr><td>Across-session memory</td><td><code>main.py · read_weak_spots() / update_weak_spots()</code></td><td>~110-160</td></tr>
+        <tr><td>Loop feedback (G3)</td><td><code>main.py · agent_loop() · 🔄 [LOOP FEEDBACK]</code></td><td>~410</td></tr>
+        <tr><td>Principled stop (three exits)</td><td><code>main.py · agent_loop() · 🏁 exit branches</code></td><td>~440-460</td></tr>
+      </tbody>
+    </table>
+    <p>The gate-code annotations in the code (<code># GATE[G1]</code> through <code># GATE[G5]</code>) are the spec traceability surface — they are not user-facing.</p>
+  </aside>
+</section>
+
+<!-- §5 — deeper dive sidebar -->
+<section id="s5">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§5 · Reading the code (a tiny Python primer)</h2>
+    <p>You do not need to <em>write</em> Python to read this agent. You need to <em>recognize</em> five constructs. That's it.</p>
+    <ul>
+      <li><code>def name(args): …</code> — a named recipe. Read the name; the body is the steps.</li>
+      <li><code>while CONDITION: …</code> — keep doing the indented block until the condition turns false.</li>
+      <li><code>if … : … else: …</code> — a branch. Take the first block if the test is true, otherwise the second.</li>
+      <li><code>print("…")</code> — show this text in the terminal. Every emoji-labeled line you'll see during the run is one of these.</li>
+      <li><code>async</code> and <code>await</code> — black-box for now. Read <code>await something()</code> as "wait here until something() comes back." It's how Python politely lets the LLM take a few seconds to respond without freezing.</li>
+    </ul>
+    <p><strong>Recommended reading order:</strong></p>
+    <ol>
+      <li>Top of <code>main.py</code> — module docstring + constants. Skim the comments labelled <code>PURPOSE</code>; you'll know what each block is for without reading the implementation.</li>
+      <li>Jump to <code>session_complete()</code>. This is the goal predicate; 7 lines.</li>
+      <li>Read <code>read_weak_spots()</code> and <code>update_weak_spots()</code>. These touch the across-session memory file.</li>
+      <li>Read <code>agent_loop()</code> top-to-bottom. This is the main story. Find the <code>async with ClaudeSDKClient(…) as client:</code> line — everything inside that block is one continuous conversation with the model.</li>
+      <li>Finish with <code>print_summary()</code>. Pure formatting; no logic.</li>
+    </ol>
+  </aside>
+</section>
+
+<!-- §6 -->
+<section id="s6">
+  <p class="section-tag">§6 · Expected run</p>
+  <h2>What to expect when you run it</h2>
+  <p>Right-click <code>main.py</code> in PyCharm and choose Run. The agent will boot, check its environment, read its notes from disk (empty on your first run, populated on subsequent runs), and then start a conversation in the terminal. <strong>You will answer questions by typing.</strong> Take it seriously or play with low-confidence answers on purpose — both teach you something.</p>
+  <p>Here is roughly what the terminal will show — each line is a labeled teaching moment:</p>
+  <pre><code>🤖 [AGENT BOOT] Study Buddy v1 · rung 3
+🔬 [PREFLIGHT] checking environment...
+  ✓ Python 3.12
+  ✓ claude_agent_sdk importable
+  ✓ preflight passed
+
+🎯 [GOAL SET] Quiz you on 'python_lists'; min 5 questions
+📀 [APP MEMORY] read weak_spots.json → 0 prior entries (first run on this topic)
+📋 [PLAN GENERATED] open broadly; let model pick subtopics
+
+━━━ [SDK →] claude-opus-4-8 · turn 1 · session bootstrapping
+  ┆ AssistantMessage: {"ask": {"subtopic": "indexing", "question": ...
+━━━ [← SDK] +480 in / +95 out tokens · session_id captured
+
+🎲 [MODEL DECISION] action=ask · subtopic=indexing
+❓ Q1: What does a[0] return for a list a = [10, 20, 30]?
+Your answer: <em>(you type)</em>
+
+📐 [GOAL PREDICATE] session_complete(state) → False  (1/5 min asked)
+💾 [SESSION MEMORY] rung 3 — client holds 1 turn of conversation
+🔄 [LOOP FEEDBACK] model received your answer; next turn will assess + ask
+... and so on, up to 8 questions max ...
+
+🏁 GOAL MET — model assessed session complete
+📀 [APP MEMORY] weak_spots.json saved → 5 subtopic entries
+╔══ 🧠 AGENT SUMMARY ══╗
+  ... per-trait evidence with quoted output lines ...
+╚════════════════════════╝</code></pre>
+  <p>Don't worry about reading every line as it scrolls past. The full log is saved to <code>study-buddy_run_output.log</code> in the same folder, and we'll use that log to write Part 2 of the learning materials after your run.</p>
+</section>
+
+<!-- §7 -->
+<section id="s7">
+  <p class="section-tag">§7 · Watch for these moments</p>
+  <h2>Things worth noticing during the run</h2>
+  <div class="callout good">
+    <div class="label">The headline moment</div>
+    <p><strong>The agent remembers what it just asked you</strong> — and the second question takes the first one into account. In the previous cycle's agent, every call to the model started fresh; this time, every question after the first is being asked by a model that already knows what came before.</p>
+    <p>You'll see this in <code>[SESSION MEMORY]</code> lines that grow — "1 turn, 2 turns, 3 turns" — and in the prompts your code sends, which get <em>shorter</em>, not longer, after turn 1. That's the new capability landing.</p>
+  </div>
+  <div class="callout">
+    <div class="label">Two-layer memory in action</div>
+    <p>Watch for two distinct labels: <code>💾 [SESSION MEMORY]</code> is the conversation memory living inside the LLM client (gone the moment the run ends), and <code>📀 [APP MEMORY]</code> is the notes file on disk (survives forever). They do different jobs.</p>
+  </div>
+  <div class="callout">
+    <div class="label">Run it twice</div>
+    <p>After your first run finishes, run it again on the same topic. Notice the difference. The first turn's prompt now includes "indexing: 0.4 confidence last time" — and the model opens by drilling indexing. <strong>No code changed; the agent's behavior did.</strong> That's the punchline of this cycle.</p>
+  </div>
+  <div class="callout">
+    <div class="label">The log accumulates</div>
+    <p><code>study-buddy_run_output.log</code> is appended every run, never overwritten. By cycle's end you'll have multiple runs side-by-side in one file — useful for the post-run reflection and (in later cycles) for cross-run comparison.</p>
+  </div>
+</section>
+
+<!-- §8 -->
+<section id="s8">
+  <p class="section-tag">§8 · Gotchas</p>
+  <h2>Watch out for these</h2>
+  <ol>
+    <li><strong>First-run empty ledger.</strong> If you run on a topic that's never been studied, the agent's "notes from last time" are an empty list. The agent handles this gracefully — it just opens broadly. Don't be alarmed if your first run feels less personalized than the second.</li>
+    <li><strong>Model wraps JSON in markdown fences.</strong> Sometimes the model gets chatty and writes <code>```json …```</code> around its structured response. The parser strips fences and extracts the JSON object. If parsing fails entirely, the agent falls back to a safe default rather than crashing.</li>
+    <li><strong>You hit Enter without typing.</strong> An empty answer is treated as low-confidence (the model sees "user gave no answer" and updates the ledger accordingly). The run continues.</li>
+    <li><strong>The plan can change mid-run.</strong> After a surprising answer, the model may abandon the path it was on and switch to a different subtopic — you'll see a <code>📝 [PLAN REVISED]</code> line. That's not a bug; that's the autonomy trait firing.</li>
+    <li><strong>Disk write failure.</strong> If <code>weak_spots.json</code> can't be written (rare — permissions or disk full), the agent surfaces a <code>⚠ [ERROR: STRUCTURAL → log]</code> line and continues with the session. The ledger won't update, but the run still completes.</li>
+  </ol>
+</section>
+
+<!-- §9 -->
+<section id="s9">
+  <p class="section-tag">§9 · Control plane</p>
+  <h2>Who's making the decisions</h2>
+  <p>Every interesting choice in Study Buddy is made by one of three deciders. Knowing which is which is the lay version of the question "is this really an agent?"</p>
+  <table>
+    <thead><tr><th>Decision</th><th>Who owns it</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Which topic gets studied this run</td><td>You (or a constant in code, for the demo)</td><td>Topic comes from the user; agent doesn't pick what to teach you</td></tr>
+      <tr><td>Which subtopic to drill first</td><td>The model</td><td>It reads the ledger and decides where the weakness is</td></tr>
+      <tr><td>How to phrase each question</td><td>The model</td><td>Same intent, different wording every run</td></tr>
+      <tr><td>How confident your answer was</td><td>The model</td><td>It assigns a 0-to-1 score based on your wording</td></tr>
+      <tr><td>Whether to ask another question or stop</td><td>The model — until the cap fires</td><td>The cap is your code's last word; before that, the model gets to call it done</td></tr>
+      <tr><td>When to give up entirely</td><td>You (by typing <code>stop</code>) or the cap</td><td>The agent never overrides a user-stop</td></tr>
+    </tbody>
+  </table>
+  <p>If you replaced the model with a fixed question list and removed the confidence scoring, you'd have a quiz program — not an agent. The agency lives in the rows where the model owns the decision.</p>
+</section>
+
+<!-- §10 — deeper dive sidebar, end-positioned -->
+<section id="s10">
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <h2 style="border-bottom: 1px dashed var(--aside-rule); padding-bottom: 8px;">§10 · SDK glossary</h2>
+    <p>For readers who want the technical vocabulary:</p>
+    <ul>
+      <li><code>ClaudeSDKClient</code> — the SDK class that holds a persistent conversation. Opened as <code>async with ClaudeSDKClient(options) as client:</code>; closed automatically when the block exits.</li>
+      <li><code>await client.query(prompt)</code> — sends a new turn into the open conversation.</li>
+      <li><code>async for msg in client.receive_response():</code> — pulls messages from the model until a <code>ResultMessage</code> arrives (which marks the end of that turn's response).</li>
+      <li><code>session_id</code> — a string captured from <code>ResultMessage</code>. With the right rung (6+) you can pass this back to a future <code>query()</code> call to resume the same conversation across separate runs. This agent captures and prints it but does not actively resume.</li>
+      <li><code>ClaudeAgentOptions</code> — config bag for the client: system prompt, model id, max-turns per call, permission mode, child env.</li>
+      <li><code>MessageLens</code> — local helper that renders one auditable line per SDK message so the conversation is watchable in the terminal.</li>
+      <li>Rung 3 — the SDK ladder rung introduced by this agent: <em>multi-turn ClaudeSDKClient + session_id capture/resume.</em></li>
+    </ul>
+  </aside>
+</section>
+
+<!-- §11 -->
+<section id="s11">
+  <p class="section-tag">§11 · Self-check</p>
+  <h2>A few self-check questions</h2>
+  <p>Three quick questions. Click <em>Reveal</em> for each after you've picked an answer.</p>
+
+  <div class="mcq" id="q1">
+    <div class="q">1. Why does this agent's second run on the same topic give a different lesson than its first run?</div>
+    <label><input type="radio" name="q1"> Because the model is random.</label>
+    <label><input type="radio" name="q1"> Because the agent read its own notes file from the first run.</label>
+    <label><input type="radio" name="q1"> Because the LLM gets smarter over time.</label>
+    <button onclick="document.getElementById('q1').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>The agent read its own notes file from the first run.</strong> The other two answers are wrong: the model isn't random (it's deterministic enough), and the LLM doesn't change between runs. What changes is the across-session memory layer — <code>weak_spots.json</code> — which the agent reads at the start of every run and folds into the first prompt.</div>
+  </div>
+
+  <div class="mcq" id="q2">
+    <div class="q">2. Which of these would stop being true if you replaced <code>ClaudeSDKClient</code> with the older <code>query()</code> from Cycle 1?</div>
+    <label><input type="radio" name="q2"> The agent could still ask you questions.</label>
+    <label><input type="radio" name="q2"> Each new question would be asked by a model that doesn't remember the previous one.</label>
+    <label><input type="radio" name="q2"> The notes file would stop being saved.</label>
+    <button onclick="document.getElementById('q2').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>Each new question would be asked by a model that doesn't remember the previous one.</strong> You'd have to re-tell the model everything that happened in prior turns by re-stuffing it into every prompt. The agent could still ask questions and still save notes — those don't depend on the new SDK feature. The model's <em>own memory across turns</em> is what would vanish.</div>
+  </div>
+
+  <div class="mcq" id="q3">
+    <div class="q">3. If the agent runs all eight questions without the model declaring done, what happens?</div>
+    <label><input type="radio" name="q3"> The agent loops forever.</label>
+    <label><input type="radio" name="q3"> The agent crashes with an error.</label>
+    <label><input type="radio" name="q3"> The agent stops cleanly at the safety cap; ledger entries written so far are saved.</label>
+    <button onclick="document.getElementById('q3').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>The agent stops cleanly at the safety cap; ledger entries written so far are saved.</strong> This is the principled-stop trait. The agent has three exit paths — the model says done, you type <code>stop</code>, or the cap fires — and any of the three terminates the loop safely. Partial progress is not lost.</div>
+  </div>
+</section>
+
+<!-- §12 -->
+<section id="s12">
+  <p class="section-tag">§12 · Ready check</p>
+  <h2>Before you hit Run</h2>
+  <p>The whole point of Cycle 2 is that you can <em>see</em> the difference memory makes. Plan to run the agent at least twice on the same topic so you can compare. Five-minute commitment.</p>
+  <div class="checklist">
+    <label><input type="checkbox"> I understand this agent is interactive — I'll type answers in the terminal.</label>
+    <label><input type="checkbox"> I know the three exit paths: model says done, I type <code>stop</code>, or the cap of 8 fires.</label>
+    <label><input type="checkbox"> I know to look for <code>[SESSION MEMORY]</code> growing each turn (within-session) and <code>[APP MEMORY]</code> writing to disk (across-session).</label>
+    <label><input type="checkbox"> I will run the agent at least twice on the same topic to see the second-run difference.</label>
+    <label><input type="checkbox"> I know that <code>study-buddy_run_output.log</code> in the agent folder captures everything — I don't need to take notes.</label>
+  </div>
+  <p style="margin-top:24px;">When all five are checked, head to PyCharm. After you've run it (at least once), say <em>"I ran it"</em> in the Foundry chat and Part 2 (<code>study-buddy_learning-insights.html</code>) will be generated from your actual run log.</p>
+</section>
+
+<!-- §13 -->
+<footer class="provenance" id="s13">
+  <p><strong>Agent:</strong> study-buddy · Cycle 2 · 2026-06-08</p>
+  <p><strong>SDK rung introduced:</strong> 3 (ClaudeSDKClient multi-turn + session_id capture)</p>
+  <p><strong>Companion files:</strong> <code>main.py</code> · <code>prompt.md</code> · <code>weak_spots.json</code> · <code>study-buddy_run_output.log</code> (post-run) · <code>study-buddy_learning-insights.html</code> (post-run, Part 2)</p>
+  <p><strong>Project:</strong> Agent Foundry · PRD v9 + FR-C10/C11/F7</p>
+  <p><strong>Document version:</strong> v1 · lay-first per FR-C5 / FR-C10 contracts</p>
+</footer>
+
+</main>
+</body>
+</html>

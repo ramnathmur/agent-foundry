@@ -1,0 +1,299 @@
+
+============================================================
+RUN: 2026-06-13 14:07:13
+============================================================
+
+
+═══════════════════════════════════════════════════════
+🌅  T H E   A G E N T   W A K E S   U P
+═══════════════════════════════════════════════════════
+🤖 [AGENT BOOT] Research Project Lead v1.0
+   Domain: learning-research | Rung: 8 (subagents + context compaction)
+   Max sub-researchers: 5 | Max follow-ups: 2 | Max synthesis attempts: 2
+
+📖 [OUTPUT GUIDE] Each labeled line is a teaching element — match to learning-guide.html §6
+   🤖 Boot  🎯 Goal  📋 Plan  🎲 Decision  🔧 Tool  📥 Result
+   🔄 Feedback  📐 Predicate  🏁 Exit  ━━━ SDK boundary
+   Sub-researcher work appears in ┌──box──┐ containers
+
+🎯 [GOAL SET] all_dispatched_returned AND synthesis_produced AND confidence >= 0.7
+   Research question: What's the most effective spaced-repetition algorithm for learning a programming language — and what are the trade-offs vs alternatives?
+  💡 The agent has set its success criteria — a computable checklist, not a wish.
+
+📀 [APP MEMORY] No prior briefings found — this is the first run
+
+═══════════════════════════════════════════════════════
+📋  T H E   A G E N T   M A K E S   A   P L A N
+═══════════════════════════════════════════════════════
+
+📊 [CONTEXT] ~34 tokens in context (~19 words)
+
+━━━ [SDK →] model · ~68 prompt tokens
+━━━ [← SDK] 0.0s · ERROR
+⚠ [ERROR: TRANSIENT] Planning call failed: query() got an unexpected keyword argument 'max_tokens'
+
+🎲 [MODEL DECISION] selected: technical, user, contrarian · alternatives: market, regulatory, historical
+  💡 The model chose 3 angles from 6 options — this is its own choice, not hard-coded.
+
+📋 [PLAN GENERATED]
+   ▶ 1. Dispatch sub-researcher: technical
+   ○ 2. Dispatch sub-researcher: user
+   ○ 3. Dispatch sub-researcher: contrarian
+   ○ 4. Collect reports and check for gaps
+   ○ 5. Synthesize final briefing
+
+   Model's reasoning: Fallback due to error: query() got an unexpected keyword argument 'max_tokens'
+  📌 Step 0 in one sentence: Plan ready — 3 angles selected, dispatch next.
+
+═══════════════════════════════════════════════════════
+🚀  D I S P A T C H I N G   S U B - R E S E A R C H E R S
+═══════════════════════════════════════════════════════
+
+📍 [STEP 1] Dispatching sub-researcher #1: technical
+   🔧 [TOOL CALL] spawn_researcher(angle='technical', question='What's the most effective spaced-repetition algori...')
+   🔒 [TRUST FENCE] research database content fenced as data
+  ━━━ [SDK →] sub-researcher(technical) · ~253 prompt tokens
+  ━━━ [← SDK] 0.0s · ERROR
+  ⚠ [ERROR: TRANSIENT] sub-researcher(technical): query() got an unexpected keyword argument 'max_tokens'
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ Sub-Researcher: technical                                                   │
+  │─────────────────────────────────────────────────────────────────────────────│
+  │ 🔧 [TOOL CALL] lookup_source(angle='technical')                              │
+  │ 📥 [TOOL RESULT] 2 source(s) found                                           │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='tech-001')                         │
+  │ 📥 [TOOL RESULT] extracted: Leitner System: Algorithm Design and Performa... │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='tech-002')                         │
+  │ 📥 [TOOL RESULT] extracted: SM-2 and SuperMemo: Interval Scheduling Mathe... │
+  │ 🧠 [REASON] synthesizing 2 finding(s)                                        │
+  │ ✅ Report ready: confidence 0.30 | gap: yes                                  │
+  └─────────────────────────────────────────────────────────────────────────────┘
+
+💾 [SESSION MEMORY] sub_report_technical
+   └─ confidence=0.30, gap=True
+
+📋 [PLAN PROGRESS]
+   ✓ 1. Dispatch sub-researcher: technical
+   ▶ 2. Dispatch sub-researcher: user
+   ○ 3. Dispatch sub-researcher: contrarian
+   ○ 4. Collect reports and check for gaps
+   ○ 5. Synthesize final briefing
+  📌 Step 1 in one sentence: Sub-researcher 'technical' reported back with confidence 0.30.
+
+📍 [STEP 2] Dispatching sub-researcher #2: user
+   🔧 [TOOL CALL] spawn_researcher(angle='user', question='What's the most effective spaced-repetition algori...')
+   🔒 [TRUST FENCE] research database content fenced as data
+  ━━━ [SDK →] sub-researcher(user) · ~267 prompt tokens
+  ━━━ [← SDK] 0.0s · ERROR
+  ⚠ [ERROR: TRANSIENT] sub-researcher(user): query() got an unexpected keyword argument 'max_tokens'
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ Sub-Researcher: user                                                        │
+  │─────────────────────────────────────────────────────────────────────────────│
+  │ 🔧 [TOOL CALL] lookup_source(angle='user')                                   │
+  │ 📥 [TOOL RESULT] 2 source(s) found                                           │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='usr-001')                          │
+  │ 📥 [TOOL RESULT] extracted: Learning Outcomes: SRS vs Traditional Study f... │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='usr-002')                          │
+  │ 📥 [TOOL RESULT] extracted: User Experience Research: Why Learners Abando... │
+  │ 🧠 [REASON] synthesizing 2 finding(s)                                        │
+  │ ✅ Report ready: confidence 0.30 | gap: yes                                  │
+  └─────────────────────────────────────────────────────────────────────────────┘
+
+💾 [SESSION MEMORY] sub_report_user
+   └─ confidence=0.30, gap=True
+
+📋 [PLAN PROGRESS]
+   ✓ 1. Dispatch sub-researcher: technical
+   ✓ 2. Dispatch sub-researcher: user
+   ▶ 3. Dispatch sub-researcher: contrarian
+   ○ 4. Collect reports and check for gaps
+   ○ 5. Synthesize final briefing
+  📌 Step 2 in one sentence: Sub-researcher 'user' reported back with confidence 0.30.
+
+📍 [STEP 3] Dispatching sub-researcher #3: contrarian
+   🔧 [TOOL CALL] spawn_researcher(angle='contrarian', question='What's the most effective spaced-repetition algori...')
+   🔒 [TRUST FENCE] research database content fenced as data
+  ━━━ [SDK →] sub-researcher(contrarian) · ~182 prompt tokens
+  ━━━ [← SDK] 0.0s · ERROR
+  ⚠ [ERROR: TRANSIENT] sub-researcher(contrarian): query() got an unexpected keyword argument 'max_tokens'
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ Sub-Researcher: contrarian                                                  │
+  │─────────────────────────────────────────────────────────────────────────────│
+  │ 🔧 [TOOL CALL] lookup_source(angle='contrarian')                             │
+  │ 📥 [TOOL RESULT] 1 source(s) found                                           │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='con-001')                          │
+  │ 📥 [TOOL RESULT] extracted: Against Spaced Repetition for Programming: A ... │
+  │ 🧠 [REASON] synthesizing 1 finding(s)                                        │
+  │ ✅ Report ready: confidence 0.30 | gap: yes                                  │
+  └─────────────────────────────────────────────────────────────────────────────┘
+
+💾 [SESSION MEMORY] sub_report_contrarian
+   └─ confidence=0.30, gap=True
+
+📋 [PLAN PROGRESS]
+   ✓ 1. Dispatch sub-researcher: technical
+   ✓ 2. Dispatch sub-researcher: user
+   ✓ 3. Dispatch sub-researcher: contrarian
+   ▶ 4. Collect reports and check for gaps
+   ○ 5. Synthesize final briefing
+  📌 Step 3 in one sentence: Sub-researcher 'contrarian' reported back with confidence 0.30.
+
+═══════════════════════════════════════════════════════
+👁  C O L L E C T   &   C H E C K
+═══════════════════════════════════════════════════════
+
+📍 [STEP 4] Collecting all reports
+   🔧 [TOOL CALL] collect_reports()
+
+👁 [OBSERVE] 3 report(s) collected
+   • technical: confidence 0.30 ⚠ GAP
+   • user: confidence 0.30 ⚠ GAP
+   • contrarian: confidence 0.30 ⚠ GAP
+
+🧠 [REASON] 3 report(s) have gaps or low confidence
+   Follow-up budget: 2 remaining
+
+🔄 [LOOP FEEDBACK] 3 report(s) need follow-up → dispatching
+  💡 The agent read the reports and found gaps — instead of ignoring them, it's sending reinforcements.
+
+═══════════════════════════════════════════════════════
+🔄  F O L L O W - U P   D I S P A T C H E S
+═══════════════════════════════════════════════════════
+
+📍 [STEP 4] Follow-up dispatch: technical
+   ⚡ [ACT] spawn follow-up for gap: Error during technical research: query() got an unexpected k
+  ━━━ [SDK →] sub-researcher(technical) · ~253 prompt tokens
+  ━━━ [← SDK] 0.0s · ERROR
+  ⚠ [ERROR: TRANSIENT] sub-researcher(technical): query() got an unexpected keyword argument 'max_tokens'
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ Follow-up: technical                                                        │
+  │─────────────────────────────────────────────────────────────────────────────│
+  │ 🔧 [TOOL CALL] lookup_source(angle='technical')                              │
+  │ 📥 [TOOL RESULT] 2 source(s) found                                           │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='tech-001')                         │
+  │ 📥 [TOOL RESULT] extracted: Leitner System: Algorithm Design and Performa... │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='tech-002')                         │
+  │ 📥 [TOOL RESULT] extracted: SM-2 and SuperMemo: Interval Scheduling Mathe... │
+  │ 🧠 [REASON] synthesizing 2 finding(s)                                        │
+  │ ✅ Report ready: confidence 0.30 | gap: yes                                  │
+  └─────────────────────────────────────────────────────────────────────────────┘
+   📊 Follow-up added as supplementary (confidence 0.30)
+  📌 Step 4 in one sentence: Follow-up on 'technical' completed.
+
+📍 [STEP 5] Follow-up dispatch: user
+   ⚡ [ACT] spawn follow-up for gap: Error during user research: query() got an unexpected keywor
+  ━━━ [SDK →] sub-researcher(user) · ~267 prompt tokens
+  ━━━ [← SDK] 0.0s · ERROR
+  ⚠ [ERROR: TRANSIENT] sub-researcher(user): query() got an unexpected keyword argument 'max_tokens'
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │ Follow-up: user                                                             │
+  │─────────────────────────────────────────────────────────────────────────────│
+  │ 🔧 [TOOL CALL] lookup_source(angle='user')                                   │
+  │ 📥 [TOOL RESULT] 2 source(s) found                                           │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='usr-001')                          │
+  │ 📥 [TOOL RESULT] extracted: Learning Outcomes: SRS vs Traditional Study f... │
+  │ 🔧 [TOOL CALL] extract_finding(source_id='usr-002')                          │
+  │ 📥 [TOOL RESULT] extracted: User Experience Research: Why Learners Abando... │
+  │ 🧠 [REASON] synthesizing 2 finding(s)                                        │
+  │ ✅ Report ready: confidence 0.30 | gap: yes                                  │
+  └─────────────────────────────────────────────────────────────────────────────┘
+   📊 Follow-up added as supplementary (confidence 0.30)
+  📌 Step 5 in one sentence: Follow-up on 'user' completed.
+
+🔍 [TERMINATION CHECK] follow-up cap reached (2/2)
+
+📐 [GOAL PREDICATE] is_goal_met(state) → False
+   all_dispatched_returned=True
+   synthesis_produced=False
+   synthesis_confidence=0.0
+  💡 Not done yet — reports collected but no synthesis. The checklist says keep going.
+
+═══════════════════════════════════════════════════════
+📝  S Y N T H E S I Z I N G   T H E   B R I E F I N G
+═══════════════════════════════════════════════════════
+
+📍 [STEP 6] Synthesizing final briefing
+   🔧 [TOOL CALL] synthesize_briefing(reports=5 reports)
+
+━━━ [SDK →] model · ~273 prompt tokens
+━━━ [← SDK] 0.0s · ERROR
+⚠ [ERROR: TRANSIENT] Synthesis failed: query() got an unexpected keyword argument 'max_tokens'
+
+📐 [GOAL PREDICATE] is_goal_met(state) → False
+   all_dispatched_returned=True
+   synthesis_produced=False
+   synthesis_confidence=0.00 (threshold: 0.7)
+
+═══════════════════════════════════════════════════════
+🏁  V E R D I C T
+═══════════════════════════════════════════════════════
+
+🔍 [TERMINATION CHECK] subagents: 5/5 · follow-ups: 2/2 · synthesis: 1/2
+
+🏁 EXIT: subagent cap — 5/5 sub-researchers used without producing synthesis
+  💡 The agent ran out of specialists before finishing. Governance stopped it — not failure.
+
+╔════════════════════════════════════════════════════════╗
+║  🧠 AGENT SUMMARY                                      ║
+╚════════════════════════════════════════════════════════╝
+
+1️⃣  RUN NARRATIVE
+   The Research Project Lead received a question about spaced-repetition
+   algorithms for programming. It selected 3 angles (technical, user, contrarian),
+   dispatched 3 sub-researchers (each in its own context window),
+   dispatched 2 follow-up(s) for identified gaps,
+   and did not produce a synthesis.
+   Exit: EXIT: subagent cap
+
+2️⃣  TRAITS IN ACTION
+   • Goal-directedness  → is_goal_met() checked after dispatch and after synthesis
+   • Autonomy           → Model selected 3 angles from 6
+   • O-R-A loop         → Gaps detected → follow-ups dispatched
+   • Perception         → 9 findings extracted from mock DB
+   • Planning           → Investigation plan generated before dispatch
+   • Memory (session)   → Main agent carried context across 7 steps
+   • Memory (subagent)  → 5 independent context windows created (rung 8)
+   • Memory (app)       → research_briefs.json unchanged
+   • Principled stop    → EXIT: subagent cap
+
+3️⃣  MODEL DECISIONS
+   • Angle selection: technical, user, contrarian (from 6 options)
+   • Each sub-researcher independently decided how to search and summarize
+
+4️⃣  PLAN RECALIBRATIONS
+   • 2 follow-up(s) dispatched after gap detection
+     └─ technical: Error during technical research: query() got an unexpected k
+     └─ user: Error during user research: query() got an unexpected keywor
+     └─ contrarian: Error during contrarian research: query() got an unexpected 
+     └─ technical: Error during technical research: query() got an unexpected k
+     └─ user: Error during user research: query() got an unexpected keywor
+
+5️⃣  ITERATION COUNT
+   • Steps completed: 7
+   • Sub-researchers: 5/5
+   • Follow-ups: 2/2
+   • Synthesis attempts: 1/2
+   • Termination: EXIT: subagent cap
+
+6️⃣  MEMORY LEDGER
+   SESSION memory (dies with this run):
+     • dispatched_angles: ['technical', 'user', 'contrarian']
+     • reports: 5 report objects
+     • synthesis: not produced
+   WITHIN-SUBAGENT memory (each died when its sub-researcher finished):
+     • 5 independent context windows created and discarded
+   APP memory (survives this run):
+     • research_briefs.json: unchanged
+
+7️⃣  GATE VERDICTS
+   • Did-it-finish check: ⬜ goal not met — is_goal_met() returned False
+   • Model's own choice:  ✅ PASS — model selected 3 angles at [MODEL DECISION]
+   • Learning from what it saw: ✅ PASS — gap detected, follow-up dispatched
+   • Principled stop: ✅ PASS — EXIT: subagent cap
+
+💰 [USAGE] token tracking unavailable (SDK version may not expose usage)
+
+📊 [RUN DATA] Saved to research-lead_run_data.json for Run Log generation
+
+═══════════════════════════════════════════════════════
+Run complete. Total elapsed: 0.0s
+═══════════════════════════════════════════════════════
