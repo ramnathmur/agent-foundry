@@ -2,7 +2,7 @@
   "project": "Agent Foundry",
   "prd_version": "v9 + FR-C10 Audience Register + FR-C11 HTML backup rule + FR-F7 Professor Checkpoints (added 2026-06-07)",
   "created": "2026-06-07",
-  "last_updated": "2026-06-07 (end of session, post-Cycle-1)",
+  "last_updated": "2026-06-25 (Cycle 6 morning-spark — two runs completed; three bugs found and fixed; third run pending: dict-access bug → allowed_tools bug; 32/32 smoke tests green after all repairs)",
   "preferences": {
     "domains": ["morning-briefing", "health-habits", "learning-research"],
     "focus_trait": "observe-reason-act feedback loop",
@@ -12,38 +12,55 @@
   "sdk_ladder": {
     "1_query_message_anatomy": "introduced (study-prep, Cycle 1)",
     "2_goal_predicate_loop_circuit_breaker": "introduced (study-prep, Cycle 1)",
-    "3_client_sessions_resume": "not_started (Cycle 2 target — FORWARD)",
-    "4_custom_tools_mcp": "not_started",
-    "5_permissions_allowed_tools": "not_started",
-    "6_hooks_span_trace": "not_started",
-    "7_independent_verifier": "not_started",
-    "8_subagents_compaction": "not_started"
+    "3_client_sessions_resume": "introduced (study-buddy, Cycle 2 — capture via ResultMessage.session_id; resume drill deferred to rung 6+)",
+    "4_custom_tools_mcp": "introduced (recipe-companion, Cycle 3 — 5 tools registered via @tool + create_sdk_mcp_server; model orchestrates tool chains within a single response)",
+    "5_permissions_allowed_tools": "introduced (mac-advisor, Cycle 4 — phase-gated tool palettes: research phase allows 4 tools, synthesis phase allows 1; permission_mode='dontAsk' enforces denial of out-of-palette tools; demonstrated visibly when the model tried to call synthesize_recommendation during research turn 2 and was blocked at the SDK level)",
+    "6_hooks_span_trace": "introduced (morning-spark, Cycle 6 — PreToolUse guard detects repeated params and denies with variation instruction; PostToolUse writes JSONL span per tool call; HookMatcher(matcher=None) applied to all 5 tools via ClaudeAgentOptions)",
+    "7_independent_verifier": "not_started (skipped in Cycle 5 by Ram's conscious choice)",
+    "8_subagents_compaction": "introduced (research-lead, Cycle 5 — main agent spawns sub-researchers each with own ClaudeSDKClient instance and independent context window; context compaction via structured report handoff; 5 independent context windows created in mock-assisted run; model selected 3 of 6 angles at plan stage)"
   },
   "gotchas_mastered": [
     "duplicate-url — dedup guard before appending a URL to coverage_map (study-prep, main.py:88)",
     "transient-error — ConnectionError on fetch routed as TRANSIENT → skip, not crash (study-prep, main.py:107)",
     "api-key-bypass — ANTHROPIC_API_KEY stripped from child-process env; auth via Max plan only (study-prep, main.py:215)",
-    "trust-fence — external content wrapped before reaching the LLM; prevents prompt injection from ingested data (study-prep, main.py:260)"
+    "trust-fence — external content wrapped before reaching the LLM; prevents prompt injection from ingested data (study-prep, main.py:260; study-buddy fences user input the same way)",
+    "empty-ledger — first-run case where weak_spots.json doesn't exist yet; read_weak_spots() returns [] gracefully so the loop still runs (study-buddy)",
+    "markdown-fence — model wraps JSON in ```json ... ``` blocks; parser strips fences before json.loads (study-buddy)",
+    "atomic-write — ledger is written to .tmp then renamed; never leaves a half-written JSON if the process dies mid-write (study-buddy)",
+    "confidence-clamp — model can return confidence > 1.0 or < 0.0; clamp to [0, 1] before writing to disk (study-buddy)",
+    "transient-sdk-error — a single failed turn inside ClaudeSDKClient doesn't crash the loop; we decrement the question counter and retry on the next iteration (study-buddy)",
+    "corrupt-ledger — a malformed JSON file is treated as empty/default rather than crashing the read (recipe-companion, generalised pattern from study-buddy's empty-ledger)",
+    "unknown-recipe — graceful 'not found' from lookup_recipe lets the model recover and offer alternatives rather than crashing the loop (recipe-companion)",
+    "handler-vs-decorated-tool — @tool decorator returns an SdkMcpTool object, NOT a callable async function; smoke tests must access .handler to invoke the underlying implementation (recipe-companion smoke_test repair, 2026-06-08)",
+    "predicate-vs-signal — model text 'RESEARCH COMPLETE' is a hint, NOT part of the goal predicate; predicate trusts the tool-call log only. mac-advisor turn 1 emitted 'RESEARCH COMPLETE' but conflict_resolved=False, so predicate stayed False — text signal is checked separately as a hint, not as truth (mac-advisor main.py · reinforces Cycle 3 carry-gap)",
+    "permission-mode-dontAsk-enforces-palette — allowed_tools alone is a *hint*; permission_mode='dontAsk' is what makes it a *control*. Without dontAsk, the model can still attempt out-of-palette tools and the SDK will prompt; with dontAsk, any out-of-palette call is silently denied (mac-advisor, turn 2 — model tried synthesize_recommendation during research and got blocked)",
+    "side-channel-mock-state — when tool implementations need to signal events to the agent loop (e.g. 'a price drop happened'), tool impls write flags to a module-level dict (_mock_state); the agent loop reads the dict after each send_turn() returns and prints the corresponding banner. Cleanest pattern when the SDK boundary hides per-tool returns from the loop (mac-advisor main.py:178)",
+    "indian-rupee-formatting — Python's f-string `:,` formatter uses US grouping (₹249,900), not Indian lakh notation (₹2,49,900). For Indian market amounts, format manually: last 3 digits, then comma every 2 digits (mac-advisor _inr() helper)",
+    "phase-handoff-instruction-leak — when the agent loop detects a conflict and prints the remediation step to the terminal, the *model* doesn't see that printed line — only the structured state dict injected into the next turn's context does. If the remediation isn't in the dict, the model has no idea what to do next. Carry over remediation as a structured 'pending_clearance' field, not just a binary unresolved flag (mac-advisor Cycle 4 design gap — surfaced in Phase F2 Probe 1)",
+    "corrupt-response — when a sub-researcher's query() call returns malformed, empty, or unparseable JSON, treat it as low-confidence (confidence=0.0, gap=True) rather than crashing the loop; the sub-researcher still delivers a report to the main agent so the run can continue (research-lead main.py:523)",
+    "hook-input-is-a-dict — the SDK passes PreToolUse and PostToolUse hook input_data as a plain Python dict, not as an object with named attributes. getattr(input_data, 'tool_name', '?') always returns '?' (dicts have no such attribute). Use dict.get('tool_name') instead, or a _get_field() helper that branches on isinstance(obj, dict). This caused all MCP tool calls to hash to ('?', '{}') and be denied as duplicates of the ToolSearch call that fired first. (morning-spark Cycle 6 — discovered on first run; fixed with _get_field helper)",
+    "dontAsk-requires-allowed-tools — permission_mode='dontAsk' without an explicit allowed_tools list silently denies all MCP tools at the SDK permission layer — AFTER PreToolUse fires ALLOW. From the output this is invisible: PreToolUse prints ALLOW, a ToolResult UserMessage appears, but the result contains a permission denial, PostToolUse never fires, and the model says 'the tool was denied.' Harness tools (e.g. ToolSearch) are auto-allowed and bypass the check; only MCP tools registered on your server are affected. Fix: add allowed_tools=[list all mcp__server__tool_name strings] to ClaudeAgentOptions when using dontAsk. (morning-spark Cycle 6 — discovered on second run; fixed with ALL_ALLOWED constant)"
   ],
   "report_card": {
-    "agents_understood": ["study-prep"],
-    "sdk_rungs_introduced": [1, 2],
+    "agents_understood": ["study-prep", "study-buddy", "recipe-companion", "mac-advisor", "research-lead"],
+    "sdk_rungs_introduced": [1, 2, 3, 4, 5, 8],
     "gate_verdicts_summary": {
-      "G1": "demonstrated (study-prep)",
-      "G2": "demonstrated (study-prep — 10 model decisions captured in run log)",
-      "G3": "demonstrated partial (study-prep — loop closed, model varied queries; but trapped in zero-information feedback state caused by mock-DB perception trap)",
-      "G4": "demonstrated (study-prep — principled stop fired correctly at 10/10)",
-      "G5": "N/A — first appears at rung 7"
+      "G1": "demonstrated across 5 agents — predicate computed each step. Mac-advisor sharpened the distinction: predicate stayed False even when model emitted 'RESEARCH COMPLETE' text. Research-lead extends to a three-part compound predicate (all_dispatched_returned AND synthesis_produced AND confidence >= 0.7) — goal complexity scales with agent complexity.",
+      "G2": "demonstrated and deepened — recipe-companion: model orchestrates tool chains; mac-advisor: model freely chose 11 tools turn 1 (strongest G2 before Cycle 5); research-lead: model selected 3 of 6 research angles based on question semantics — first time angle selection itself is the model's own choice.",
+      "G3": "demonstrated multi-layer across cycles. Mac-advisor: code-side O-R-A strong but model-side propagation gap. Research-lead: gap detection at team level (3 low-confidence reports → follow-up dispatch) — G3 evidence; but follow-ups queried same data source with same parameters. Act-strategy adaptation gap still open.",
+      "G4": "demonstrated across all 5 agents — both exit paths reachable. Research-lead's cap-exit (5/5 subagents) is a clean principled stop with labelled exit reason.",
+      "G5": "N/A — first appears at rung 7 (skipped in Cycles 4 and 5)"
     },
     "domain_coverage": {
-      "learning-research": 1,
+      "learning-research": 3,
       "morning-briefing": 0,
-      "health-habits": 0
+      "health-habits": 1,
+      "consumer-research": 1
     },
     "top_active_gaps": [
-      "Perception-layer design — what makes a tool starvation-proof for the agent loop (Cycle 1, surfaced by mock-DB trap)",
-      "Phase F/F2 probe readiness — formal probe sequence not yet experienced (Cycle 1 structural)",
-      "G3 zero-information feedback — agent kept varying queries but never escalated to a different strategy (Cycle 1)"
+      "Act-strategy adaptation on starvation (NEW, Cycle 5) — when the observe→reason→act loop detects a gap and re-dispatches to the same data source with the same parameters, the result is structurally identical to the first attempt. Strategy change is needed (different source, different query, different angle), not just retry. Research-lead Probe 2 surfaced this; Ram located the root cause only after scaffolding.",
+      "Phase-handoff instruction propagation (Cycle 4, still open) — when the code-side O-R-A loop computes a remediation step, it must travel into the model's next-turn context as a structured pending-clearance field. Mac-advisor revealed this gap; rung 6 (hooks) is the production fix. Deferred two cycles running.",
+      "Cost economics (carried from Cycles 2–5) — token tracking unavailable this run (mock-assisted); explicit daily/monthly $-math drill again deferred. Five consecutive cycles without a cost drill."
     ]
   },
   "_agent_schema_note": {
@@ -77,6 +94,420 @@
     }
   },
   "agents": [
+    {
+      "slug": "morning-spark",
+      "date": "2026-06-25",
+      "domain": "morning-briefing",
+      "traits_demonstrated": [
+        "goal-directedness (briefing_complete() = weather AND date_info AND headline AND quality_passed AND briefing — five-part compound predicate checked every turn)",
+        "autonomy (model selects tool order and headline category; no hardcoded sequence)",
+        "observe-reason-act (PreToolUse denial observed → model reasons → adapts category; JSONL span closes audit loop)",
+        "perception (5 mock tools simulate real morning data sources)",
+        "memory (APP — briefing_log.json; yesterday's headline_preview informs today's category choice cross-day guard)",
+        "memory (SESSION — ClaudeSDKClient holds context across turns)",
+        "tool-selection (@tool + create_sdk_mcp_server; rung 4/5 carried)",
+        "principled-stop (briefing_complete() predicate + MAX_LOOP_TURNS=6 + MAX_TOOL_CALLS=12)"
+      ],
+      "gates_passed": ["G1 (five-part predicate evaluated every turn)", "G2 (model selects headline category)", "G3 (PreToolUse denial → model adapts category — act-strategy variation demonstrated)", "G4 (both exit paths: goal-met and cap-hit)", "G5 N/A (rung 7 not yet introduced)"],
+      "sdk_concepts_introduced": [6],
+      "status": "closed 2026-06-25 — three runs; goal met on run 3 (turn 1, 6 spans, $0.71); Phase F2 pending",
+      "learning_position": "FORWARD",
+      "run_result": {
+        "run_date_attempt1": "2026-06-25",
+        "exit_attempt1": "cap: MAX_TOOL_CALLS=12",
+        "turns_attempt1": "5/6",
+        "tool_calls_attempt1": "12/12",
+        "hook_denials_attempt1": 11,
+        "spans_written_attempt1": 1,
+        "goal_met_attempt1": false,
+        "cost_usd_attempt1_approx": 1.90,
+        "root_cause_attempt1": "hook-input-is-a-dict — all PreToolUse hook calls resolved to ('?', '{}') because getattr(dict, 'tool_name', '?') returns '?' for dicts. ToolSearch (SDK internal tool for schema discovery) registered the signature first; every subsequent MCP tool was denied as a duplicate. No real tools executed; briefing_log.json not written; spans file has 1 ToolSearch entry only.",
+        "fix_applied": "_get_field() helper added to pre_tool_use_guard and post_tool_use_audit; branches on isinstance(obj, dict). 32/32 smoke tests green after fix.",
+        "run_date_attempt2": "2026-06-25",
+        "exit_attempt2": "cap: MAX_TOOL_CALLS=12",
+        "turns_attempt2": "3/6",
+        "tool_calls_attempt2": "12/12",
+        "hook_denials_attempt2": "partial — MCP tools allowed by PreToolUse but denied by SDK permission layer",
+        "spans_written_attempt2": 1,
+        "goal_met_attempt2": false,
+        "root_cause_attempt2": "dontAsk-requires-allowed-tools — permission_mode='dontAsk' without allowed_tools silently denies all MCP tools at the SDK permission layer, AFTER PreToolUse fires ALLOW. PreToolUse print showed ALLOW; model received a denial in the ToolResult; PostToolUse never fired; _agent_state never updated. Only ToolSearch (harness tool, auto-allowed) produced a span. Fix: added ALL_ALLOWED list with all 5 mcp__spark__ tools to ClaudeAgentOptions.",
+        "fix_applied_attempt2": "Added ALL_ALLOWED constant and allowed_tools=ALL_ALLOWED to build_options(). 32/32 smoke tests green after fix.",
+        "run_date_attempt3": "2026-06-25",
+        "exit_attempt3": "GOAL MET — briefing_complete() = True",
+        "turns_attempt3": "1/6",
+        "tool_calls_attempt3": "6/12",
+        "hook_denials_attempt3": 0,
+        "spans_written_attempt3": 6,
+        "goal_met_attempt3": true,
+        "cost_usd_attempt3": 0.7098,
+        "tokens_in_attempt3": 18094,
+        "tokens_out_attempt3": 777,
+        "briefing_log_written": true,
+        "notes_attempt3": "Clean single-turn completion. Model called ToolSearch first (schema load), then fetch_weather, fetch_date + fetch_headline in parallel (same response), check_quality, synthesize_briefing. All 5 MCP tools executed; 6 spans written (ToolSearch + 5 tools). PreToolUse guard never needed to deny — no repeats. Model delivered briefing in text after synthesize_briefing returned."
+      },
+      "smoke_test_repairs": [
+        "Repair 1 (Windows %-d format): _MOCK_DATE used %-d (Unix-only zero-pad suppression); replaced with _now.day integer. 32/32 green.",
+        "Repair 2 (hook-input-is-a-dict): all hook field access used getattr(); replaced with _get_field() helper that branches on isinstance(obj, dict). 32/32 green.",
+        "Repair 3 (dontAsk-requires-allowed-tools): build_options() used permission_mode='dontAsk' without allowed_tools; added ALL_ALLOWED constant listing all 5 mcp__spark__ tools and wired into ClaudeAgentOptions. 32/32 green."
+      ],
+      "learning": {
+        "skipped": false,
+        "probes_asked": [
+          "Probe 1 (two-gate problem) — 'In a production agent, you'll often have multiple independent control layers — hooks, permission modes, rate limits, external API auth. If one of them silently fails, what would you need in the runtime output to catch it fast? What did this run's output tell you, and what did it not tell you?'",
+          "Probe 2 (PostToolUse as execution proof) — 'Six spans were written in run 3. If you opened morning-spark_spans.jsonl right now and one of the six entries had result_length: 0 — what would that tell you? What would you check next?'",
+          "Probe 3 (the guard that never fired / act-strategy) — 'If you were designing morning-spark for a production environment where the real weather API sometimes returns a 503 error — how would you modify the PreToolUse guard to handle that case? Should the guard allow a retry of the same tool with the same parameters, or should that be handled somewhere else entirely?'"
+        ],
+        "strengths": [
+          "Observability design (Probe 1 — STRONG) — Ram identified that stage-level logging is the fix: each gate in the pipeline should emit a structured log entry so a silent failure leaves a breadcrumb trail. This is distributed tracing applied to agent pipelines — the right production engineering frame, reached without scaffolding.",
+          "Execution vs empty result (Probe 2 — CORRECT) — Ram correctly identified that result_length: 0 means the tool ran but returned nothing useful — execution happened (PostToolUse fired), but the fetch produced no content. Understands the distinction between 'tool ran' and 'tool returned useful data.'",
+          "Act-strategy adaptation applied independently (Probe 3 — STRONG) — Ram said 'call a different weather tool' without any prompting. This is the Cycle 5 act-strategy gap applied to a new context without scaffolding: when a resource fails, change the resource (different tool), not the retry count. Gap from Cycle 5 is now demonstrably closed."
+        ],
+        "gaps": [
+          "Probe 2 stopped at diagnosis — Ram answered 'what does result_length: 0 mean' correctly but didn't extend to 'what would you check next' (look at result_preview in the span, check the tool impl for the error path, check if the MCP server received the call). Diagnosis without remediation path.",
+          "Cost economics (carried from Cycles 2–6, still deferred) — $0.71 for a single clean run; first successful run cost has now been observed, but explicit daily/monthly dollar-math drill again not completed."
+        ],
+        "recall_question_next_cycle": "Morning Spark's PreToolUse guard denies duplicate tool calls. In Cycle 7 (Habit Streak + Accountability), the predicate will have a failure branch — the goal is different depending on whether a streak was kept or broken. Question for Cycle 7: if a goal predicate can have two valid 'done' outcomes (success branch and failure branch), how do you write briefing_complete() so it returns True on both, but labels which branch fired?"
+      },
+      "post_run_notes": {
+        "skipped": false,
+        "main_py_run": true,
+        "run_mode": "live (3rd attempt; all fixes applied)",
+        "runtime_surprises": [
+          "Goal met in a single turn with 0 denials — the model called all 5 tools in the correct dependency order without any coaching from the PreToolUse guard. The guard existed but never needed to fire. A clean run makes the dedup guard invisible.",
+          "Model called fetch_date and fetch_headline in the same response (parallel tool calls). The SDK fired their hooks independently and returned two ToolResults. The parallel calling was the model's own autonomous choice — the system prompt didn't prescribe it.",
+          "The two-gate permission bug (dontAsk without allowed_tools) produced uniquely deceptive output in run 2: PreToolUse showed ALLOW, a ToolResult UserMessage appeared, but PostToolUse never fired and the model said 'The weather tool was denied.' The silence between ALLOW and execution was the entire diagnostic — not an error message, just absence of the next expected print line."
+        ],
+        "post_run_probes_asked": [
+          "two-gate problem / observability — stage-level logging as the fix (answered correctly: structured log per gate; distributed tracing framing reached independently)",
+          "PostToolUse as execution proof — result_length: 0 diagnosis (answered correctly: execution happened, result was empty; stopped short of remediation path)",
+          "act-strategy on 503s — should guard allow retry? (answered strongly: 'call a different weather tool' — act-strategy adaptation applied independently without scaffolding; Cycle 5 gap closed)"
+        ],
+        "next_cycle_expectation": "Cycle 7 — Habit Streak + Accountability. Path-dependent predicate (goal shape changes based on streak outcome). Rung 6 hooks carry forward. Ram's Probe 3 answer already points at the design challenge: when the primary tool fails, what is the fallback strategy? Cycle 7's health-habits domain will surface this concretely."
+      },
+      "artifacts": {
+        "code": "agents/morning-spark/main.py + smoke_test.py + prompt.md",
+        "learning_guide": "agents/morning-spark/morning-spark_learning-guide.html",
+        "learning_insights": "agents/morning-spark/morning-spark_learning-insights.html",
+        "spans_file": "agents/morning-spark/morning-spark_spans.jsonl",
+        "run_log": "agents/morning-spark/morning-spark_run_output.log",
+        "memory": "agents/morning-spark/briefing_log.json (created on goal-met exit)"
+      }
+    },
+    {
+      "slug": "research-lead",
+      "date": "2026-06-13",
+      "domain": "learning-research",
+      "traits_demonstrated": [
+        "goal-directedness (three-part compound predicate: all_dispatched_returned AND synthesis_produced AND confidence >= 0.7)",
+        "autonomy (model selected 3 angles from 6 at plan stage — technical, user, contrarian — based on question semantics)",
+        "observe-reason-act (team-level: 3 low-confidence reports with gaps → follow-up dispatches; gap detection → strategy response)",
+        "perception (sub-researchers extracted findings from simulated research database: tech-001, tech-002, usr-001, usr-002, con-001)",
+        "planning (5-step plan generated before any dispatch; tracked via [PLAN PROGRESS] across all steps)",
+        "memory (session — main agent carried all sub-reports across 7 steps via SESSION memory)",
+        "memory (subagent — NEW rung 8: 5 independent context windows created, each discarded after compact report delivery)",
+        "memory (app — research_briefs.json unchanged on this run; would persist briefings on goal-met exit)",
+        "tool-selection (sub-researchers independently selected their own tools within isolated context windows)",
+        "sequential-action (7 steps: plan → dispatch × 3 → collect → follow-up × 2 → synthesize)",
+        "principled-stop (subagent cap fired at 5/5 with labelled exit: EXIT: subagent cap)"
+      ],
+      "gates_passed": ["G1 (compound predicate evaluated each step; False throughout — synthesis never produced)", "G2 (model selected 3 of 6 angles at [MODEL DECISION])", "G3 (gap detection → follow-up dispatch; act-strategy adaptation gap still open)", "G4 (cap fired at 5/5; labelled exit)"],
+      "sdk_concepts_introduced": [8],
+      "status": "closed 2026-06-13 — main.py ran; mock-assisted (max_tokens kwarg error on all real SDK calls; fallback mock research database ran correctly); subagent cap 5/5; Phase F2 3 probes complete",
+      "learning_position": "FORWARD",
+      "run_result": {
+        "run_date": "2026-06-13T14:07:13",
+        "exit": "subagent_cap",
+        "sub_researchers_dispatched": "5/5 (3 primary + 2 follow-up)",
+        "follow_ups_dispatched": "2/2",
+        "synthesis_attempts": "1/2",
+        "goal_met": false,
+        "synthesis_produced": false,
+        "synthesis_confidence": 0.0,
+        "all_report_confidence": 0.30,
+        "elapsed": "0.0s (mock-speed — real SDK calls not invoked)",
+        "token_tracking": "unavailable (SDK version does not expose usage on subscription plan)",
+        "run_mode": "mock-assisted — real SDK calls hit query() got an unexpected keyword argument max_tokens; fallback mock research database ran correctly; sub-researchers extracted real records from the seeded database",
+        "root_cause_of_no_synthesis": "All real query() calls failed with max_tokens kwarg error; fallback mock logic produced sub-researcher reports at 0.30 confidence; follow-ups queried same mock data source with same parameters, returning identical records; synthesis attempt also hit the same SDK error; subagent cap fired at 5/5"
+      },
+      "learning": {
+        "skipped": false,
+        "probes_asked": [
+          "Probe 1 (model's own choice — angle selection) — 'The model had 6 angles available and picked 3. What would have been different — in the quality of the research outcome — if the code had just hard-picked the first three alphabetically?' Concept hook: senior consultant who reads the brief vs junior analyst with a fixed playbook.",
+          "Probe 2 (learning from what it saw — gap detection vs act-strategy change) — 'Between turns, this agent knew reports had gaps. What did it do differently — and what did it fail to do, that a better version would have?' Concept hook: research team PM who reads incomplete reports and sends analysts back out.",
+          "Probe 3 (sub-agent isolation / context isolation) — 'What would go wrong if the sub-researchers were not isolated — if they could all see each other's work-in-progress while they were researching?' Concept hook: parallel consulting workstreams with structured report handoffs."
+        ],
+        "strengths": [
+          "Semantic context-sensitivity of model choice (Probe 1 — STRONG) — Ram identified that hard-coded angles are semantically misaligned for most questions, and that the mismatch is invisible: 'wrong angle will be applied' producing output that looks complete but is off the mark. Reached without scaffolding.",
+          "Sub-agent interface contract (Probe 3 — STRONG) — Ram named task/boundary/input/output as the defining elements of a sub-agent unprompted: 'Sub-agents typically have a task, a boundary, what input to get and what output to give.' Named contamination as the failure mode of non-isolated agents; articulated that independence is what makes outputs combinable."
+        ],
+        "gaps": [
+          "Act-strategy adaptation on starvation (Probe 2 — needed scaffolding) — Ram's initial answer attributed low confidence to agent quality ('agents not up to the task'). Root cause is structural: follow-ups queried the same mock data source with the same parameters, returning identical records (tech-001, tech-002 again). The O-R-A loop detected correctly; the act step needed a strategy change (different source, different query), not a retry. Gap: knowing that observe-a-gap → re-dispatch is insufficient when the re-dispatch doesn't change what it looks at.",
+          "Cost economics (carried from Cycles 2–5, still deferred) — token tracking unavailable this run (mock-assisted); explicit daily/monthly dollar-math drill again deferred."
+        ],
+        "recall_question_next_cycle": "In research-lead, the follow-up sub-researchers came back with exactly the same 0.30 confidence as the originals, because they looked at the same data source with the same parameters. The observe→reason→act loop worked — it saw the gap and dispatched reinforcements. But the act step was structurally identical to the first attempt. Question for Cycle 6: what is the difference between 'try again' and 'try differently'? When an agent detects that its first strategy did not work, what needs to change in the act step for the second attempt to have a real chance of producing a different result?"
+      },
+      "post_run_notes": {
+        "skipped": false,
+        "main_py_run": true,
+        "run_mode": "mock-assisted",
+        "runtime_surprises": [
+          "Every real SDK call hit query() got an unexpected keyword argument max_tokens — the code passed max_tokens as a kwarg the current SDK version does not accept. The fallback mock logic still ran correctly: sub-researchers extracted findings from the seeded research database and produced reports at 0.30 confidence.",
+          "Total elapsed time: 0.0s — the entire agent run including 5 sub-researchers and all their tool calls completed in under a second, because the real model was never invoked; all work was done by Python's mock research database.",
+          "All 5 sub-researchers (primary and follow-up) returned identical confidence scores of 0.30 — visible evidence that the follow-up dispatch was structurally identical to the original, producing no new information."
+        ],
+        "post_run_probes_asked": [
+          "model's own choice / angle selection — hard-coded vs context-sensitive selection (answered strongly: named invisible semantic mismatch as the core danger)",
+          "observe→reason→act / follow-up strategy — gap detection vs strategy change (partially answered; root cause needed scaffolding: same source = same result)",
+          "sub-agent isolation / context isolation — independence and combinability (answered strongly: named interface contract and contamination failure mode)"
+        ],
+        "next_cycle_expectation": "Not explicitly asked — run was mock-assisted, reducing the teaching signal. Inferred from Probe 2 discussion: Ram is starting to see that the architecture of what the agent does on a second attempt matters, not just that it makes a second attempt."
+      },
+      "smoke_test_repairs": [
+        "Repair 1 (module-level import guard for query): query was imported locally inside run_sub_researcher() and main(), so patch('main.query') couldn't find it at module level. Fix: added module-level try/except import guard and removed local imports. 38/38 green after repair."
+      ],
+      "artifacts": {
+        "code": "agents/research-lead/main.py + smoke_test.py + prompt.md",
+        "learning_guide": "agents/research-lead/research-lead_learning-guide.html",
+        "learning_insights": "agents/research-lead/research-lead_learning-insights.html",
+        "memory_seed": "agents/research-lead/research_briefs.json (seeded as {}; unchanged after this run)",
+        "run_log": "agents/research-lead/research-lead_run_output.log",
+        "run_data": "agents/research-lead/research-lead_run_data.json"
+      }
+    },
+    {
+      "slug": "mac-advisor",
+      "date": "2026-06-12",
+      "domain": "consumer-research",
+      "traits_demonstrated": [
+        "goal-directedness (two predicates: is_research_complete + is_recommendation_ready)",
+        "autonomy (turn 1 — model freely selected 11 tool calls across 4 tools)",
+        "observe-reason-act (code-side: conflict detected → remediation computed → 'sustained_load' workload prescribed; model-side: gap surfaced — remediation didn't reach the next turn's context)",
+        "perception (4 mock research databases simulate real sources)",
+        "planning (5-step plan tracked across phases; phase boundary code-enforced)",
+        "memory (SESSION — ClaudeSDKClient per phase; rung 3 carried)",
+        "memory (APP — research_notes.json persists across runs; 6 entries injected on this run)",
+        "tool-selection (NEW dimension — rung 5: phase-gated palettes via allowed_tools)",
+        "sequential-action",
+        "principled-stop (cap fired at 8/8; agent labelled WHY it stopped — 'EXIT: research cap' vs 'GOAL MET' distinction visible in output)"
+      ],
+      "gates_passed": ["G1 (predicate-only, not model text)", "G2 (11 tool calls turn 1)", "G3 (partial — code side strong, model side gap)", "G4 (cap fired cleanly)"],
+      "sdk_concepts_introduced": [5],
+      "status": "closed 2026-06-12 — main.py ran; cap exit at 8/8; Phase F2 4 probes complete under new concept-first register; all 4 landed strongly",
+      "learning_position": "FORWARD",
+      "run_result": {
+        "run_date": "2026-06-11T19:18:26",
+        "exit": "research_cap",
+        "research_turns": "8/8",
+        "synthesis_turns": "0/3",
+        "total_tool_calls": "13/24",
+        "goal_met": false,
+        "tokens_in": 16833,
+        "tokens_out": 7040,
+        "cost_usd_approx": 1.87,
+        "session_id_captured": "cf358c15-e700-4c",
+        "thermal_conflict_detected": false,
+        "price_drop_detected": true,
+        "root_cause_of_no_recommendation": "phase-handoff instruction leak — the code-side O-R-A loop detected the thermal conflict and computed the remediation step ('call analyze_thermal with sustained_load workload') and printed it to the terminal. But the model's next-turn context received only the binary flag conflict_resolved=False, not the structured remediation instruction. From turn 3 onward the model repeated 'nothing to do' because it had no way to know what to do. Cap fired correctly as a principled stop. NOT an agent failure — a state-propagation design lesson."
+      },
+      "learning": {
+        "skipped": false,
+        "probes_asked": [
+          "Probe 1 (concept-first register, anchor: [CONFLICT DETECTED] remediation line vs [LOOP FEEDBACK] state injection) — Analyst writes resolution note in appendix; meeting runs from executive summary; conflict sits unresolved. How would you redesign the process so the resolution instruction reaches the person who needs to act on it?",
+          "Probe 2 (concept-first register, anchor: model attempted synthesize_recommendation in research and got blocked) — Difference between telling an agent 'please don't synthesize until research is complete' versus making synthesis structurally impossible during research. When would you care about that difference?",
+          "Probe 3 (concept-first register, anchor: 🏁 EXIT: research cap — 8/8 turns) — From a client management perspective, how would you handle 'goal met' versus 'cap reached' outcomes differently? Does it matter that the agent labelled WHY it stopped?",
+          "Probe 4 (concept-first register, anchor: [LOOP FEEDBACK] state re-injection each turn) — Every conversation with the model starts fresh. The agent re-briefs each turn. If you were building an agent that needed to keep working on the same problem across days, not turns, what would you want it to do differently?"
+        ],
+        "strengths": [
+          "Clearance-register / pre-condition-log pattern (Probe 1) — Ram independently named the FS-consulting pattern that solves this: a gateway between phases that documents what is blocking readiness, so the remediation travels with the work. Direct mapping to the structured-state fix; reached without scaffolding.",
+          "Structural enforceability as compliance control (Probe 2) — Ram framed permission_mode='dontAsk' in regulatory terms: 'segregation of duties enforced at the system level, because soft instructions are only as strong as the person following them.' Named auditability + traceability as second-order benefits. Production engineering frame.",
+          "Execution-success vs goal-success distinction (Probe 3) — Ram cleanly separated 'the agent executed correctly' from 'the agent achieved its purpose.' Recognized goal-met → delivery process, cap-reached → debrief/recalibration. Most engineers struggle with this; Ram named it crisply.",
+          "Episodic memory unprompted (Probe 4) — Ram named 'episodic memory' (literal correct term in the agent literature) before any framing. Named both write-side and read-side selectivity. Connected directly to forthcoming rung-7+/rung-8 capabilities."
+        ],
+        "gaps": [
+          "Pre-run inspection of the state-propagation surface — Ram (and the design) didn't anticipate that the code-side remediation print would not reach the model. Reinforces that the LLM only sees what's in its context window; printing to stdout teaches the human, not the agent. Worth surfacing pre-run on the next agent whose loop computes mid-run state changes.",
+          "Cost economics (still carried from Cycle 2) — touched conceptually via Probe 4 (memory + cost across days) but the explicit daily/monthly $-math drill was again deferred. Mac-advisor cost $1.87 for one cap-exit run; high-signal evidence for a focused drill."
+        ],
+        "recall_question_next_cycle": "In mac-advisor, the code-side O-R-A loop saw the conflict and computed the right next step — but printed it to the terminal, not into the model's next-turn brief. Question for Cycle 5: when your code detects something the model needs to act on (a remediation, a deadline, a new constraint), what is the *one* place that signal must end up in order for the model to actually use it? And what's the failure mode if you only print it?"
+      },
+      "post_run_notes": {
+        "skipped": false,
+        "main_py_run": true,
+        "runtime_surprises": [
+          "Model freely chose 11 tool calls in a single turn 1 response (specs × 3, prices × 2, thermal × 2, compares × 2, follow-up price × 1) — strongest G2 evidence to date. Larger than recipe-companion's 9-call chain.",
+          "Model tried to skip to synthesize_recommendation in turn 2 and got SDK-level blocked — the rung-5 enforcement moment visible in output as 'synthesize_recommendation tool is blocked by permission_mode'.",
+          "Cap fired at 8/8 with no recommendation. Initially looked like a failure; on Probe 3 Ram recognized it as a working principled stop."
+        ],
+        "post_run_probes_asked": [
+          "clearance-register pattern (Probe 1) — Ram named the FS-process fix unprompted",
+          "structural enforceability vs polite instruction (Probe 2) — Ram framed it as regulatory segregation of duties",
+          "execution-success vs goal-success + value of labelled exit (Probe 3) — Ram distinguished the two cleanly and named the debrief implication",
+          "episodic memory across days vs context-window re-briefing (Probe 4) — Ram named 'episodic memory' independently"
+        ],
+        "next_cycle_expectation": "Rung 6 — hooks (PreToolUse / PostToolUse) for span tracing. Ram's Probe 1 + 4 already engaged with the upstream concerns: how do you observe what's flowing through the agent at audit-grade resolution, and how do you carry state across sessions deliberately."
+      },
+      "register_change_meta": {
+        "trigger": "Mid-Phase-F2 user feedback — 'all these probes are directly relating to code blocks and then asking conceptual questions... I am losing interest in these probes'",
+        "diagnosis": "Old Checkpoint 4 format (quote-first, ask-second) led with the code line, making the line the question instead of the evidence. Probes felt like code interrogation rather than teaching.",
+        "fix_applied_mid_cycle": "CLAUDE.md Checkpoint 4 rewritten to concept-first four-beat structure: real-world professional analogy → why it matters → runtime line as illustration → open concept-level question. Added a professional analogy reference table the Professor draws from. Updated Phase F (pre-run) sample probes to match. Memory file feedback_foundry-ux.md updated with the new register and rationale.",
+        "validation": "Probes 1–4 in mac-advisor's Phase F2 used the new register; all four landed strongly (Ram named clearance register, structural enforceability, execution-vs-goal distinction, and episodic memory unprompted). Old register: pushbacks and skips. New register: production-engineering insights unprompted. The format change worked."
+      },
+      "smoke_test_repairs": [
+        "Repair 1 (indian-rupee-formatting): Python's f-string `:,` formatter uses US grouping (₹249,900), but the smoke test asserted Indian lakh notation (₹2,49,900). Fix: added _inr() helper that manually formats last-3-digits + every-2-digits-comma. 25/25 green on retry."
+      ],
+      "artifacts": {
+        "code": "agents/mac-advisor/main.py + smoke_test.py + prompt.md",
+        "learning_guide": "agents/mac-advisor/mac-advisor_learning-guide.html",
+        "learning_insights": "agents/mac-advisor/mac-advisor_learning-insights.html",
+        "ledger_seed": "agents/mac-advisor/research_notes.json (seeded as {}; 6 entries after first run)",
+        "run_log": "agents/mac-advisor/mac-advisor_run_output.log"
+      }
+    },
+    {
+      "slug": "recipe-companion",
+      "date": "2026-06-08",
+      "domain": "health-habits (food/cooking)",
+      "traits_demonstrated": [
+        "goal-directedness",
+        "autonomy (deepened — tool chains within one turn)",
+        "observe-reason-act (three speeds — within-chain, within-session, across-sessions)",
+        "perception (SDK-routed tool calls, not Python dispatches)",
+        "planning",
+        "memory (session — rung 3 carried)",
+        "memory (app — three ledgers: pantry, shopping_list, favorites)",
+        "memory (within-turn chain — NEW visibility via [TOOL CHAIN] label)",
+        "tool-selection (NEW — native @tool registration)",
+        "sequential-action (counted per-turn AND across-turns)",
+        "principled-stop"
+      ],
+      "gates_passed": ["G1", "G2 (deepened)", "G3 (three-layer)", "G4 (four exit paths)"],
+      "sdk_concepts_introduced": [4],
+      "status": "closed 2026-06-11 — Phase F2 ran 3 probes (conceptual; main.py not run due to env dep issue); learning recorded",
+      "learning_position": "FORWARD",
+      "run_result": null,
+      "learning": {
+        "skipped": false,
+        "probes_asked": [
+          "Probe 1 (tool chain capability) — In Cycle 2 the model sent one action per response and Python dispatched each call. Here it chained 9 tool calls in a single response. What can the agent do in rung 4 that it couldn't in rung 3?",
+          "Probe 2 (memory layer persistence) — After a full Python restart, which of the three memory layers survives: conversation history (ClaudeSDKClient), pantry contents (pantry.json), shopping list (shopping_list.json)?",
+          "Probe 3 (predicate vs model_done text signal) — The agent has both a goal predicate checking the tool call log AND a model_done signal reading the model's response text. Why both? What breaks if you remove the predicate?"
+        ],
+        "strengths": [
+          "Tool chain capability (Probe 1) — Ram correctly identified that the agent makes decisions on the fly and chains from ingredient to ingredient without Python controlling each step. Deepened to: model holds the thread; Python doesn't see the tool sequence until the model is done. Correct operational sense of rung 4.",
+          "Memory layer structure (Probe 2, self-corrected) — Correctly identified conversation history (SESSION) resets and pantry contents (APP, disk) persists. Initial flip on shopping list (assumed ephemeral) corrected quickly once disk-backed pattern pointed out."
+        ],
+        "gaps": [
+          "Predicate-vs-signal reliability (Probe 3 needed scaffolding) — Ram did not independently reach the insight that language is unreliable as a completion signal. Required a concrete failure scenario before the two-mechanism distinction became clear. Insight landed after framing, not before.",
+          "main.py not yet run — Environment dependency issue (claude_agent_sdk not installed in PyCharm venv) blocked the actual agent run. Probes answered conceptually. The 9-tool chain, [TOOL CHAIN] label, and four exit paths have not been observed in actual terminal output.",
+          "Cost economics (carried from Cycle 2) — first cost-awareness drill still not completed."
+        ],
+        "recall_question_next_cycle": "In recipe-companion, the predicate trusted the tool call log and the text signal trusted the model's words. The agent needed both because language alone is unreliable as a completion signal. In Cycle 4 you'll see allowed_tools — the ability to limit which tools the model can call per turn. Question: if you restricted the model to only two tools mid-session, what would need to change in the goal predicate to stay accurate?"
+      },
+      "post_run_notes": {
+        "skipped": false,
+        "main_py_run": false,
+        "main_py_blocked_reason": "claude_agent_sdk not installed in Ram's PyCharm venv — smoke_test.py hit ImportError on the SDK-dependent integration tests (13 failed, 8 passed pure-function only). Phase F2 probes answered conceptually without actual runtime output.",
+        "runtime_surprises": [],
+        "post_run_probes_asked": [
+          "tool chain capability — what can the agent do in rung 4 that it couldn't in rung 3? (answered correctly)",
+          "memory layer persistence — which layers survive a full Python restart? (pantry correct; shopping list initially flipped then corrected)",
+          "dual termination mechanisms — why predicate AND text signal? (needed scaffolding with concrete failure scenario; insight landed)"
+        ],
+        "next_cycle_expectation": "Cycle 4 will introduce allowed_tools / disallowed_tools / permission_mode — the ability to control which tools the model can access at runtime, not just which tools exist."
+      },
+      "smoke_test_repairs": [
+        "Repair 1 (handler-vs-decorated-tool): @tool decorator wraps each function into an SdkMcpTool object. The smoke test originally tried to call lookup_recipe_tool({...}) directly, which fails because the wrapped object is not a coroutine. Fix: access .handler attribute. Discovered via `import main` smoke check; fixed in one edit; 21/21 green on retry."
+      ],
+      "artifacts": {
+        "code": "agents/recipe-companion/main.py + smoke_test.py + prompt.md",
+        "learning_guide": "agents/recipe-companion/recipe-companion_learning-guide.html",
+        "learning_insights": "agents/recipe-companion/recipe-companion_learning-insights.html",
+        "ledger_seeds": [
+          "agents/recipe-companion/pantry.json (10 items seeded so the demo isn't pathologically empty)",
+          "agents/recipe-companion/shopping_list.json ([])",
+          "agents/recipe-companion/favorites.json ([])"
+        ],
+        "run_log": "agents/recipe-companion/recipe-companion_run_output.log (created on first run)"
+      }
+    },
+    {
+      "slug": "study-buddy",
+      "date": "2026-06-08",
+      "domain": "learning-research",
+      "traits_demonstrated": [
+        "goal-directedness",
+        "autonomy",
+        "observe-reason-act",
+        "perception",
+        "planning",
+        "memory (session — rung 3 ClaudeSDKClient)",
+        "memory (app — weak_spots.json on disk)",
+        "tool-selection",
+        "sequential-action",
+        "principled-stop"
+      ],
+      "gates_passed": ["G1", "G2", "G3 (two-layer)", "G4 (four exit paths)"],
+      "sdk_concepts_introduced": [3],
+      "status": "delivered + ran (model-done exit at turn 5; Phase F2 ran 3 probes; closed 2026-06-08)",
+      "learning_position": "FORWARD (with FOUNDATIONAL flavor — addresses Cycle 1 perception/memory gap)",
+      "run_result": {
+        "run_date": "2026-06-08T15:13:24",
+        "exit": "model_done",
+        "iterations": "5/8",
+        "questions_asked_to_user": 4,
+        "ledger_updates": 4,
+        "goal_met": true,
+        "tokens_in": 16457,
+        "tokens_out": 1686,
+        "cost_usd_approx": 0.64,
+        "session_id_captured": "2c77f5a1-04b1-47cc-b790-59784e4f58cf",
+        "subtopic_distribution": {
+          "list_creation_and_indexing": 0.20,
+          "list_mutation_methods": 0.95,
+          "slicing": 0.95,
+          "references_and_copying": 0.95
+        },
+        "token_efficiency_note": "Turn 1 sent 13,707 input tokens; turns 2-5 sent ~2 input each. O(1)-per-turn pattern is the literal numerical proof of rung 3 (ClaudeSDKClient carrying conversation context natively, no Python re-injection)."
+      },
+      "learning": {
+        "skipped": false,
+        "probes_asked": [
+          "Probe 1 (anchor: [MODEL DECISION] action=done, line 144) — Why did the model pick 'done' at turn 5 over keep-asking? Could a different run with the same answers have produced 7-8 turns instead of 5?",
+          "Probe 2 (anchor: [GOAL PREDICATE] False at 4/5 min asked, line 125) — What does the third trigger of the did-it-finish check (MIN_QUESTIONS_FOR_AUTO_DONE + ledger_written) specifically protect against, given the cap already handles model-never-stops?",
+          "Probe 3 (anchors: [SESSION MEMORY] growing turn by turn; [APP MEMORY] writing to disk) — What's the lifecycle difference between session memory and app memory? Which is the new capability landing this cycle, and why couldn't Cycle 1 have demonstrated it?",
+          "Probe 4 (skipped by Ram's choice — cost economics drill, deferred)"
+        ],
+        "strengths": [
+          "Probabilistic-vs-deterministic framing (Probe 1) — Ram independently identified that the model's done-decision is probabilistic and contrasted it cleanly with the cap's determinism. This was the seed for the 'soft stop wrapped in hard stops' insight; he reached the production-engineering frame without being primed for it.",
+          "Model-as-decision-maker locus (Probe 1) — correct attribution of the autonomy moment to a specific runtime line (`[MODEL DECISION] action=done`). He can now point at log lines and identify 'this is where the agent's choice lives.'",
+          "App-memory lifecycle (Probe 3) — clean understanding that app memory survives across runs while session memory dies with the run; correct lifecycle frame.",
+          "Active engagement with Socratic counter-questions (Probe 2) — when the first answer didn't quite match the question, Ram self-corrected by asking for the explanation directly rather than guessing again; that's a healthy learning posture."
+        ],
+        "gaps": [
+          "Feature-vs-capability distinction (Probe 3 surfaced this — CLOSED in Cycle 3 Phase 0 Q1) — Ram named the lifecycles correctly but flipped which memory is the rung-3 capability. Re-probed in Cycle 3 Phase 0; Ram nailed it. Gap closed.",
+          "Cost economics (Probe 4 deferred) — first cost-awareness drill skipped; daily-use math wasn't internalized this cycle. Carry forward."
+        ],
+        "recall_question_next_cycle": "Look at study-buddy: app memory is a feature you can use in any future agent without needing any new SDK capability — your Python can always write to disk. Session memory required the rung 3 client. So the question for Cycle 3: of the new things you'll add, which ones will be FEATURE choices (any cycle could have done them) and which ones will be CAPABILITY uses (only possible because of the new rung)?"
+      },
+      "post_run_notes": {
+        "skipped": false,
+        "runtime_surprises": [
+          "Model declared done at turn 5 with 3 turns still available before the safety cap — Ram noticed this as the most distinctive moment in his own run, naming it 'probabilistic, not deterministic' on Probe 1.",
+          "Token cost dropped from 13,707 input at turn 1 to ~2 input per turn afterward — the O(1)-per-turn pattern after turn 1 makes the rung 3 capability visible in numbers, not just framing."
+        ],
+        "post_run_probes_asked": [
+          "model's stopping decision (probe 1) — answered correctly",
+          "third trigger of the did-it-finish check (probe 2) — partial answer; explained",
+          "session vs app memory distinction (probe 3) — lifecycle right, capability attribution flipped"
+        ],
+        "next_cycle_expectation": "Custom tools the model can call directly via the SDK (rung 4 target). Ram should approach Cycle 3 with the 'which is feature vs which is capability?' question in mind."
+      },
+      "artifacts": {
+        "code": "agents/study-buddy/main.py + smoke_test.py + prompt.md",
+        "learning_guide": "agents/study-buddy/study-buddy_learning-guide.html",
+        "ledger_seed": "agents/study-buddy/weak_spots.json (empty `{}` until first run)",
+        "run_log": "agents/study-buddy/study-buddy_run_output.log (created on first run)"
+      }
+    },
     {
       "slug": "study-prep",
       "date": "2026-06-07",
@@ -139,6 +570,117 @@
     }
   ],
   "brainstorm_sessions": [
+    {
+      "date": "2026-06-14",
+      "cycle": 6,
+      "candidates": [
+        {
+          "name": "Morning Spark v4",
+          "domain": "morning-briefing",
+          "gates": "G1 PASS (compound: all_sources_fetched AND quality_passed AND briefing_synthesized) · G2 PASS (model selects tool order and headline category) · G3 PASS (PreToolUse detects repeat params, denies, model adapts strategy) · G4 PASS (cap + predicate) · G5 N/A (rung 7 not yet introduced)",
+          "decision": "locked (others-shortcut — candidates from reference/AgentFoundry_Candidate-Analysis_v1.md)",
+          "notes": "FORWARD — introduces rung 6 (PreToolUse guard + PostToolUse audit + JSONL span trace). First morning-briefing agent after 5 consecutive deferrals. Three independent fetch tools (weather, date, headline) create natural PreToolUse surface: hook detects repeated identical parameters and denies with variation instruction — direct implementation of Cycle 5 act-strategy fix in new domain. PostToolUse writes JSONL span per tool call to morning-spark_spans.jsonl. Slug: morning-spark."
+        },
+        {
+          "name": "Habit Streak + Accountability",
+          "domain": "health-habits",
+          "gates": "G1–G4 pass; G5 N/A",
+          "decision": "available (Cycle 7 first-choice)",
+          "notes": "Path-dependent predicate (failure branch) is most pedagogically distinctive predicate concept in candidate list. Rung 6 fits cleanly onto recovery loop PreToolUse guard. Carry-forward noted for Cycle 7."
+        }
+      ],
+      "locked": "Morning Spark v4",
+      "decision_type": "others-shortcut",
+      "notes": "Ram provided reference/AgentFoundry_Candidate-Analysis_v1.md (17 candidates, scored for rungs 3-4). Professor re-evaluated top candidates for rung 6 fitness. Morning Spark v4 recommended: top domain priority (morning-briefing 0 agents after 5 cycles), 3 independent fetch tools ideal for PreToolUse dedup detection, directly closes Cycle 5 act-strategy gap in new domain. Habit Streak + Accountability noted as Cycle 7 first-choice candidate (path-dependent predicate). Ram confirmed lock 2026-06-14."
+    },
+    {
+      "date": "2026-06-13",
+      "cycle": 5,
+      "candidates": [
+        {
+          "name": "Research Project Lead",
+          "domain": "learning-research",
+          "gates": "G1–G4 pass; G5 N/A (rung 7 concept)",
+          "decision": "locked",
+          "notes": "FORWARD — introduces rung 8 (subagents with own ClaudeSDKClient instances + context compaction). Skips rungs 6-7 by Ram's conscious choice. Main agent spawns 3-5 sub-researchers from a 6-angle palette (technical/market/user/contrarian/regulatory/historical); each sub-researcher gets its own ClaudeSDKClient and mini-loop. G1: all_dispatched_subagents_returned AND synthesis_produced AND confidence >= 0.7. G2: model picks which angles to dispatch. G3: if sub-report has gap_flagged=True or confidence < 0.6, main agent spawns follow-up. G4: MAX_SUBAGENTS_TOTAL=5, MAX_FOLLOWUP=2, MAX_SYNTHESIS_TURNS=2. Default question: 'What is the most effective spaced-repetition algorithm for learning a programming language — and what are the trade-offs vs alternatives?' Memory: WITHIN-SUBAGENT (new rung 8), SESSION (main agent), APP (research_briefs.json). Enhanced runtime output with phase banners, narrative glosses, sub-agent boxes, run_data.json companion. New Run Log section in learning-insights.html with vertical timeline, expandable cards, and Professor-styled teaching callouts."
+        }
+      ],
+      "locked": "Research Project Lead",
+      "decision_type": "brainstorm",
+      "notes": "Brainstorm ran in prior session (2026-06-13). Ram chose rung 8 (subagents) over rung 6 (hooks), skipping rungs 6-7. Learning-research domain (3rd agent in this domain). Position: FORWARD. Project-level enhancement approved: enriched runtime console output + Run Log section in Part 2 HTML. CLOSED 2026-06-13: mock-assisted run (max_tokens kwarg error on all real SDK calls); subagent cap 5/5; Phase F2 3 probes."
+    },
+    {
+      "date": "2026-06-12",
+      "cycle": 4,
+      "candidates": [
+        {
+          "name": "Mac Advisor",
+          "domain": "consumer-research",
+          "gates": "G1–G4 pass; G5 N/A",
+          "decision": "locked (others-shortcut)",
+          "notes": "Ram provided a spec file (macbook_agent_prompt.md) at brainstorm-start; routing branch C (others-shortcut). Original spec used raw anthropic SDK + ANTHROPIC_API_KEY + synchronous calls — three hard incompatibilities with Foundry rules. Adapted to Foundry-compatible: claude-agent-sdk with @tool, 4-tool research palette + 1-tool synthesis palette, MAX_RESEARCH_TURNS=8 / MAX_SYNTHESIS_TURNS=3 hard caps, ANTHROPIC_API_KEY stripped from child env only. FORWARD — introduces rung 5 (allowed_tools / disallowed_tools / permission_mode='dontAsk'). Phase boundary enforced at SDK level, not via system prompt. Locked 2026-06-11 ('lock mac-advisor'). Smoke 25/25 green after one repair (Indian-rupee formatting). Closed 2026-06-12 after Phase F2 4 probes under new concept-first register."
+        }
+      ],
+      "locked": "Mac Advisor",
+      "decision_type": "others-shortcut",
+      "notes": "First others-shortcut lock in registry. Step 1's full Q&A brainstorm not run; instead, spec file read + gate-checked + Foundry-compatibility-adapted before lock confirmation. Phase 0 warm-up Part A completed; Part B skipped at Ram's request ('let us skip the questions and proceed with the brainstorming')."
+    },
+    {
+      "date": "2026-06-08",
+      "cycle": 3,
+      "candidates": [
+        {
+          "name": "Morning Spark v3",
+          "domain": "morning-briefing",
+          "gates": "G1–G4 pass; G5 N/A",
+          "decision": "available",
+          "notes": "Carry-forward (now four times deferred). Multi-source chaining (weather + calendar + email) is the cleanest pedagogical demo of rung 4 but Ram preferred Recipe Companion. Eligible for Cycle 6+ — priority domain (still at zero agents)."
+        },
+        {
+          "name": "Habit Pulse v2",
+          "domain": "health-habits",
+          "gates": "G1–G4 pass; G5 N/A",
+          "decision": "available",
+          "notes": "Cycle 2 carry-forward extended to rung 4. Eligible for Cycle 6+."
+        },
+        {
+          "name": "Recipe Companion",
+          "domain": "health-habits (food/cooking)",
+          "gates": "G1–G4 pass; G5 N/A",
+          "decision": "locked",
+          "notes": "Locked 2026-06-08 Cycle 3 via 'Log Recipe: Campanion..' (interpreted as 'lock recipe-companion'). FORWARD — introduces rung 4 (@tool + create_sdk_mcp_server). 5 tools registered; model chains them within single turns. New runtime label [TOOL CHAIN] N tool calls makes the chaining visible. Smoke 21/21 green after one repair (handler attribute on @tool-decorated objects). Closed 2026-06-11 after Phase F2 3 probes (conceptual; main.py env dep unresolved)."
+        }
+      ],
+      "locked": "Recipe Companion"
+    },
+    {
+      "date": "2026-06-08",
+      "cycle": 2,
+      "candidates": [
+        {
+          "name": "Morning Spark v2",
+          "domain": "morning-briefing",
+          "gates": "G1–G4 all pass; G5 N/A",
+          "decision": "available",
+          "notes": "Carries forward the deferred 2026-06-07 Morning Spark, extended to rung 3. Eligible for Cycle 3."
+        },
+        {
+          "name": "Habit Pulse",
+          "domain": "health-habits",
+          "gates": "G1–G4 all pass; G5 N/A",
+          "decision": "available",
+          "notes": "Daily 90-second check-in with cross-day + cross-week memory; would close health-habits coverage gap. Eligible for Cycle 3."
+        },
+        {
+          "name": "Study Buddy v2",
+          "domain": "learning-research",
+          "gates": "G1–G4 all pass; G5 N/A",
+          "decision": "locked",
+          "notes": "Locked 2026-06-08 Cycle 2. FORWARD (foundational flavor) — introduces rung 3 (ClaudeSDKClient + session_id capture) and addresses Cycle 1's perception/memory gap by giving the agent two-layer memory (SESSION via SDK + APP via weak_spots.json). Goal predicate: session_complete(state). Three real exit paths: model-done, user-stop, predicate-satisfied; plus the cap. max_questions=8. Smoke test 22/22 green; awaiting first run."
+        }
+      ],
+      "locked": "Study Buddy v2"
+    },
     {
       "date": "2026-06-07",
       "cycle": 1,

@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Project Lead — Learning Insights (Part 2)</title>
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-light: #253561;
+    --indigo: #3b4fa8;
+    --indigo-light: #5a73d4;
+    --gold: #c9a227;
+    --gold-light: #f0c94a;
+    --amber: #e07b1a;
+    --emerald: #1e7e5e;
+    --rose: #c0392b;
+    --slate: #4a5568;
+    --slate-light: #718096;
+    --muted: #f4f6fa;
+    --muted-dark: #e8edf5;
+    --white: #ffffff;
+    --card-shadow: 0 2px 12px rgba(26,39,68,0.10);
+    --card-shadow-hover: 0 6px 24px rgba(26,39,68,0.18);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font: 'Georgia', 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'Consolas', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--muted);
+    color: var(--navy);
+    line-height: 1.7;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, var(--indigo) 100%);
+    color: var(--white);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(201,162,39,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: var(--font);
+    font-size: 2.1rem;
+    font-weight: normal;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  header p.subtitle {
+    color: rgba(255,255,255,0.7);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--muted-dark);
+    padding: 0.75rem 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  nav a {
+    color: var(--indigo);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  nav a:hover { background: var(--muted); }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--muted-dark);
+  }
+  .section-num {
+    background: var(--indigo);
+    color: var(--white);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: var(--font);
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--navy);
+  }
+
+  /* §1 Setup grid */
+  .setup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .setup-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--card-shadow);
+    border-left: 3px solid var(--indigo-light);
+  }
+  .setup-card .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--slate-light);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .setup-card .value {
+    font-size: 0.95rem;
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  .caveat-card {
+    border-left-color: var(--amber);
+    background: #fffbf4;
+  }
+
+  .result-snapshot {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    color: var(--white);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.2rem;
+  }
+  .snapshot-divider {
+    text-align: center;
+    color: var(--slate-light);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 0 1rem;
+  }
+  .metric {
+    text-align: center;
+  }
+  .metric .num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .metric .desc {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .metric.highlight .num { color: var(--amber); }
+  .metric.dim .num { color: rgba(255,255,255,0.5); font-size: 1.2rem; }
+
+  /* §2 Proof blocks */
+  .proof-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .proof-block {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+  .proof-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .proof-block .question {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .proof-block .runtime-line {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--muted);
+    border-left: 3px solid var(--indigo-light);
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+    color: var(--navy);
+    word-break: break-word;
+  }
+  .proof-block .verdict {
+    font-size: 0.9rem;
+    color: var(--navy);
+    margin-top: 0.4rem;
+  }
+  .verdict-yes { color: var(--emerald); font-weight: 700; }
+  .verdict-partial { color: var(--amber); font-weight: 700; }
+
+  /* §3 Goal check */
+  .goal-explainer {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.8rem;
+    box-shadow: var(--card-shadow);
+  }
+  .goal-explainer p { margin-bottom: 1rem; }
+  .goal-explainer p:last-child { margin-bottom: 0; }
+  .goal-checklist {
+    background: var(--muted);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .goal-checklist .check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+  }
+  .check-item:last-child { margin-bottom: 0; }
+  .check-item .tick { color: var(--emerald); font-weight: 700; }
+  .check-item .cross { color: var(--rose); font-weight: 700; }
+
+  /* §4 Trait cards */
+  .trait-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .trait-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.4rem;
+    box-shadow: var(--card-shadow);
+    border-top: 3px solid var(--indigo-light);
+  }
+  .trait-card.core { border-top-color: var(--navy); }
+  .trait-card.essential { border-top-color: var(--indigo); }
+  .trait-card.enhancing { border-top-color: var(--indigo-light); }
+  .trait-card .tier-tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--slate-light);
+    margin-bottom: 0.3rem;
+  }
+  .trait-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.6rem;
+  }
+  .trait-card .evidence {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--muted);
+    padding: 0.4rem 0.7rem;
+    border-radius: 4px;
+    margin-bottom: 0.6rem;
+    color: var(--slate);
+    word-break: break-word;
+  }
+  .trait-card p { font-size: 0.88rem; color: var(--slate); }
+
+  /* §5 Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.85rem;
+    top: 1rem;
+    bottom: 1rem;
+    width: 2px;
+    background: var(--muted-dark);
+  }
+  .timeline-step {
+    position: relative;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.3rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+  }
+  .timeline-step::before {
+    content: attr(data-icon);
+    position: absolute;
+    left: -2.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.8rem;
+    height: 1.8rem;
+    background: var(--white);
+    border: 2px solid var(--indigo-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    text-align: center;
+    line-height: 1.6rem;
+  }
+  .timeline-step h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--indigo);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .timeline-step p { font-size: 0.9rem; color: var(--slate); margin-bottom: 0.3rem; }
+  .timeline-step .log-ref {
+    font-family: var(--font-mono);
+    font-size: 0.73rem;
+    color: var(--slate-light);
+  }
+  .timeline-step.stop-step { border-left: 3px solid var(--amber); }
+
+  /* §6 Progress trace */
+  .progress-trace {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.6rem;
+    box-shadow: var(--card-shadow);
+  }
+  .trace-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--muted-dark);
+  }
+  .trace-step:last-child { border-bottom: none; }
+  .trace-dot {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    background: var(--indigo-light);
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+  }
+  .trace-dot.red { background: var(--rose); }
+  .trace-dot.amber { background: var(--amber); }
+  .trace-step-text { font-size: 0.9rem; color: var(--navy); }
+  .trace-step-text .result-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.4rem;
+  }
+  .badge-false { background: #ffeaea; color: var(--rose); }
+  .badge-cap { background: #fff3e0; color: var(--amber); }
+
+  /* §7 Spectrum */
+  .spectrum-wrap {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.8rem;
+    box-shadow: var(--card-shadow);
+  }
+  .spectrum-bar {
+    position: relative;
+    height: 0.5rem;
+    background: linear-gradient(90deg, var(--muted-dark), var(--indigo-light), var(--indigo), var(--navy));
+    border-radius: 4px;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .spectrum-marker {
+    position: absolute;
+    top: -0.9rem;
+    transform: translateX(-50%);
+  }
+  .spectrum-marker.active .marker-dot {
+    width: 1.4rem;
+    height: 1.4rem;
+    background: var(--gold);
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--gold);
+  }
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--slate-light);
+    margin-top: 0.4rem;
+  }
+  .spectrum-callout {
+    background: var(--muted);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1.1rem;
+    margin-top: 1.2rem;
+    font-size: 0.9rem;
+    color: var(--navy);
+  }
+
+  /* §8 Flashcards */
+  .flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .flashcard {
+    height: 160px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-sm);
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--indigo) 0%, var(--navy) 100%);
+    color: var(--white);
+  }
+  .flashcard-front .term { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .flashcard-front .hint { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+  .flashcard-back {
+    background: var(--white);
+    color: var(--navy);
+    transform: rotateY(180deg);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    border: 2px solid var(--indigo-light);
+  }
+
+  /* §9 MCQ */
+  .mcq-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.5rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1rem;
+  }
+  .mcq-item h4 { font-size: 0.95rem; margin-bottom: 0.9rem; color: var(--navy); }
+  .mcq-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 0.3rem;
+    border: 1px solid transparent;
+    font-size: 0.88rem;
+    color: var(--slate);
+  }
+  .mcq-option:hover { background: var(--muted); }
+  .mcq-option.correct { background: #e6faf3; border-color: var(--emerald); color: var(--emerald); }
+  .mcq-option.wrong { background: #fef2f2; border-color: var(--rose); color: var(--rose); }
+  .mcq-option .circle {
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--muted-dark);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+  .mcq-reveal {
+    display: none;
+    background: var(--muted);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+    color: var(--slate);
+  }
+  .mcq-reveal.shown { display: block; }
+
+  /* §10 Next */
+  .next-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .next-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.4rem;
+    box-shadow: var(--card-shadow);
+    border-bottom: 3px solid var(--indigo-light);
+  }
+  .next-card h4 { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+  .next-card p { font-size: 0.86rem; color: var(--slate); line-height: 1.5; }
+  .next-card .new-cap {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-size: 0.72rem;
+    background: var(--muted);
+    color: var(--indigo);
+    border-radius: 4px;
+    padding: 0.2rem 0.6rem;
+    font-weight: 600;
+  }
+
+  /* §11 Provenance */
+  .provenance {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 1.8rem 2rem;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.82rem;
+  }
+  .provenance h3 { color: var(--gold-light); margin-bottom: 1rem; font-size: 1rem; }
+  .prov-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .prov-item .prov-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.2rem;
+  }
+  .prov-item .prov-val { color: var(--white); font-size: 0.85rem; }
+  .glossary-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .glossary-table th {
+    text-align: left;
+    padding: 0.4rem 0.8rem;
+    color: var(--gold-light);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-weight: 600;
+  }
+  .glossary-table td {
+    padding: 0.35rem 0.8rem;
+    color: rgba(255,255,255,0.75);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .glossary-table tr:last-child td { border-bottom: none; }
+
+  blockquote.teaching {
+    border-left: 3px solid var(--gold);
+    background: rgba(201,162,39,0.07);
+    padding: 0.8rem 1.2rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-style: italic;
+    color: var(--navy-light);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+
+  .divider { height: 1px; background: var(--muted-dark); margin: 2rem 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Part 2 · Post-Run · Cycle 5</div>
+  <h1>Research Project Lead</h1>
+  <p class="subtitle">What actually happened when the agent ran — proof from its own terminal output</p>
+</header>
+
+<nav>
+  <a href="#s1">This Run</a>
+  <a href="#s2">Agent Proof</a>
+  <a href="#s3">Goal Check</a>
+  <a href="#s4">Traits</a>
+  <a href="#s5">Timeline</a>
+  <a href="#s6">Progress</a>
+  <a href="#s7">Spectrum</a>
+  <a href="#s8">Flashcards</a>
+  <a href="#s9">Self-Check</a>
+  <a href="#s10">Build Next</a>
+  <a href="#s11">Provenance</a>
+</nav>
+
+<div class="container">
+
+<!-- §1 About This Run -->
+<section id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>About this run</h2>
+  </div>
+
+  <div class="setup-grid">
+    <div class="setup-card">
+      <div class="label">What the agent does</div>
+      <div class="value">Sends out independent sub-researchers to investigate a question from different angles, then synthesises their findings into a single briefing.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">The question it was given</div>
+      <div class="value">"What's the most effective spaced-repetition algorithm for learning a programming language — and what are the trade-offs vs alternatives?"</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">What counts as "done"</div>
+      <div class="value">All sub-researchers have reported back <em>and</em> a final synthesis was produced <em>and</em> that synthesis has a confidence score of 70% or higher.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">Safety limit (set by us)</div>
+      <div class="value">Maximum 5 sub-researchers total (3 initial + 2 follow-ups). Maximum 2 synthesis attempts. These caps were designed by us — the agent didn't choose them.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">Tools available</div>
+      <div class="value">Angle picker, sub-researcher spawner, source lookup, finding extractor, report collector, briefing synthesiser.</div>
+    </div>
+    <div class="setup-card caveat-card">
+      <div class="label">⚠ Important caveat</div>
+      <div class="value">This run used a simulated research database. Every real call to the AI model hit an error, so all research data came from pre-loaded mock records. The architecture worked perfectly — the real-data path simply wasn't exercised this run.</div>
+    </div>
+  </div>
+
+  <p class="snapshot-divider">— What happened —</p>
+
+  <div class="result-snapshot">
+    <div class="metric">
+      <div class="num">5/5</div>
+      <div class="desc">Sub-researchers used</div>
+    </div>
+    <div class="metric highlight">
+      <div class="num">None</div>
+      <div class="desc">Synthesis produced</div>
+    </div>
+    <div class="metric">
+      <div class="num">0.30</div>
+      <div class="desc">All confidence scores</div>
+    </div>
+    <div class="metric dim">
+      <div class="num">Cap</div>
+      <div class="desc">How it stopped</div>
+    </div>
+    <div class="metric dim">
+      <div class="num">~0s</div>
+      <div class="desc">Elapsed (mock speed)</div>
+    </div>
+  </div>
+  <p style="font-size:0.8rem;color:var(--slate-light);margin-top:0.7rem;text-align:center;">The agent hit its safety cap with 5 of 5 sub-researcher slots used, before a synthesis could be produced. This is a working principled stop — not a crash.</p>
+</section>
+
+<!-- §2 Agent Proof -->
+<section id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>Was this really an agent? Here's the proof</h2>
+  </div>
+
+  <div class="proof-grid">
+    <div class="proof-block">
+      <div class="proof-icon">✅</div>
+      <div>
+        <div class="question">Did the agent decide when it was done?</div>
+        <div class="runtime-line">📐 [GOAL PREDICATE] is_goal_met(state) → False<br>&nbsp;&nbsp;&nbsp;all_dispatched_returned=True<br>&nbsp;&nbsp;&nbsp;synthesis_produced=False<br>&nbsp;&nbsp;&nbsp;synthesis_confidence=0.0 (threshold: 0.7)</div>
+        <div class="verdict"><span class="verdict-yes">Yes.</span> At every step the agent ran a three-part checklist on itself. All three conditions had to be true simultaneously. The verdict was computed — not guessed — at every step of the run.</div>
+      </div>
+    </div>
+    <div class="proof-block">
+      <div class="proof-icon">✅</div>
+      <div>
+        <div class="question">Did the agent choose its own next move?</div>
+        <div class="runtime-line">🎲 [MODEL DECISION] selected: technical, user, contrarian · alternatives: market, regulatory, historical</div>
+        <div class="verdict"><span class="verdict-yes">Yes.</span> The code offered six possible research angles. The model looked at the spaced-repetition question and chose three that fit it — technical (the algorithms), user (how learners actually experience it), and contrarian (the case against it). Nothing in the Python hard-coded that selection.</div>
+      </div>
+    </div>
+    <div class="proof-block">
+      <div class="proof-icon">✅</div>
+      <div>
+        <div class="question">Did the agent learn from what it saw?</div>
+        <div class="runtime-line">🔄 [LOOP FEEDBACK] 3 report(s) need follow-up → dispatching<br>&nbsp;&nbsp;&nbsp;💡 The agent read the reports and found gaps — instead of ignoring them, it's sending reinforcements.</div>
+        <div class="verdict"><span class="verdict-yes">Yes.</span> After reading all three sub-researcher reports and finding low confidence and gaps across the board, the agent did not move on. It dispatched two follow-up researchers. What it saw changed what it did next.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §3 Why This Goal Counted -->
+<section id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>Why this goal counted as a real check</h2>
+  </div>
+  <div class="goal-explainer">
+    <p>A lot of software has goals in the form of wishes: "try to summarise the document," "aim to find at least three results," "see if you can produce a recommendation." These are aspirational. There's no clear moment when the system can compute a yes-or-no verdict on whether it succeeded.</p>
+    <p>This agent's goal was different. It was a three-part checklist — every item either ticked or not, no judgment call required:</p>
+    <div class="goal-checklist">
+      <div class="check-item"><span class="tick">✓</span> Have all sub-researchers reported back?</div>
+      <div class="check-item"><span class="cross">✗</span> Has a final synthesis briefing been produced?</div>
+      <div class="check-item"><span class="cross">✗</span> Is the synthesis confidence 70% or higher?</div>
+    </div>
+    <p>At every single step — after each sub-researcher delivered their report, after the follow-up dispatches, after the synthesis attempt — the agent ran this checklist. The line <code style="font-size:0.85em;background:var(--muted);padding:0.1em 0.4em;border-radius:3px;">📐 [GOAL PREDICATE] is_goal_met(state) → False</code> is the moment of evaluation. False is the right answer every time, because the second and third conditions never cleared.</p>
+    <p>This is what makes it an agent rather than a loop that just runs a fixed number of times and hopes for the best: the agent always knows whether it's finished, because "finished" is a computable test it runs on itself.</p>
+  </div>
+</section>
+
+<!-- §4 Traits in Action -->
+<section id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>Traits in Action</h2>
+  </div>
+  <div class="trait-grid">
+    <div class="trait-card core">
+      <div class="tier-tag">Core Trait</div>
+      <h3>Goal-directedness</h3>
+      <div class="evidence">📐 [GOAL PREDICATE] is_goal_met(state) → False</div>
+      <p>The agent checked its own three-part completion list after every step, not just at the end. It always knew exactly where it stood.</p>
+    </div>
+    <div class="trait-card core">
+      <div class="tier-tag">Core Trait</div>
+      <h3>Autonomy</h3>
+      <div class="evidence">🎲 [MODEL DECISION] selected: technical, user, contrarian · alternatives: market, regulatory, historical</div>
+      <p>The model selected which research angles to pursue based on the question itself — not from a hard-coded list. A different question would likely produce a different selection.</p>
+    </div>
+    <div class="trait-card core">
+      <div class="tier-tag">Core Trait</div>
+      <h3>Observe → Reason → Act</h3>
+      <div class="evidence">🔄 [LOOP FEEDBACK] 3 report(s) need follow-up → dispatching</div>
+      <p>Saw three low-confidence reports (observe), recognised this as a gap requiring action (reason), dispatched two follow-up researchers (act). The loop closed at the team level.</p>
+    </div>
+    <div class="trait-card essential">
+      <div class="tier-tag">Essential Trait</div>
+      <h3>Perception</h3>
+      <div class="evidence">📥 [TOOL RESULT] extracted: Leitner System: Algorithm Design and Performa...</div>
+      <p>Each sub-researcher read from the simulated research database and extracted specific findings — individual records, not just a dump of everything.</p>
+    </div>
+    <div class="trait-card essential">
+      <div class="tier-tag">Essential Trait</div>
+      <h3>Planning</h3>
+      <div class="evidence">📋 [PLAN GENERATED] ▶ 1. Dispatch sub-researcher: technical  ○ 2. Dispatch: user  ○ 3. Dispatch: contrarian...</div>
+      <p>The agent built a five-step plan before dispatching anyone. Each step was tracked as it completed — you could watch the plan progress in real time.</p>
+    </div>
+    <div class="trait-card essential">
+      <div class="tier-tag">Essential Trait — NEW at Rung 8</div>
+      <h3>Memory (Sub-Agent)</h3>
+      <div class="evidence">Sub-Researcher: technical [runs 3 tool calls, synthesises findings, closes its context window]</div>
+      <p>Each sub-researcher had its own private conversation with the model — invisible to the others. When it finished, its full internal process was compressed into one compact report and handed back. The conversation was then discarded. Five independent context windows, created and closed.</p>
+    </div>
+    <div class="trait-card essential">
+      <div class="tier-tag">Essential Trait</div>
+      <h3>Memory (Session)</h3>
+      <div class="evidence">💾 [SESSION MEMORY] sub_report_technical └─ confidence=0.30, gap=True</div>
+      <p>The main agent carried all sub-researcher reports across seven steps in its own session memory. This memory lived only during this run — it does not survive a restart.</p>
+    </div>
+    <div class="trait-card enhancing">
+      <div class="tier-tag">Enhancing Trait</div>
+      <h3>Principled Stop</h3>
+      <div class="evidence">🏁 EXIT: subagent cap — 5/5 sub-researchers used without producing synthesis</div>
+      <p>The agent stopped with a labelled reason — not because it decided it was done, but because the safety cap fired. The label tells you exactly which cap triggered and why. Execution succeeded; the goal didn't.</p>
+    </div>
+  </div>
+</section>
+
+<!-- §5 The Life of This Agent -->
+<section id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>The life of this agent (from wake-up to goodbye)</h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-step" data-icon="🌅">
+      <h4>Wake Up</h4>
+      <p>The agent introduced itself, confirmed it could run, declared the research question it was trying to answer, and printed a guide explaining what every labelled line in the terminal means.</p>
+      <div class="log-ref">🤖 [AGENT BOOT] Research Project Lead v1.0 · 🎯 [GOAL SET]</div>
+    </div>
+    <div class="timeline-step" data-icon="📋">
+      <h4>Plan</h4>
+      <p>Before sending anyone out, the agent — specifically the model — looked at the question and chose three research angles. It then built a five-step plan and printed it so you could follow along.</p>
+      <div class="log-ref">🎲 [MODEL DECISION] selected: technical, user, contrarian · 📋 [PLAN GENERATED]</div>
+    </div>
+    <div class="timeline-step" data-icon="🚀">
+      <h4>Dispatch</h4>
+      <p>Three sub-researchers went out, one per angle. Each worked inside its own box — its own private conversation with the model, completely isolated from the others. You could watch each one look up sources and extract findings.</p>
+      <div class="log-ref">📍 [STEP 1–3] Sub-researcher boxes appear in the terminal output</div>
+    </div>
+    <div class="timeline-step" data-icon="👁">
+      <h4>Look</h4>
+      <p>The main agent collected all three reports. It read them: confidence 0.30 on every one, gaps flagged across the board. Rather than moving on, it stopped and assessed the situation.</p>
+      <div class="log-ref">👁 [OBSERVE] 3 report(s) collected · ⚠ GAP flagged on all three</div>
+    </div>
+    <div class="timeline-step" data-icon="🔄">
+      <h4>Reinforce</h4>
+      <p>Because the reports had gaps, the agent dispatched two follow-up sub-researchers to investigate further. Each one went back to the research database. Their reports came back with the same 0.30 confidence — the same data, seen again.</p>
+      <div class="log-ref">🔄 [LOOP FEEDBACK] → follow-up dispatches → same confidence returned</div>
+    </div>
+    <div class="timeline-step stop-step" data-icon="🏁">
+      <h4>Stop</h4>
+      <p>The synthesis attempt also failed. With all five sub-researcher slots used and no synthesis produced, the safety cap fired cleanly. The agent labelled exactly why it stopped and printed a full summary of everything that happened.</p>
+      <div class="log-ref">🏁 EXIT: subagent cap — 5/5 sub-researchers used without producing synthesis</div>
+    </div>
+  </div>
+</section>
+
+<!-- §6 Progress Trace -->
+<section id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Did the agent reach its goal? (the progress trace)</h2>
+  </div>
+  <div class="progress-trace">
+    <div class="trace-step">
+      <div class="trace-dot"></div>
+      <div class="trace-step-text"><strong>Step 1–3: Sub-researchers dispatched.</strong> The agent checked after each: all dispatched returned? ✓ — but no synthesis yet. <span class="result-badge badge-false">Not done</span></div>
+    </div>
+    <div class="trace-step">
+      <div class="trace-dot"></div>
+      <div class="trace-step-text"><strong>Step 4: Reports collected — all show gaps and low confidence.</strong> The checklist: dispatched returned ✓, synthesis produced ✗, confidence 0.30 (threshold 0.70). <span class="result-badge badge-false">Not done</span></div>
+    </div>
+    <div class="trace-step">
+      <div class="trace-dot"></div>
+      <div class="trace-step-text"><strong>Step 4–5: Follow-up sub-researchers dispatched.</strong> After reading gap-flagged reports, two more sub-researchers went out. Each came back with exactly the same 0.30 confidence. <span class="result-badge badge-false">Not done</span></div>
+    </div>
+    <div class="trace-step">
+      <div class="trace-dot"></div>
+      <div class="trace-step-text"><strong>Step 6: Synthesis attempted.</strong> The agent tried to produce the final briefing. The synthesis call also failed. Checklist: dispatched ✓, synthesis produced ✗, confidence 0.0. <span class="result-badge badge-false">Not done</span></div>
+    </div>
+    <div class="trace-step">
+      <div class="trace-dot amber"></div>
+      <div class="trace-step-text"><strong>Cap fires.</strong> 5 of 5 sub-researcher slots used. 1 of 2 synthesis attempts used. The safety cap fires before the goal predicate can clear. <span class="result-badge badge-cap">Safety cap</span></div>
+    </div>
+  </div>
+  <blockquote class="teaching">The goal predicate returned False at every step of this run. That's not a malfunction — it's the agent being honest. The checklist didn't clear, so the verdict was False, and the cap eventually made the decision the agent couldn't make for itself: stop.</blockquote>
+</section>
+
+<!-- §7 Spectrum Placement -->
+<section id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>Agent Spectrum Placement</h2>
+  </div>
+  <div class="spectrum-wrap">
+    <p>Where does this agent sit on the spectrum from a simple fixed script to a fully autonomous system?</p>
+    <div class="spectrum-bar">
+      <!-- Active marker at ~78% = Autonomous Agent -->
+      <div class="spectrum-marker active" style="left: 82%">
+        <div class="marker-dot"></div>
+      </div>
+    </div>
+    <div class="spectrum-labels">
+      <span>Workflow (fixed steps)</span>
+      <span>Simple Agent</span>
+      <span>Multi-Step Agent</span>
+      <span>Autonomous Agent ←</span>
+    </div>
+    <div class="spectrum-callout">
+      <strong>If this were a workflow:</strong> the script would always dispatch sub-researchers for the same three angles — "technical," "user," and "contrarian" — regardless of the question being asked. A regulatory question would get a technical analysis. A cost comparison would get a user experience angle. The work would be done, but the lenses would be wrong.<br><br>
+      <strong>What makes it an agent:</strong> the line <code style="font-size:0.85em;background:rgba(0,0,0,0.07);padding:0.1em 0.4em;border-radius:3px;">🎲 [MODEL DECISION] selected: technical, user, contrarian · alternatives: market, regulatory, historical</code> shows the model reading the question and choosing the right angles for it. Different question → different selection. That's not a workflow; that's judgment.
+    </div>
+  </div>
+</section>
+
+<!-- §8 Flashcards -->
+<section id="s8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2>Flashcards <span style="font-weight:normal;font-size:0.9rem;color:var(--slate-light)">(click to flip)</span></h2>
+  </div>
+  <div class="flashcard-grid">
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">Sub-researcher</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">An independent assistant with its own private conversation. In this run, each sub-researcher looked up sources, extracted findings, and synthesised a report — then its memory was cleared. Five ran; none were aware of each other.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">Context isolation</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">Each sub-researcher got a fresh start with no knowledge of the others. The technical researcher couldn't read the contrarian researcher's notes while it was working. This is by design — isolated perspectives can be combined; contaminated ones cannot.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">Context compaction</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">Each sub-researcher's full conversation — all its tool calls, reasoning steps, back-and-forth — was compressed into one compact report. The main agent only received the summary. This is what makes running five parallel conversations practical.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">The "did-it-finish" check</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">Three conditions, all required: (1) every sub-researcher reported back, (2) a synthesis was produced, (3) synthesis confidence ≥ 70%. The agent computed this checklist at every step — never once trusted a "feels done" signal from the model.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">Principled stop</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">When this agent ran out of sub-researcher slots, it stopped with a labelled reason: "EXIT: subagent cap — 5/5 sub-researchers used without producing synthesis." Not a crash. Not silence. A governance cap fired correctly — the agent executed perfectly; the goal wasn't reached.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="term">Follow-up dispatch</div><div class="hint">Tap to see what this means in this run</div></div>
+        <div class="flashcard-back">After reading reports with gaps, the agent sent two more sub-researchers. This is the observe→reason→act loop working at the team level. The limitation here: the follow-ups went to the same data source with the same parameters — and returned identical results. Detecting a gap is not the same as changing strategy.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §9 Self-check -->
+<section id="s9">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <h2>Quick self-check</h2>
+  </div>
+
+  <div class="mcq-item">
+    <h4>The model selected "technical, user, contrarian" as research angles. What would a workflow have done instead?</h4>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'Close — but a workflow wouldn\'t ask anyone. It would just run a fixed pre-set list, whether or not it fits the question.')"><div class="circle"></div>A workflow would have asked you to choose the angles.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'A workflow wouldn\'t necessarily run all 6 — it would run whatever fixed set was hard-coded in the script, which might be fewer or more.')"><div class="circle"></div>A workflow would have run all 6 angles every time.</div>
+    <div class="mcq-option" onclick="pickMcq(this, true, 'Correct. A workflow picks the same angles every time, regardless of the question. A question about drug regulation would still get "technical, user, contrarian" — which may be the wrong lenses entirely.')"><div class="circle"></div>A workflow would have used a fixed hard-coded set of angles, regardless of what the question was.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'Coincidence is not the point. The issue is what happens when the question changes — and a workflow can\'t adapt.')"><div class="circle"></div>A workflow would have selected the same angles by coincidence.</div>
+    <div class="mcq-reveal"></div>
+  </div>
+
+  <div class="mcq-item">
+    <h4>Each sub-researcher worked in its own box. What does that box represent?</h4>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'Not quite — it\'s not a separate operating system process. The box represents an independent conversation with the model.')"><div class="circle"></div>A separate Python process running on a different CPU core.</div>
+    <div class="mcq-option" onclick="pickMcq(this, true, 'Correct. Each box is an independent conversation with the model — with its own private context window. When the sub-researcher finishes, that conversation is discarded.')"><div class="circle"></div>An independent conversation with the model, with its own private memory.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'No — they all ran on the same computer, sequentially. The box is about memory isolation, not physical separation.')"><div class="circle"></div>A separate computer handling that specific angle.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'Not a different version — the same agent logic, but with its own fresh context window and its own private conversation.')"><div class="circle"></div>A different version of the main agent.</div>
+    <div class="mcq-reveal"></div>
+  </div>
+
+  <div class="mcq-item">
+    <h4>The follow-ups came back with the same 0.30 confidence as the original sub-researchers. What most likely explains this?</h4>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'The model followed its instructions correctly — it was the data source that was the limitation, not the model\'s quality.')"><div class="circle"></div>The model wasn't smart enough to do better research.</div>
+    <div class="mcq-option" onclick="pickMcq(this, true, 'Correct. The follow-ups queried the same mock database with the same parameters and found the same pre-seeded records. Same data in, same confidence out. To get a different result, the strategy needs to change — not just the attempt number.')"><div class="circle"></div>The follow-ups looked at the same data source with the same approach and got the same records back.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'The threshold was fine — it just reflects that the data available genuinely had a confidence ceiling at 0.30. Raising or lowering the threshold wouldn\'t have changed what the database contained.')"><div class="circle"></div>The confidence threshold of 70% was too high.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'More retries against the same source produce the same result. The problem is the source, not the number of attempts.')"><div class="circle"></div>The agent should have tried more follow-ups.</div>
+    <div class="mcq-reveal"></div>
+  </div>
+
+  <div class="mcq-item">
+    <h4>The agent stopped without producing a synthesis. This means:</h4>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'The cap is intentional — it\'s a design decision, not a bug. The agent executed exactly as designed.')"><div class="circle"></div>There is a bug in the code that needs to be fixed.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'Execution succeeded — the agent ran correctly through all its steps. The goal wasn\'t reached, but that\'s different from the agent failing.')"><div class="circle"></div>The agent failed at its job.</div>
+    <div class="mcq-option" onclick="pickMcq(this, true, 'Correct. The safety cap exists precisely for this situation — when the goal can\'t be reached within the allocated resources, the cap fires cleanly rather than letting the agent spin forever. The agent worked; the question just needed more data than the mock database had.')"><div class="circle"></div>The safety cap worked correctly — the agent ran its course and stopped with a labelled reason.</div>
+    <div class="mcq-option" onclick="pickMcq(this, false, 'No network error — the run used a local mock database for all research. The real network calls (to the AI model) hit an error, but the fallback logic handled those cleanly.')"><div class="circle"></div>A network error interrupted the run.</div>
+    <div class="mcq-reveal"></div>
+  </div>
+</section>
+
+<!-- §10 What You Could Build Next -->
+<section id="s10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <h2>What you could build next</h2>
+  </div>
+  <div class="next-grid">
+    <div class="next-card">
+      <h4>A live research agent</h4>
+      <p>The same architecture, but connected to real sources — Wikipedia, arXiv, a news API. Sub-researchers fetch live content instead of mock records. The architecture doesn't change; only the data source does.</p>
+      <div class="new-cap">Real perception, live data</div>
+    </div>
+    <div class="next-card">
+      <h4>An agent that changes strategy when stuck</h4>
+      <p>When a sub-researcher reports a gap, the follow-up gets a different brief — a different source, a different search term, a broader framing. Detecting a gap and dispatching a smarter follow-up: that's the next level.</p>
+      <div class="new-cap">Adaptive act-step</div>
+    </div>
+    <div class="next-card">
+      <h4>A fact-checking agent</h4>
+      <p>Three sub-researchers each check the same claim from a different source — do they agree? If two agree and one contradicts, the main agent flags the contradiction rather than averaging it away.</p>
+      <div class="new-cap">Independent corroboration</div>
+    </div>
+    <div class="next-card">
+      <h4>An agent that remembers last week's research</h4>
+      <p>After a successful synthesis, the briefing gets saved to a file. Next time the same topic is researched, the agent loads the prior briefing and updates only what changed. It doesn't start from scratch every run.</p>
+      <div class="new-cap">Persistent briefings across runs</div>
+    </div>
+  </div>
+</section>
+
+<!-- §11 Provenance -->
+<section id="s11">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <h2>Provenance &amp; Glossary</h2>
+  </div>
+  <div class="provenance">
+    <h3>Run record</h3>
+    <div class="prov-grid">
+      <div class="prov-item"><div class="prov-label">Agent slug</div><div class="prov-val">research-lead</div></div>
+      <div class="prov-item"><div class="prov-label">Run date</div><div class="prov-val">2026-06-13 · 14:07:13</div></div>
+      <div class="prov-item"><div class="prov-label">SDK rung introduced</div><div class="prov-val">Rung 8 — Subagents + Context Compaction</div></div>
+      <div class="prov-item"><div class="prov-label">Run exit</div><div class="prov-val">EXIT: subagent cap (5/5)</div></div>
+      <div class="prov-item"><div class="prov-label">Goal met</div><div class="prov-val">No — synthesis not produced</div></div>
+      <div class="prov-item"><div class="prov-label">Run mode</div><div class="prov-val">Mock-assisted (real SDK calls hit max_tokens kwarg error)</div></div>
+      <div class="prov-item"><div class="prov-label">Part 1 companion</div><div class="prov-val">research-lead_learning-guide.html</div></div>
+      <div class="prov-item"><div class="prov-label">Log source</div><div class="prov-val">Option A — research-lead_run_output.log</div></div>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">Gate verdicts — this run</h3>
+    <table class="glossary-table" style="margin-bottom:1.5rem;">
+      <tr><th>Functional name</th><th>Result</th><th>Evidence</th></tr>
+      <tr><td>Did-it-finish check</td><td>✗ Not met</td><td>All [GOAL PREDICATE] evaluations returned False; synthesis never produced</td></tr>
+      <tr><td>Model's own choice</td><td>✓ Pass</td><td>[MODEL DECISION] — model selected 3 of 6 angles</td></tr>
+      <tr><td>Learning from what it saw</td><td>✓ Pass (partial)</td><td>[LOOP FEEDBACK] gap detection → follow-up dispatch; act strategy unchanged</td></tr>
+      <tr><td>Principled stop</td><td>✓ Pass</td><td>EXIT: subagent cap at 5/5 with labelled reason</td></tr>
+      <tr><td>Independent check</td><td>N/A</td><td>First appears at rung 7 (not yet introduced)</td></tr>
+    </table>
+
+    <h3>Glossary — functional names to codes</h3>
+    <p style="margin-bottom:0.8rem;font-size:0.8rem;color:rgba(255,255,255,0.5);">These are the technical gate codes. They appear only here, in this footer. Everywhere else in this document — and in all conversation with the Professor — only the functional names above are used.</p>
+    <table class="glossary-table">
+      <tr><th>Functional name</th><th>Technical code</th></tr>
+      <tr><td>Did-it-finish check</td><td>G1 — Goal is a predicate</td></tr>
+      <tr><td>Model's own choice</td><td>G2 — Model owns a real decision</td></tr>
+      <tr><td>Learning from what it saw</td><td>G3 — Closed observe→reason→act loop</td></tr>
+      <tr><td>Principled stop</td><td>G4 — Principled termination</td></tr>
+      <tr><td>Independent check</td><td>G5 — Verification is independent</td></tr>
+    </table>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<script>
+function pickMcq(el, correct, explanation) {
+  const item = el.closest('.mcq-item');
+  if (item.dataset.answered) return;
+  item.dataset.answered = '1';
+  el.classList.add(correct ? 'correct' : 'wrong');
+  const reveal = item.querySelector('.mcq-reveal');
+  reveal.textContent = (correct ? '✓ ' : '✗ ') + explanation;
+  reveal.classList.add('shown');
+}
+</script>
+</body>
+</html>

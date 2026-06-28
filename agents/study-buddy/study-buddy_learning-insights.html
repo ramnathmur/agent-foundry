@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Study Buddy — Post-run insights (Part 2)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #fbf7ef;
+    --ink: #2a2a2a;
+    --muted: #6e6557;
+    --accent: #7a4e2d;
+    --accent-soft: #e7d8c4;
+    --rule: #d8cdb8;
+    --aside-bg: #f2ecde;
+    --aside-rule: #c8b890;
+    --good: #2f6a3a;
+    --warn: #a45b00;
+    --bad:  #8c2a2a;
+    --code-bg: #fff8ec;
+    --card-bg: #ffffff;
+    --dash-bg: #2a2a2a;
+    --dash-ink: #f7eedb;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: Georgia, "Iowan Old Style", "Source Serif Pro", serif;
+    line-height: 1.65;
+    font-size: 17.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 780px; margin: 0 auto; padding: 56px 32px 96px; }
+  header.title { margin: 0 0 32px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+  header.title .kicker {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    text-transform: uppercase; font-size: 12px; letter-spacing: 0.15em;
+    color: var(--accent); margin: 0 0 12px;
+  }
+  header.title h1 { font-size: 38px; line-height: 1.15; margin: 0 0 8px; font-weight: 700; }
+  header.title .sub { color: var(--muted); font-style: italic; margin-top: 4px; }
+  nav.toc {
+    margin: 24px 0 40px; padding: 18px 22px;
+    background: var(--aside-bg); border-left: 3px solid var(--accent);
+    font-family: -apple-system, sans-serif; font-size: 14px;
+  }
+  nav.toc ol { margin: 6px 0; padding-left: 22px; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  section { margin: 56px 0; scroll-margin-top: 20px; }
+  section h2 {
+    font-size: 26px; font-weight: 700; margin: 0 0 8px;
+    border-bottom: 1px dashed var(--rule); padding-bottom: 10px;
+  }
+  section .section-tag {
+    font-family: -apple-system, sans-serif; text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.12em; color: var(--accent);
+    margin-bottom: 6px;
+  }
+  p { margin: 14px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg); padding: 1px 6px; border-radius: 3px;
+    font-size: 0.92em;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.55;
+  }
+  pre code { background: transparent; padding: 0; }
+  blockquote {
+    border-left: 3px solid var(--accent); padding: 6px 16px; margin: 14px 0;
+    color: var(--ink); background: var(--code-bg); font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px; line-height: 1.5; border-radius: 0 4px 4px 0;
+  }
+  aside.deep-dive {
+    background: var(--aside-bg); border: 1px solid var(--aside-rule);
+    border-radius: 4px; padding: 18px 22px; margin: 20px 0;
+    font-size: 16px; color: var(--muted);
+  }
+  aside.deep-dive .label {
+    font-family: -apple-system, sans-serif;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 6px; font-weight: 600;
+  }
+
+  /* §1 setup grid — calm, informational */
+  .setup-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0 24px;
+  }
+  .setup-card {
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .setup-card .label {
+    font-family: -apple-system, sans-serif; text-transform: uppercase;
+    font-size: 10px; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 4px;
+  }
+  .setup-card .value { font-size: 15px; line-height: 1.45; color: var(--ink); }
+  .setup-card .value em { font-style: italic; color: var(--muted); }
+
+  /* §1 result snapshot — high-contrast dashboard */
+  .snapshot {
+    background: var(--dash-bg); color: var(--dash-ink);
+    border-radius: 8px; padding: 22px 24px; margin: 16px 0 8px;
+  }
+  .snapshot h3 {
+    color: var(--dash-ink); font-family: -apple-system, sans-serif;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.12em;
+    margin: 0 0 14px; opacity: 0.7; font-weight: 600;
+  }
+  .snapshot .row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 8px 0;
+  }
+  .snapshot .stat .num {
+    font-size: 28px; font-weight: 700; color: #ffe8b8; line-height: 1.1;
+    font-family: Georgia, serif;
+  }
+  .snapshot .stat .lbl {
+    font-family: -apple-system, sans-serif; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.75;
+    margin-top: 4px;
+  }
+  .snapshot .outcome { margin-top: 14px; padding-top: 14px; border-top: 1px solid #444; }
+  .snapshot .outcome .verdict {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    background: #2f6a3a; color: #fff; font-family: -apple-system, sans-serif;
+    font-size: 12px; letter-spacing: 0.05em; font-weight: 600;
+  }
+  .snapshot .outcome .text { font-size: 15px; margin-top: 8px; line-height: 1.5; }
+
+  /* §2 proof — emphasized */
+  .proof-block { margin: 24px 0; }
+  .proof-q {
+    font-size: 19px; font-weight: 700; color: var(--accent); margin-bottom: 6px;
+    font-family: Georgia, serif;
+  }
+  .proof-verdict {
+    background: #eef4ed; border-left: 4px solid var(--good); padding: 10px 14px;
+    border-radius: 0 4px 4px 0; margin-top: 8px; font-size: 15.5px;
+  }
+  .proof-verdict strong { color: var(--good); }
+
+  /* §4 traits */
+  .traits-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 18px 0; }
+  .trait-card {
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .trait-card .head {
+    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;
+  }
+  .trait-card .name {
+    font-family: -apple-system, sans-serif; font-weight: 700; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
+  }
+  .trait-card .tier {
+    font-family: -apple-system, sans-serif; font-size: 11px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .trait-card blockquote { margin: 8px 0 6px; font-size: 12.5px; }
+  .trait-card .why { font-size: 14.5px; color: var(--ink); margin: 0; }
+
+  /* §5 timeline */
+  .timeline { margin: 18px 0; padding: 0; list-style: none; }
+  .timeline li {
+    display: grid; grid-template-columns: 110px 1fr; gap: 14px;
+    padding: 10px 0; border-top: 1px solid var(--rule);
+  }
+  .timeline li:last-child { border-bottom: 1px solid var(--rule); }
+  .timeline .stage {
+    font-family: -apple-system, sans-serif; font-weight: 700;
+    color: var(--accent); font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.08em; padding-top: 2px;
+  }
+  .timeline .stage .anchor {
+    display: block; font-size: 10.5px; color: var(--muted);
+    text-transform: none; letter-spacing: 0; font-weight: 400; margin-top: 2px;
+  }
+  .timeline .what { font-size: 15.5px; line-height: 1.5; }
+
+  /* §6 progress strip */
+  .progress {
+    margin: 18px 0; padding: 14px 16px;
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+  }
+  .progress .row {
+    display: grid; grid-template-columns: 64px 90px 1fr; gap: 12px;
+    padding: 6px 0; align-items: baseline; border-bottom: 1px dashed var(--rule);
+  }
+  .progress .row:last-child { border-bottom: 0; }
+  .progress .iter {
+    font-family: -apple-system, sans-serif; font-weight: 700;
+    color: var(--accent); font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .progress .verdict {
+    font-family: "SF Mono", monospace; font-size: 12px;
+    padding: 2px 8px; border-radius: 3px; display: inline-block; width: fit-content;
+  }
+  .progress .verdict.false { background: #f4ece0; color: var(--warn); }
+  .progress .verdict.true  { background: #dfeada; color: var(--good); }
+  .progress .gloss { font-size: 14.5px; color: var(--ink); }
+
+  /* §7 spectrum */
+  .spectrum {
+    margin: 18px 0; padding: 18px 20px;
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+  }
+  .spectrum-line {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin: 18px 0 8px; position: relative;
+  }
+  .spectrum-line .stop {
+    text-align: center; padding: 10px 6px; border-radius: 4px;
+    font-family: -apple-system, sans-serif; font-size: 12px;
+    color: var(--muted); border: 1px solid var(--rule);
+  }
+  .spectrum-line .stop.you {
+    background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700;
+  }
+  .spectrum-line .stop.you::after {
+    content: "← THIS RUN"; display: block; font-size: 10px;
+    margin-top: 4px; letter-spacing: 0.08em;
+  }
+
+  /* §8 flashcards */
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0; }
+  .card {
+    perspective: 800px; height: 140px; cursor: pointer;
+  }
+  .card-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.5s; transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px;
+    display: flex; flex-direction: column; justify-content: center;
+    font-size: 14.5px; line-height: 1.45;
+  }
+  .card-face.front { background: var(--card-bg); color: var(--ink); font-weight: 700; }
+  .card-face.front .hint {
+    font-family: -apple-system, sans-serif; font-size: 10px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 8px; font-weight: 400;
+  }
+  .card-face.back {
+    background: var(--accent); color: #fff8ec; transform: rotateY(180deg);
+  }
+
+  /* §9 MCQ */
+  .mcq {
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 16px 18px; margin: 18px 0;
+  }
+  .mcq .q { font-weight: 700; margin-bottom: 10px; }
+  .mcq label { display: block; padding: 6px 0; cursor: pointer; color: var(--ink); }
+  .mcq label input { margin-right: 8px; }
+  .mcq .reveal {
+    display: none; margin-top: 14px; padding: 12px 14px;
+    background: var(--aside-bg); border-left: 3px solid var(--good);
+    border-radius: 0 4px 4px 0; font-size: 15px;
+  }
+  .mcq.show .reveal { display: block; }
+  .mcq button {
+    margin-top: 10px; padding: 6px 14px;
+    background: var(--accent); color: #fff; border: 0;
+    border-radius: 4px; font-family: -apple-system, sans-serif; font-size: 14px; cursor: pointer;
+  }
+
+  /* §10 build-next */
+  .build-list { list-style: none; padding: 0; }
+  .build-list li {
+    background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 12px 14px; margin: 8px 0;
+  }
+  .build-list .title { font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+
+  footer.provenance {
+    margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--rule);
+    font-family: -apple-system, sans-serif; font-size: 13px; color: var(--muted);
+  }
+  footer.provenance p { margin: 4px 0; }
+  footer.provenance .glossary {
+    background: var(--aside-bg); border: 1px solid var(--aside-rule);
+    border-radius: 4px; padding: 14px 18px; margin-top: 14px;
+  }
+  footer.provenance .glossary table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  footer.provenance .glossary td {
+    padding: 4px 8px; vertical-align: top;
+  }
+  footer.provenance .glossary td.func { width: 60%; color: var(--ink); }
+  footer.provenance .glossary td.code { font-family: monospace; color: var(--accent); }
+
+  @media (max-width: 600px) {
+    main { padding: 32px 18px 60px; }
+    .setup-grid, .cards { grid-template-columns: 1fr; }
+    .snapshot .row { grid-template-columns: repeat(2, 1fr); }
+    .timeline li { grid-template-columns: 1fr; gap: 4px; }
+    .progress .row { grid-template-columns: 1fr; gap: 2px; }
+    .spectrum-line { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header class="title">
+  <p class="kicker">Study Buddy · Part 2 · Post-run insights</p>
+  <h1>What the run actually proved</h1>
+  <p class="sub">Generated from <code>study-buddy_run_output.log</code> · run dated 2026-06-08 15:13.</p>
+</header>
+
+<nav class="toc">
+  <strong>Sections</strong>
+  <ol>
+    <li><a href="#s1">About this run</a></li>
+    <li><a href="#s2">Was this really an agent? Here's the proof</a></li>
+    <li><a href="#s3">Why this goal counted as a real check</a></li>
+    <li><a href="#s4">Traits in Action</a></li>
+    <li><a href="#s5">The life of this agent</a></li>
+    <li><a href="#s6">Did the agent reach its goal? (progress trace)</a></li>
+    <li><a href="#s7">Agent Spectrum Placement</a></li>
+    <li><a href="#s8">Flashcards</a></li>
+    <li><a href="#s9">Quick self-check</a></li>
+    <li><a href="#s10">What you could build next</a></li>
+    <li><a href="#s11">Provenance + glossary</a></li>
+  </ol>
+</nav>
+
+<!-- §1 -->
+<section id="s1">
+  <p class="section-tag">§1 · About this run</p>
+  <h2>What was set up, and what came out</h2>
+
+  <h3 style="font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin:18px 0 6px;">Setup</h3>
+  <div class="setup-grid">
+    <div class="setup-card">
+      <div class="label">a · Agent's role</div>
+      <div class="value">A Socratic study quiz that quizzes you on a topic and remembers what you struggled with last time. Tutors by choosing harder or easier next questions based on how you answered the previous one.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">b · This run's input</div>
+      <div class="value">Topic: <code>python_lists</code>. <em>Empty ledger</em> at the start — first time studying this topic, so no prior weak-spots to drill.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">c · Success rule</div>
+      <div class="value">"Done" means the model itself called it done, OR you typed <code>stop</code>, OR you'd answered ≥5 questions with the on-disk ledger updated, OR the safety cap fired at 8.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">d · Safety cap (who set it?)</div>
+      <div class="value"><strong>You</strong> set it — <code>MAX_QUESTIONS=8</code> is a constant in your code. The agent doesn't get to overrule it; that's the principled-stop guarantee.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">e · Tools the agent had</div>
+      <div class="value">Three: read the weak-spots file from disk; ask you a question in the terminal; write a confidence note back to the weak-spots file.</div>
+    </div>
+    <div class="setup-card">
+      <div class="label">f · World the agent ran in</div>
+      <div class="value">Real conversation with you — not mocked. The model is real (<code>claude-opus-4-8</code>) and so is the user. Cost was billed to your Max plan.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin:24px 0 6px;">Result snapshot</h3>
+  <div class="snapshot">
+    <h3>The agent's dashboard</h3>
+    <div class="row">
+      <div class="stat"><div class="num">5/8</div><div class="lbl">turns used</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">questions asked</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">ledger updates</div></div>
+      <div class="stat"><div class="num">~$0.64</div><div class="lbl">cost this run</div></div>
+    </div>
+    <div class="row">
+      <div class="stat"><div class="num">16.5k</div><div class="lbl">tokens in</div></div>
+      <div class="stat"><div class="num">1.7k</div><div class="lbl">tokens out</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">weak subtopic</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">strong subtopics</div></div>
+    </div>
+    <div class="outcome">
+      <span class="verdict">GOAL MET</span>
+      <div class="text">The model itself called the session done at turn 5, with the auto-done predicate agreeing at the same moment. Weak spot to revisit next time: <code>list_creation_and_indexing</code> (0.20). Strong: mutation methods, slicing, references-and-copying (each 0.95).</div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 -->
+<section id="s2">
+  <p class="section-tag">§2 · The agency proof</p>
+  <h2>Was this really an agent? Here's the proof</h2>
+  <p>Three functional questions; three quoted lines from <em>your</em> run.</p>
+
+  <div class="proof-block">
+    <div class="proof-q">1. Did the agent decide when it was done?</div>
+    <blockquote>📐 [GOAL PREDICATE] session_complete(state) → False (4/5 min asked · ledger_written=True)</blockquote>
+    <div class="proof-verdict">
+      <strong>Yes.</strong> At every step the agent ran its own yes/no check — that's the line above (from turn 4). The check ran in code, not in narration: it added up "have I asked enough questions?" and "did the ledger get written?" and returned a real boolean. On turn 5, the model independently said "done" — both paths landed at the same answer.
+    </div>
+  </div>
+
+  <div class="proof-block">
+    <div class="proof-q">2. Did the agent choose its own next move?</div>
+    <blockquote>🎲 [MODEL DECISION] action=done · subtopic=references_and_copying · alternatives: ask | assess_and_ask | done</blockquote>
+    <div class="proof-verdict">
+      <strong>Yes — and the most distinctive moment is right there in the line above.</strong> The model had three live options at turn 5: keep asking, assess and ask once more, or call it done. It picked <code>done</code> after only four questions — well under the safety cap of eight. Nothing in your code dictated five; the model chose five because three strong answers in a row gave it enough signal.
+    </div>
+  </div>
+
+  <div class="proof-block">
+    <div class="proof-q">3. Did the agent learn from what it saw?</div>
+    <blockquote>🔄 [LOOP FEEDBACK] observed user answer → ledger now has 4 update(s); next question shaped by it AND by client's memory of all prior turns</blockquote>
+    <div class="proof-verdict">
+      <strong>Yes — at two layers at once.</strong> "Shaped by it" is the within-turn loop (answer to question N becomes input to question N+1). "Memory of all prior turns" is the new capability landing this cycle — the model remembers question 1 through 4 when picking question 5, with zero re-injection by your code. In the previous cycle's agent, only the first half of that sentence would have been true.
+    </div>
+  </div>
+</section>
+
+<!-- §3 -->
+<section id="s3">
+  <p class="section-tag">§3 · Why the goal counts</p>
+  <h2>Why this goal counted as a real check</h2>
+  <p>The agent didn't have a vague aspiration ("study the topic well"). It had a <em>computable test</em> it ran on itself every step.</p>
+
+  <blockquote>📐 [GOAL PREDICATE] session_complete(state) → False (1/5 min asked · ledger_written=False)</blockquote>
+
+  <p>That line is from turn 1. Read it carefully: there's a function called <code>session_complete</code>, it took the agent's current state as input, and it returned a boolean — false here, because only one question had been asked and the ledger hadn't been written yet. The agent <em>itself</em> ran this check; nothing in your terminal told it the answer.</p>
+
+  <p>Contrast a hopeful loop — "keep asking questions until it feels like enough." A hopeful loop has no defined "enough," no point where the loop knows to stop, no point where you can audit whether it stopped at the right time. The agent has all three: an enough, a stop-point, and a yes/no line in the log proving when it changed from "not yet" to "yes."</p>
+
+  <p>This is what makes the difference between an agent and a clever script. The agent has an opinion about completion, and it checks that opinion every step.</p>
+</section>
+
+<!-- §4 -->
+<section id="s4">
+  <p class="section-tag">§4 · Traits in Action</p>
+  <h2>Traits in Action</h2>
+  <p>Each trait the agent demonstrated, with one runtime line of evidence.</p>
+
+  <div class="traits-grid">
+    <div class="trait-card">
+      <div class="head"><span class="name">Goal-directedness</span><span class="tier">Core</span></div>
+      <blockquote>📐 [GOAL PREDICATE] session_complete(state) → False (4/5 min asked · ledger_written=True)</blockquote>
+      <p class="why">The agent ran a yes/no completion check after every question, never just "kept going on vibes."</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Autonomy</span><span class="tier">Core</span></div>
+      <blockquote>🎲 [MODEL DECISION] action=done · subtopic=references_and_copying · alternatives: ask | assess_and_ask | done</blockquote>
+      <p class="why">The model picked from three real options at turn 5; the stop-now decision was its own, not your code's.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Observe → reason → act</span><span class="tier">Core</span></div>
+      <blockquote>🔄 [LOOP FEEDBACK] observed user answer → ledger now has 4 update(s); next question shaped by it AND by client's memory of all prior turns</blockquote>
+      <p class="why">Every question after the first was shaped by what came back from the previous one. The agent didn't run in place.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Memory (within-session)</span><span class="tier">Essential — NEW this cycle</span></div>
+      <blockquote>💾 [SESSION MEMORY] rung 3 — client holds 5 turn(s) of conversation</blockquote>
+      <p class="why">The same conversation continued across all five turns. The model remembered every prior question without your code re-injecting anything.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Memory (across sessions)</span><span class="tier">Essential</span></div>
+      <blockquote>📀 [APP MEMORY] weak_spots.json updated → list_creation_and_indexing confidence=0.20</blockquote>
+      <p class="why">Each assessment wrote a permanent note to disk. The next time you run on the same topic, the agent will open by drilling that 0.20.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Perception</span><span class="tier">Essential</span></div>
+      <blockquote>📥 [TOOL RESULT] user answer: 87 chars</blockquote>
+      <p class="why">The agent read user input from the terminal and surfaced its length — visible evidence the agent "looked at" your answer before responding.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Planning</span><span class="tier">Essential</span></div>
+      <blockquote>📋 [PLAN GENERATED] · empty ledger — open broadly; let the model pick subtopics</blockquote>
+      <p class="why">Before any tool call, the agent stated its plan in lay terms. The plan adapted on turn 5 when the model declared done early (📝 [PLAN REVISED]).</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Tool selection &amp; use</span><span class="tier">Essential</span></div>
+      <blockquote>🔧 [TOOL CALL] ask_question(subtopic='list_mutation_methods')</blockquote>
+      <p class="why">The agent picked one of three tools each turn (read ledger / ask question / write ledger) and dispatched it — not hardcoded; the model decided.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Sequential action-taking</span><span class="tier">Enhancing</span></div>
+      <blockquote>📍 [STEP 4]  question 4/8</blockquote>
+      <p class="why">Steps 1 → 2 → 3 → 4 → 5 in order, each labeled and bounded; never two questions in flight at once.</p>
+    </div>
+    <div class="trait-card">
+      <div class="head"><span class="name">Principled stop</span><span class="tier">Enhancing</span></div>
+      <blockquote>🏁 GOAL MET — model assessed session complete</blockquote>
+      <p class="why">Four possible exits were wired in code; one of them fired. The agent never ran past its purpose.</p>
+    </div>
+  </div>
+</section>
+
+<!-- §5 -->
+<section id="s5">
+  <p class="section-tag">§5 · The story of this run</p>
+  <h2>The life of this agent (from wake-up to goodbye)</h2>
+  <p>Each non-coder stage, anchored to a specific moment in your run log.</p>
+
+  <ul class="timeline">
+    <li>
+      <div class="stage">Wake up<span class="anchor">log line 10</span></div>
+      <div class="what">🤖 [AGENT BOOT] Study Buddy v1 · rung 3 — the agent introduced itself and confirmed it could run. Preflight checked Python version, the SDK, stripped any stray API key.</div>
+    </li>
+    <li>
+      <div class="stage">Read its notes<span class="anchor">log line 16</span></div>
+      <div class="what">📀 [APP MEMORY] read weak_spots.json for 'python_lists' → 0 prior entries — first time studying this topic, so the ledger was empty. (On your next run, this line will read "→ 4 prior entries" and you'll see the agent open differently.)</div>
+    </li>
+    <li>
+      <div class="stage">Plan<span class="anchor">log line 18</span></div>
+      <div class="what">📋 [PLAN GENERATED] · empty ledger — open broadly — without prior data, the plan was to let the model survey the topic rather than drill any specific subtopic first.</div>
+    </li>
+    <li>
+      <div class="stage">Try (4×)<span class="anchor">log lines 41, 66, 92, 119</span></div>
+      <div class="what">🔧 [TOOL CALL] ask_question(...) — four questions, four different subtopics (indexing → mutation → slicing → references). Each chosen by the model, not your code.</div>
+    </li>
+    <li>
+      <div class="stage">Look (4×)<span class="anchor">log lines 46, 71, 97, 124</span></div>
+      <div class="what">📥 [TOOL RESULT] user answer: N chars — the agent saw what you said. The first answer was 2 chars (terse — that's what the model later scored at 0.20); the next three were ~80 chars each (detailed — scored at 0.95).</div>
+    </li>
+    <li>
+      <div class="stage">Try again<span class="anchor">throughout, growing each turn</span></div>
+      <div class="what">🔄 [LOOP FEEDBACK] observed user answer → ... next question shaped by it AND by client's memory of all prior turns — the line that proves the loop closed. By turn 4, the model was reading the cumulative pattern of all four answers, not just the latest.</div>
+    </li>
+    <li>
+      <div class="stage">Stop<span class="anchor">log lines 144, 148, 150</span></div>
+      <div class="what">🎲 [MODEL DECISION] action=done → 📝 [PLAN REVISED] model declared session complete → 🏁 GOAL MET. The model called it. The code didn't have to.</div>
+    </li>
+  </ul>
+
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <p><strong>Technical view: the SDK call sequence.</strong> Five <code>━━━ [SDK →]</code> / <code>━━━ [← SDK]</code> brackets total — one per loop iteration. Token usage was <em>front-loaded</em> on turn 1 (13,707 in / 216 out) because the system prompt + topic prompt got sent fresh; turns 2 through 5 averaged only ~2 input tokens each because <code>ClaudeSDKClient</code> reused the already-established conversation context. That O(1)-input-per-turn behavior is the rung-3 efficiency win in numbers.</p>
+  </aside>
+</section>
+
+<!-- §6 -->
+<section id="s6">
+  <p class="section-tag">§6 · Goal trace</p>
+  <h2>Did the agent reach its goal? (the progress trace)</h2>
+  <p>The agent's own yes/no verdict at every step:</p>
+
+  <div class="progress">
+    <div class="row">
+      <div class="iter">Step 1</div>
+      <div class="verdict false">False</div>
+      <div class="gloss">1 of 5 questions asked; ledger not yet written. Far from done — the very first question, just sent.</div>
+    </div>
+    <div class="row">
+      <div class="iter">Step 2</div>
+      <div class="verdict false">False</div>
+      <div class="gloss">2 of 5; ledger written for the first time (model assessed turn 1's answer as 0.20). Still not done — needed three more questions to satisfy the minimum.</div>
+    </div>
+    <div class="row">
+      <div class="iter">Step 3</div>
+      <div class="verdict false">False</div>
+      <div class="gloss">3 of 5; ledger updated again (mutation methods scored 0.95). The model was building a picture but the agent's count check wasn't satisfied yet.</div>
+    </div>
+    <div class="row">
+      <div class="iter">Step 4</div>
+      <div class="verdict false">False</div>
+      <div class="gloss">4 of 5; ledger keeps growing (slicing scored 0.95). One question short of the minimum auto-done threshold.</div>
+    </div>
+    <div class="row">
+      <div class="iter">Step 5</div>
+      <div class="verdict true">model-done</div>
+      <div class="gloss">Model declared done before the predicate's auto-fire moment. References-and-copying scored 0.95. Both stopping conditions converged: model said yes, predicate would have said yes — agreed independently.</div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 -->
+<section id="s7">
+  <p class="section-tag">§7 · Placement</p>
+  <h2>Agent Spectrum Placement</h2>
+  <p>Where this run lands on the agent spectrum:</p>
+
+  <div class="spectrum">
+    <div class="spectrum-line">
+      <div class="stop">Workflow</div>
+      <div class="stop">Simple Agent</div>
+      <div class="stop you">Multi-Step Agent</div>
+      <div class="stop">Autonomous Agent</div>
+    </div>
+    <p style="margin-top:14px;"><strong>Why "Multi-Step Agent" and not "Autonomous"?</strong> Study Buddy makes real-time decisions across multiple turns and owns its stopping moment — that's well past "Simple Agent." But the topic is still set by you in code, and the safety cap is your call, not the agent's. To slide into "Autonomous Agent" territory, the agent would need to set its own topic (e.g., "I notice you study Python every Tuesday — want to do that?") and propose its own cap.</p>
+
+    <div style="margin-top:14px; padding:12px 14px; background: var(--code-bg); border-left:4px solid var(--accent); border-radius:0 4px 4px 0;">
+      <strong>If this were a workflow instead.</strong> A workflow version would have a fixed question list — say, 5 questions hardcoded in order, no model-picked subtopics, no model-assessed confidence, no model-declared stopping. The line that <em>most</em> proves Study Buddy isn't that is line 144: <code>🎲 [MODEL DECISION] action=done</code>. A workflow can't produce that line, because the stop is the model's call, not the code's.
+    </div>
+  </div>
+</section>
+
+<!-- §8 -->
+<section id="s8">
+  <p class="section-tag">§8 · Flashcards</p>
+  <h2>Flashcards</h2>
+  <p>Click each card to flip. Definitions are anchored to <em>your</em> run, not generic textbook lines.</p>
+
+  <div class="cards" id="cards">
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Goal-directedness</span></div>
+        <div class="card-face back">In this run, the agent ran <code>session_complete(state) → False/True</code> after every question — visible at log line 47, 72, 98, 125. Without that check, the loop would have had no opinion about when to stop.</div>
+      </div>
+    </div>
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Autonomy</span></div>
+        <div class="card-face back">The model picked the subtopic AND wrote the question wording AND chose to stop. Line 144 — <code>action=done</code> — is the most distinctive: the model declined three more available turns and called the session complete on its own.</div>
+      </div>
+    </div>
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Within-session memory</span></div>
+        <div class="card-face back">Held by the SDK client inside the <code>async with</code> block. Visible at log lines 38, 61, 87, 114, 143 — the count grew from "1 turn" to "5 turns" without your code re-injecting prior turns into the prompt.</div>
+      </div>
+    </div>
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Across-session memory</span></div>
+        <div class="card-face back">Held by <code>weak_spots.json</code> on disk. Today's run wrote 4 entries (indexing 0.20, mutation 0.95, slicing 0.95, references 0.95). Tomorrow's run will read them — same code, different opening question.</div>
+      </div>
+    </div>
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Loop feedback</span></div>
+        <div class="card-face back">The line you re-read after the run (line 91, 118, 147): "observed user answer → ledger now has N update(s); next question shaped by it AND by client's memory of all prior turns." Two layers of feedback, both required for G3 to be honestly satisfied.</div>
+      </div>
+    </div>
+    <div class="card" onclick="this.classList.toggle('flipped')">
+      <div class="card-inner">
+        <div class="card-face front"><span class="hint">Click to flip</span><span>Principled stop</span></div>
+        <div class="card-face back">Four named exit paths in code: model-done, user-stop, predicate-satisfied, cap reached. This run hit model-done at turn 5. The cap was never used — but it was reachable; the smoke test proved that. That's principled.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §9 -->
+<section id="s9">
+  <p class="section-tag">§9 · Self-check</p>
+  <h2>Quick self-check</h2>
+
+  <div class="mcq" id="qa">
+    <div class="q">1. The agent stopped at turn 5 with three questions still available before the safety cap. Who made the decision to stop?</div>
+    <label><input type="radio" name="qa"> Your code — the safety cap fired early.</label>
+    <label><input type="radio" name="qa"> The model — it decided four answers gave it enough signal.</label>
+    <label><input type="radio" name="qa"> You — by typing one of the stop sentinels.</label>
+    <button onclick="document.getElementById('qa').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>The model — it decided four answers gave it enough signal.</strong> Line 144 (<code>action=done</code>) is the model's choice; the cap (your code's last word) was at 8 and the model stopped at 5. If a workflow had been driving, you'd have seen exactly the number of questions hard-coded into Python, no more, no less.</div>
+  </div>
+
+  <div class="mcq" id="qb">
+    <div class="q">2. What would have been different about this run if it had used the older single-shot LLM call from Cycle 1 instead of the persistent client used here?</div>
+    <label><input type="radio" name="qb"> The agent couldn't have asked questions at all.</label>
+    <label><input type="radio" name="qb"> Each turn would have had to re-state all prior turns in its prompt — and the input token count per turn would not have stayed flat at ~2.</label>
+    <label><input type="radio" name="qb"> The weak-spots file wouldn't have been saved.</label>
+    <button onclick="document.getElementById('qb').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>Each turn would have had to re-state all prior turns in its prompt.</strong> In your run, turns 2 through 5 used only ~2 input tokens each because the SDK reused the established conversation. With single-shot calls, you'd have had to stuff the whole prior conversation into every new prompt — input cost scaling linearly with turn count. The weak-spots file would still have saved (that's app memory, not session memory), and the agent could still have asked questions — but every question would have cost O(n) tokens to set up.</div>
+  </div>
+
+  <div class="mcq" id="qc">
+    <div class="q">3. The very first question (line 44) got a 2-character answer; the model assessed it at 0.20. What did the agent do on turn 2, and why does that pattern matter?</div>
+    <label><input type="radio" name="qc"> Re-asked the same question in different words.</label>
+    <label><input type="radio" name="qc"> Moved to a different subtopic (mutation methods).</label>
+    <label><input type="radio" name="qc"> Aborted the session because the answer was weak.</label>
+    <button onclick="document.getElementById('qc').classList.add('show')">Reveal</button>
+    <div class="reveal"><strong>Moved to a different subtopic (mutation methods).</strong> That's the loop closing on real evidence — a weak answer didn't trigger a re-drill of the same subtopic; the agent recorded the weakness and pivoted to gather more signal elsewhere. A future session can come back to indexing because the ledger now knows it's weak. This pattern — collect signal broadly first, drill weak areas in the next session — is the across-session loop in action.</div>
+  </div>
+</section>
+
+<!-- §10 -->
+<section id="s10">
+  <p class="section-tag">§10 · Forward</p>
+  <h2>What you could build next</h2>
+  <p>Daily-life ideas that would exercise capabilities <em>beyond</em> what Study Buddy demonstrates today:</p>
+  <ul class="build-list">
+    <li>
+      <div class="title">A meal-planner that remembers what you've cooked this week</div>
+      <p style="margin:0;">Same kind of cross-session memory you have here, applied to recipes. Adds a new wrinkle: the model would actively avoid repeating last week's meals — using memory as a constraint, not just a starting point.</p>
+    </li>
+    <li>
+      <div class="title">A Spanish drill agent with custom verb-tense tools</div>
+      <p style="margin:0;">Same study-buddy shape, but you give the agent specialized tools that can <em>verify</em> answers ("is this conjugation correct?") rather than just reading them. That's the next rung — the agent's tools become its own, callable safely, with the model picking among them per turn.</p>
+    </li>
+    <li>
+      <div class="title">A journal agent that writes back, picking up themes from last entry</div>
+      <p style="margin:0;">Pure cross-session memory plus light reasoning. Doesn't need new tooling — it's Study Buddy's pattern in a different domain. Good Cycle 3 candidate if you want a "lateral" run before moving up the ladder.</p>
+    </li>
+    <li>
+      <div class="title">A morning-briefing agent that adapts to yesterday's mood</div>
+      <p style="margin:0;">The original Morning Spark v2 candidate from this brainstorm — same rung, different domain (morning-briefing). Would close your zero-count column there.</p>
+    </li>
+  </ul>
+
+  <aside class="deep-dive">
+    <div class="label">Deeper dive · skip if not curious</div>
+    <p>Three of the four ideas above stay at SDK rung 3 (this cycle's level). The Spanish drill agent steps up to rung 4 (custom tools via <code>@tool</code> / <code>create_sdk_mcp_server</code>) — that's the natural progression for Cycle 3 if you want to keep adding capabilities rather than ranging laterally.</p>
+  </aside>
+</section>
+
+<!-- §11 -->
+<footer class="provenance" id="s11">
+  <p><strong>Agent:</strong> study-buddy · <strong>Run date:</strong> 2026-06-08 15:13:24</p>
+  <p><strong>SDK rungs introduced:</strong> 3 (<code>ClaudeSDKClient</code> multi-turn + <code>session_id</code> capture)</p>
+  <p><strong>Companion file:</strong> <code>study-buddy_learning-guide.html</code> (Part 1, pre-run)</p>
+  <p><strong>Evidence source:</strong> <code>study-buddy_run_output.log</code> (run-tee, append mode)</p>
+  <p><strong>Captured session_id:</strong> <code>2c77f5a1-04b1-47cc-b790-59784e4f58cf</code> (could be passed to a future query() call to resume the same conversation — deferred drill until rung 6+)</p>
+  <p><strong>Document version:</strong> v1 · 11-section lay-first contract per FR-C9 + Audience Register FR-C10</p>
+
+  <div class="glossary">
+    <p style="margin:0 0 8px;"><strong>Glossary — functional names mapped to spec codes.</strong> This is the only place in this document where G1–G5 codes appear; the body uses functional language throughout.</p>
+    <table>
+      <tr><td class="func">did-it-finish check (agent has a testable predicate for completion)</td><td class="code">G1</td></tr>
+      <tr><td class="func">model's own choice (a real branch chosen by the model at runtime)</td><td class="code">G2</td></tr>
+      <tr><td class="func">learning from what it saw (the loop's next action depends on its last observation)</td><td class="code">G3</td></tr>
+      <tr><td class="func">principled stop (clean termination path always reachable)</td><td class="code">G4</td></tr>
+      <tr><td class="func">independent check (separate critic call — not present in this agent; arrives at rung 7)</td><td class="code">G5</td></tr>
+    </table>
+    <p style="margin:10px 0 0;"><strong>Gate verdicts (this run):</strong> G1 PASS · G2 PASS · G3 PASS · G4 PASS · G5 N/A</p>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>

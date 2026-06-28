@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Spark — Learning Insights (Part 2)</title>
+<style>
+  :root {
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --border:   #30363d;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --green:    #3fb950;
+    --red:      #f85149;
+    --yellow:   #d29922;
+    --blue:     #58a6ff;
+    --purple:   #bc8cff;
+    --orange:   #f0883e;
+    --teal:     #39d353;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 2rem 1rem 5rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .cycle-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .25rem .65rem;
+    border-radius: 20px;
+    background: rgba(188,140,255,.15);
+    color: var(--purple);
+    border: 1px solid rgba(188,140,255,.3);
+    margin-bottom: .75rem;
+  }
+  h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: .4rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: .95rem;
+  }
+
+  /* ── Section headings ── */
+  .section { margin-bottom: 3rem; }
+  .section-label {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .4rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--blue);
+    margin: 1.25rem 0 .5rem;
+  }
+  p { margin-bottom: .85rem; }
+
+  /* ── Stats grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .85rem 1rem;
+  }
+  .stat-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin-bottom: .3rem;
+  }
+  .stat-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .stat-value.warn { color: var(--yellow); }
+  .stat-value.info { color: var(--blue); }
+  .stat-sub {
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: .15rem;
+  }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    border-left: 3px solid;
+  }
+  .callout.insight  { background: rgba(88,166,255,.07); border-color: var(--blue); }
+  .callout.warning  { background: rgba(210,153,34,.08); border-color: var(--yellow); }
+  .callout.success  { background: rgba(63,185,80,.07);  border-color: var(--green); }
+  .callout.danger   { background: rgba(248,81,73,.07);  border-color: var(--red); }
+  .callout.purple   { background: rgba(188,140,255,.07);border-color: var(--purple); }
+  .callout-title {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: .45rem;
+  }
+  .callout.insight .callout-title  { color: var(--blue); }
+  .callout.warning .callout-title  { color: var(--yellow); }
+  .callout.success .callout-title  { color: var(--green); }
+  .callout.danger  .callout-title  { color: var(--red); }
+  .callout.purple  .callout-title  { color: var(--purple); }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .85rem 1rem;
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: .82rem;
+    line-height: 1.65;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .t-allow   { color: var(--green); }
+  .t-deny    { color: var(--red); }
+  .t-audit   { color: var(--teal); }
+  .t-tool    { color: var(--orange); }
+  .t-loop    { color: var(--blue); }
+  .t-muted   { color: var(--muted); }
+  .t-goal    { color: var(--purple); }
+
+  /* ── Bug timeline ── */
+  .timeline { margin: 1.2rem 0; }
+  .tl-item {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    position: relative;
+  }
+  .tl-item:not(:last-child):before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 36px;
+    width: 2px;
+    height: calc(100% - 12px);
+    background: var(--border);
+  }
+  .tl-dot {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .85rem;
+    margin-top: .1rem;
+  }
+  .tl-dot.bug   { background: rgba(248,81,73,.2);  color: var(--red);   border: 1px solid var(--red); }
+  .tl-dot.fixed { background: rgba(63,185,80,.2);  color: var(--green); border: 1px solid var(--green); }
+  .tl-dot.win   { background: rgba(63,185,80,.3);  color: var(--green); border: 2px solid var(--green); }
+  .tl-body { flex: 1; }
+  .tl-title { font-weight: 600; color: var(--text); margin-bottom: .3rem; }
+  .tl-desc  { font-size: .9rem; color: var(--muted); }
+
+  /* ── Permission pipeline diagram ── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 1.2rem 0;
+    overflow-x: auto;
+  }
+  .pipe-stage {
+    flex: 1;
+    min-width: 110px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: .75rem .85rem;
+    text-align: center;
+  }
+  .pipe-stage:first-child { border-radius: 8px 0 0 8px; }
+  .pipe-stage:last-child  { border-radius: 0 8px 8px 0; }
+  .pipe-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+  .pipe-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin-bottom: .3rem;
+  }
+  .pipe-name { font-weight: 600; font-size: .85rem; color: var(--text); }
+  .pipe-result { font-size: .75rem; margin-top: .3rem; }
+  .pipe-result.pass { color: var(--green); }
+  .pipe-result.fail { color: var(--red); }
+  .pipe-stage.highlight { border-color: var(--yellow); background: rgba(210,153,34,.08); }
+
+  /* ── Span preview table ── */
+  .span-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .83rem;
+    margin: 1rem 0;
+  }
+  .span-table th {
+    text-align: left;
+    padding: .5rem .75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .span-table td {
+    padding: .5rem .75rem;
+    border-bottom: 1px solid rgba(48,54,61,.6);
+    vertical-align: top;
+  }
+  .span-table tr:last-child td { border-bottom: none; }
+  .span-table tr:hover td { background: rgba(255,255,255,.02); }
+  .tag {
+    display: inline-block;
+    font-size: .7rem;
+    padding: .15rem .5rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .tag.green  { background: rgba(63,185,80,.15);  color: var(--green); }
+  .tag.blue   { background: rgba(88,166,255,.15); color: var(--blue); }
+  .tag.orange { background: rgba(240,136,62,.15); color: var(--orange); }
+
+  /* ── Probe record ── */
+  .probe-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: .85rem;
+  }
+  .probe-q {
+    font-size: .85rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: .5rem;
+  }
+  .probe-a {
+    font-size: .9rem;
+    color: var(--text);
+    margin-bottom: .4rem;
+  }
+  .probe-verdict {
+    font-size: .78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .probe-verdict.strong { color: var(--green); }
+  .probe-verdict.good   { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="cycle-badge">Cycle 6 · Rung 6 · Part 2 — Post-Run</div>
+  <h1>Morning Spark — Learning Insights</h1>
+  <p class="subtitle">What the runtime revealed &nbsp;·&nbsp; 3 runs &nbsp;·&nbsp; 3 bugs found &amp; fixed &nbsp;·&nbsp; goal met on run 3</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §1 — THE RUN AT A GLANCE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§1</div>
+  <h2>The Run at a Glance</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Exit reason</div>
+      <div class="stat-value" style="font-size:1rem;margin-top:.2rem;">GOAL MET</div>
+      <div class="stat-sub">briefing_complete() = True</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Turns used</div>
+      <div class="stat-value">1 / 6</div>
+      <div class="stat-sub">entire briefing in one turn</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tool calls</div>
+      <div class="stat-value">6 / 12</div>
+      <div class="stat-sub">ToolSearch + 5 MCP tools</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Hook denials</div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">no repeats — model ran clean</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Spans written</div>
+      <div class="stat-value">6</div>
+      <div class="stat-sub">morning-spark_spans.jsonl</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cost</div>
+      <div class="stat-value info">$0.71</div>
+      <div class="stat-sub">18,094 in / 777 out tokens</div>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title">What you saw in the terminal</div>
+    The model called ToolSearch (schema load), then <code>fetch_weather</code>, then
+    <code>fetch_date</code> and <code>fetch_headline</code> in the same response (parallel),
+    then <code>check_quality</code>, then <code>synthesize_briefing</code> — all five MCP
+    tools in the right sequence, no repeats, goal met, briefing printed.
+    That single clean turn was the payoff for three runs of debugging.
+  </div>
+
+  <p>It took three runs to get here — each one revealing a different layer of the pipeline.
+  That debugging journey is the actual teaching content of this cycle, not just a setup cost.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §2 — THREE BUGS, ONE SUCCESS
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§2</div>
+  <h2>Three Bugs, One Success</h2>
+
+  <p>Each bug lived at a different layer of the execution pipeline. The first was in your Python code.
+  The second was in how the SDK delivers data to your hooks. The third was in the SDK's own permission
+  system — hidden behind output that looked like success.</p>
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-dot bug">B1</div>
+      <div class="tl-body">
+        <div class="tl-title">Windows %-d format string — found at smoke test collection</div>
+        <div class="tl-desc">
+          <code>datetime.now().strftime('%A, %B %-d, %Y')</code> worked on Linux (zero-pad suppression)
+          but raised <code>ValueError: Invalid format string</code> on Windows. Fix: replace
+          <code>%-d</code> with <code>_now.day</code> (integer). Discovered before the first real run.
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot bug">B2</div>
+      <div class="tl-body">
+        <div class="tl-title">Hook input_data is a dict, not an object — Run 1</div>
+        <div class="tl-desc">
+          The SDK passes <code>input_data</code> to PreToolUse and PostToolUse as a plain Python
+          <code>dict</code>. <code>getattr(dict_obj, "tool_name", "?")</code> always returns
+          <code>"?"</code> — Python dicts have no attributes with that name. Every tool call
+          hashed to <code>("?", "{}")</code>; ToolSearch registered it first; every subsequent MCP
+          tool was denied as a duplicate. Fix: <code>_get_field(obj, field, default)</code> helper
+          that branches on <code>isinstance(obj, dict)</code>.
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot bug">B3</div>
+      <div class="tl-body">
+        <div class="tl-title">dontAsk without allowed_tools silently denies all MCP tools — Run 2</div>
+        <div class="tl-desc">
+          After the dict fix, PreToolUse correctly said ALLOW for every MCP tool. But PostToolUse
+          never fired for any of them, and the model said "The weather tool was denied." The SDK's
+          permission layer — a separate check that runs <em>after</em> PreToolUse — denied all
+          MCP tools because <code>permission_mode="dontAsk"</code> was set without an
+          <code>allowed_tools</code> list. No list means no whitelist; no whitelist means no
+          MCP tools allowed. Fix: add <code>ALL_ALLOWED</code> with all 5 tool names.
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot win">✓</div>
+      <div class="tl-body">
+        <div class="tl-title">Run 3 — goal met in one turn</div>
+        <div class="tl-desc">
+          With all three fixes applied and 32/32 smoke tests green, the agent ran clean. All 5 MCP
+          tools executed, 6 spans written, briefing produced, <code>briefing_log.json</code> written.
+          Cost $0.71, 1/6 turns used.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §3 — PRETOOLUSE: THE FIRST GATE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§3</div>
+  <h2>PreToolUse — The First Gate</h2>
+
+  <p>PreToolUse fires before the tool executes. It receives the tool name and input, and it can
+  either allow the call to proceed or deny it with a reason the model reads. It is the earliest
+  interception point in the SDK's execution pipeline.</p>
+
+  <div class="code-block">
+<span class="t-tool">🔧 [TOOL CALL] fetch_weather({})</span>
+<span class="t-allow">✅ [PRE-TOOL GUARD] ALLOW · mcp__spark__fetch_weather({})</span>      ← our hook ran, said ALLOW
+<span class="t-audit">📋 [POST-TOOL AUDIT] span written · mcp__spark__fetch_weather · 151 chars</span>  ← tool ran
+<span class="t-muted">  ┆ UserMessage: ToolResult(id=toolu_01…)</span>                            ← result delivered to model
+  </div>
+
+  <p>PreToolUse is where the dedup guard lives. Every time a tool call arrives, the guard checks
+  whether it has already seen this exact <code>(tool_name, params_json)</code> pair. If yes — deny
+  with a variation instruction. If no — record the signature and allow.</p>
+
+  <div class="callout warning">
+    <div class="callout-title">What PreToolUse can't do</div>
+    Returning ALLOW from PreToolUse does not guarantee the tool will run. Two things can still stop it:
+    the SDK's own permission layer (Bug 3), or the MCP server failing to respond. PreToolUse is the
+    <em>first</em> gate, not the only one.
+  </div>
+
+  <p>In run 3, the guard fired ALLOW six times and denied zero times. The model called each tool
+  exactly once in the right sequence — no repeats, so the guard had nothing to intercept. The guard's
+  value is proportional to how badly the model gets stuck. A clean run makes it invisible.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §4 — POSTTOOLUSE: THE SILENCE WAS DIAGNOSTIC
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§4</div>
+  <h2>PostToolUse — The Silence Was Diagnostic</h2>
+
+  <p>PostToolUse fires after the tool's return value exists — not after PreToolUse says ALLOW, but
+  after the tool actually ran and returned data. It is execution proof. If PostToolUse fires, the
+  tool ran. If it doesn't, something stopped the tool between ALLOW and execution.</p>
+
+  <p>In run 2, this was the entire diagnostic. PreToolUse printed ALLOW for every MCP tool. But no
+  PostToolUse line followed — not for <code>fetch_weather</code>, not for <code>fetch_date</code>,
+  not for any MCP tool. The silence between ALLOW and the next print was not a logging gap; it was
+  evidence that the execution never happened.</p>
+
+  <div class="code-block">
+<span class="t-muted">── Run 2 (bug still present) ──────────────────────────────────</span>
+<span class="t-allow">✅ [PRE-TOOL GUARD] ALLOW · mcp__spark__fetch_weather({})</span>
+<span class="t-muted">  ┆ UserMessage: ToolResult(id=toolu_01…)</span>       ← ToolResult exists, but contains SDK denial
+<span class="t-muted">                                              </span>       ← no 📋 [POST-TOOL AUDIT] — tool never ran
+
+<span class="t-muted">── Run 3 (fixed) ──────────────────────────────────────────────</span>
+<span class="t-allow">✅ [PRE-TOOL GUARD] ALLOW · mcp__spark__fetch_weather({})</span>
+<span class="t-audit">📋 [POST-TOOL AUDIT] span written · mcp__spark__fetch_weather · 151 chars</span>
+<span class="t-muted">  ┆ UserMessage: ToolResult(id=toolu_01…)</span>       ← ToolResult carries the actual weather string
+  </div>
+
+  <div class="callout insight">
+    <div class="callout-title">Auditor analogy</div>
+    An auditor doesn't mark a payment complete when the CFO approves the wire. They mark it complete
+    when the bank confirmation lands. PostToolUse is the bank confirmation — it only exists when the
+    transaction completed. ALLOW is the CFO's signature. These are different events on different systems.
+  </div>
+
+  <p>In run 3, six PostToolUse spans were written — one for each tool call that actually ran.
+  <code>result_length</code> in each span tells you how many characters came back. A span with
+  <code>result_length: 0</code> would mean the tool ran but returned nothing — execution happened,
+  but the fetch produced no content. That's a different failure mode from "tool never ran."</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §5 — THE TWO-GATE PERMISSION PIPELINE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§5</div>
+  <h2>The Two-Gate Permission Pipeline</h2>
+
+  <p>This is the core lesson of Cycle 6. There are two independent permission checks between a
+  tool call arriving and the tool executing. Both must pass. Neither tells you whether the other passed.</p>
+
+  <div class="pipeline">
+    <div class="pipe-stage">
+      <div class="pipe-label">Step 1</div>
+      <div class="pipe-name">PreToolUse hook</div>
+      <div class="pipe-result pass">our code · ALLOW/DENY</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-stage highlight">
+      <div class="pipe-label">Step 2 ← Bug 3 lived here</div>
+      <div class="pipe-name">SDK permission layer</div>
+      <div class="pipe-result fail">allowed_tools check</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-stage">
+      <div class="pipe-label">Step 3</div>
+      <div class="pipe-name">Tool executes</div>
+      <div class="pipe-result pass">MCP server runs impl</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-stage">
+      <div class="pipe-label">Step 4</div>
+      <div class="pipe-name">PostToolUse hook</div>
+      <div class="pipe-result pass">our code · span written</div>
+    </div>
+  </div>
+
+  <p>In run 2, step 1 (PreToolUse) passed. Step 2 (SDK permission) failed silently — because
+  <code>permission_mode="dontAsk"</code> was set without an <code>allowed_tools</code> list.
+  The SDK had no whitelist of approved tools, so it denied all MCP tools by default. Steps 3
+  and 4 never ran. The model received a denial inside the ToolResult and said "The weather tool
+  was denied" — even though our hook had just said ALLOW.</p>
+
+  <div class="callout warning">
+    <div class="callout-title">The deceptive output</div>
+    In run 2, the terminal showed: ALLOW (green checkmark) → ToolResult → model says "denied." From
+    the outside this looks like the ALLOW was ignored. What actually happened: ALLOW passed gate 1;
+    gate 2 denied without printing anything; the denial message went into the ToolResult the model
+    read. Gate 1 and gate 2 have completely independent outputs.
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title">The fix</div>
+    Add <code>allowed_tools=ALL_ALLOWED</code> to <code>ClaudeAgentOptions</code>. This gives the
+    SDK's permission layer a whitelist. With <code>dontAsk</code> and a whitelist: any tool on the
+    list is allowed silently; any tool not on the list is denied silently. Harness tools like
+    ToolSearch are auto-allowed and bypass this check entirely — which is why ToolSearch worked in
+    all three runs while our MCP tools failed in run 2.
+  </div>
+
+  <div class="code-block">
+<span class="t-muted">## Pattern: always set allowed_tools when using dontAsk</span>
+
+ALL_ALLOWED: list[str] = [
+    <span class="t-allow">"mcp__spark__fetch_weather"</span>,
+    <span class="t-allow">"mcp__spark__fetch_date"</span>,
+    <span class="t-allow">"mcp__spark__fetch_headline"</span>,
+    <span class="t-allow">"mcp__spark__check_quality"</span>,
+    <span class="t-allow">"mcp__spark__synthesize_briefing"</span>,
+]
+
+ClaudeAgentOptions(
+    ...
+    <span class="t-allow">allowed_tools=ALL_ALLOWED</span>,
+    permission_mode=<span class="t-allow">"dontAsk"</span>,
+    ...
+)
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §6 — MODULE-LEVEL STATE: THE WAR ROOM WHITEBOARD
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§6</div>
+  <h2>Module-Level State — The War Room Whiteboard</h2>
+
+  <p>Hooks fire inside the SDK's execution pipeline — not inside your agent loop. They run in a
+  different call stack from the <code>while loop_state["turns"] &lt; MAX_LOOP_TURNS:</code> block.
+  For the hooks and the loop to share information, the state they both read and write must live at
+  the module level — visible to any function in the file.</p>
+
+  <div class="callout insight">
+    <div class="callout-title">Consulting analogy</div>
+    A consulting team uses a war room whiteboard. Each consultant updates their section when they
+    finish a task. The project lead reads it after each round to check overall progress. If each
+    consultant had a personal notepad that stayed in their pocket, the project lead would never know
+    what they found — the state would exist but not be shared.
+    <br><br>
+    <code>_agent_state</code> is the whiteboard. <code>_fetch_weather_impl</code>,
+    <code>pre_tool_use_guard</code>, <code>post_tool_use_audit</code>, and
+    <code>briefing_complete()</code> all read the same object. When the weather tool runs and writes
+    <code>_agent_state["weather"] = _MOCK_WEATHER</code>, the next thing to read that key —
+    wherever it runs — sees the update immediately.
+  </div>
+
+  <div class="code-block">
+<span class="t-muted">## Module level — the shared whiteboard</span>
+_agent_state: dict = {<span class="t-allow">"weather": None</span>, <span class="t-allow">"date_info": None</span>, ...}
+_hook_state:  dict = {<span class="t-allow">"calls_made": []</span>, <span class="t-allow">"spans": []</span>, ...}
+
+<span class="t-muted">## Tool impl writes to the whiteboard</span>
+async def _fetch_weather_impl(args: dict) -> dict:
+    <span class="t-tool">_agent_state["weather"] = _MOCK_WEATHER</span>   <span class="t-muted">← whiteboard updated</span>
+    return {"content": [{"type": "text", ...}]}
+
+<span class="t-muted">## PreToolUse reads the call log to detect repeats</span>
+async def pre_tool_use_guard(input_data, tool_use_id, context) -> dict:
+    if sig in <span class="t-tool">_hook_state["calls_made"]</span>: ...      <span class="t-muted">← same whiteboard</span>
+
+<span class="t-muted">## Goal predicate reads final state</span>
+def briefing_complete() -> bool:
+    return <span class="t-goal">_agent_state["weather"] is not None</span> and ...  <span class="t-muted">← same whiteboard</span>
+  </div>
+
+  <p>In run 3, after <code>fetch_weather</code> ran, <code>_agent_state["weather"]</code> was set to
+  the mock weather string. The next time <code>briefing_complete()</code> ran — at the end of turn 1
+  — it found that key non-None and counted it as True. The whiteboard connected the tool execution
+  to the goal check without any explicit passing of data between functions.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §7 — THE SPAN FILE AS AUDIT RECORD
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§7</div>
+  <h2>The Span File as Audit Record</h2>
+
+  <p><code>morning-spark_spans.jsonl</code> now has 6 lines — one per tool call that actually
+  executed in run 3. Each line is a JSON object written by <code>post_tool_use_audit</code>
+  immediately after the tool returned.</p>
+
+  <table class="span-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>tool_name</th>
+        <th>result_length</th>
+        <th>what it means</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><span class="tag blue">ToolSearch</span></td>
+        <td>343</td>
+        <td>Schema load — the SDK discovered the 5 MCP tool signatures</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><span class="tag green">fetch_weather</span></td>
+        <td>151</td>
+        <td>Weather string returned; <code>_agent_state["weather"]</code> set</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><span class="tag green">fetch_date</span></td>
+        <td>53</td>
+        <td>Date string returned; <code>_agent_state["date_info"]</code> set</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><span class="tag green">fetch_headline</span></td>
+        <td>110</td>
+        <td>Technology headline returned; <code>_agent_state["headline"]</code> set</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><span class="tag green">check_quality</span></td>
+        <td>68</td>
+        <td>Quality JSON returned: <code>{"quality_passes": true, "issues": []}</code></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><span class="tag orange">synthesize_briefing</span></td>
+        <td>424</td>
+        <td>Full briefing text; <code>_agent_state["briefing"]</code> set; log written</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Notice spans 3 and 4 (<code>fetch_date</code> and <code>fetch_headline</code>) — these two
+  tools were called in the same model response (parallel). The SDK fired their PreToolUse and
+  PostToolUse hooks independently, and both spans landed in the file correctly. The JSONL format
+  (one JSON object per line) means each span is independently parseable even if written concurrently.</p>
+
+  <p>Span 1 (ToolSearch, 343 chars) appeared in all three runs — it's a harness tool that always
+  ran. Spans 2–6 only appeared in run 3. That's how you could tell, from the spans file alone,
+  which runs produced real tool execution.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §8 — GOAL PREDICATE WALK-THROUGH
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§8</div>
+  <h2>Goal Predicate Walk-Through</h2>
+
+  <p>After turn 1, the loop printed:</p>
+
+  <div class="code-block">
+<span class="t-goal">📊 [GOAL PREDICATE] weather=True · date=True · headline=True · quality=True · briefing=True</span>
+<span class="t-loop">🔄 [LOOP FEEDBACK] turn 1 done · tool_calls=6 · briefing_complete=True</span>
+<span class="t-allow">✅ [GOAL MET] briefing_complete() returned True. Exiting loop.</span>
+  </div>
+
+  <p>All five parts of the compound predicate flipped to True in the same turn. Let's trace how each one flipped:</p>
+
+  <ul style="padding-left:1.4rem; margin-bottom:.85rem;">
+    <li style="margin-bottom:.4rem;"><strong>weather=True</strong> — <code>_fetch_weather_impl</code> set <code>_agent_state["weather"] = _MOCK_WEATHER</code></li>
+    <li style="margin-bottom:.4rem;"><strong>date=True</strong> — <code>_fetch_date_impl</code> set <code>_agent_state["date_info"] = _MOCK_DATE</code></li>
+    <li style="margin-bottom:.4rem;"><strong>headline=True</strong> — <code>_fetch_headline_impl</code> set <code>_agent_state["headline"] = _MOCK_HEADLINES["technology"]</code></li>
+    <li style="margin-bottom:.4rem;"><strong>quality=True</strong> — <code>_check_quality_impl</code> found all three non-None; set <code>_agent_state["quality_passed"] = True</code></li>
+    <li style="margin-bottom:.4rem;"><strong>briefing=True</strong> — <code>_synthesize_briefing_impl</code> found quality_passed=True; assembled the briefing; set <code>_agent_state["briefing"] = ...</code></li>
+  </ul>
+
+  <p>The predicate is a chain: each stage depends on the one before it. <code>check_quality</code>
+  can only pass if weather, date, and headline are all non-None. <code>synthesize_briefing</code>
+  can only succeed if quality_passed is True. The tool sequence the model chose exactly matched
+  the dependency order — not because the code forced it, but because the system prompt described
+  the dependency and the model reasoned about it.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §9 — THE MODEL'S OWN CHOICES
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§9</div>
+  <h2>The Model's Own Choices</h2>
+
+  <p>The model made three autonomous decisions during the run that the code didn't prescribe:</p>
+
+  <h3>1. Call ToolSearch first</h3>
+  <p>Before calling any of your 5 MCP tools, the model issued a ToolSearch call to load their
+  schemas. The system prompt didn't say to do this. The SDK presents ToolSearch to the model as a
+  way to discover available tools, and the model chose to use it. This is why ToolSearch appeared
+  in the span file every run — it's the model's own initialization step.</p>
+
+  <h3>2. Call fetch_date and fetch_headline in parallel</h3>
+  <p>The model's second response body contained both <code>fetch_date</code> and
+  <code>fetch_headline</code> as separate ToolUseBlocks. The SDK executed them both, fired their
+  hooks, and returned two ToolResult blocks. The model decided these two fetches were independent
+  and could be issued in the same turn — correct. Weather was fetched first (separate response),
+  then date + headline together, then quality check, then synthesis.</p>
+
+  <h3>3. Choose "technology" as the headline category</h3>
+  <p>The system prompt listed six valid categories. The model chose <code>technology</code>.
+  There was no cross-day guard on the first run (no <code>briefing_log.json</code> existed yet),
+  so no steering constraint was applied. That choice was entirely the model's. On a second run,
+  the cross-day guard would read yesterday's <code>headline_preview</code> and inject a note into
+  the system prompt if the category looked similar — that's the app memory's role in G2.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §10 — THE GUARD THAT NEVER FIRED
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§10</div>
+  <h2>The Guard That Never Fired</h2>
+
+  <p>Zero PreToolUse denials in run 3. The dedup guard — the main rung 6 teaching point — was
+  completely idle. The model called every tool exactly once and never repeated a signature.</p>
+
+  <div class="callout purple">
+    <div class="callout-title">Insurance pattern</div>
+    A fire extinguisher in a building doesn't fail if it goes unused during a year. Its value is
+    proportional to what happens if it's needed and not there. The dedup guard works the same way:
+    in a clean run, it's invisible. In a stuck run — where the model tries the same tool with the
+    same parameters three times because it can't make progress — it fires, delivers a variation
+    instruction, and the model adapts. Zero denials is the best outcome, not a sign the guard is
+    useless.
+  </div>
+
+  <p>The G3 teaching point (observe–reason–act) is demonstrated most clearly when the guard fires.
+  In runs 1 and 2, when all tools resolved to <code>("?", "{}")</code> due to the dict bug, the
+  guard fired 11 times. The model observed the denial reasons and reasoned about them — but could
+  not adapt because the denial reason said "duplicate detected" for tools that had never actually
+  run. The O-R-A loop was working; the environment was broken.</p>
+
+  <p>The act-strategy adaptation gap from Cycle 5 also surfaced here in the post-run probes.
+  When a real weather API returns a 503 error, calling <code>fetch_weather</code> again with
+  the same parameters won't help — the guard's dedup logic correctly blocks it. What you actually
+  need is a <em>different</em> tool: a backup weather source. The guard can deny the repeat;
+  the fallback requires a second tool registered on the server. That's act-strategy adaptation:
+  change the resource, not the retry count.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     §11 — WHAT RUNG 6 TEACHES
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">§11</div>
+  <h2>What Rung 6 Teaches</h2>
+
+  <p>Hooks are not wrappers around the agent loop — they are interceptors inside the SDK's
+  execution pipeline. The pipeline looks like this:</p>
+
+  <div class="callout insight">
+    <div class="callout-title">The mental model to keep</div>
+    <strong>Tool call arrives → PreToolUse fires (can deny) → SDK permission check (can deny) →
+    Tool executes → PostToolUse fires (always, if execution happened) → Result to model.</strong>
+    <br><br>
+    Silence at any step after ALLOW means something stopped execution between that step and the
+    next. PostToolUse silence after PreToolUse ALLOW = the SDK permission layer denied it.
+    The way to observe which step failed: look at what <em>didn't</em> print, not just what did.
+  </div>
+
+  <p>Three gotchas now in the registry from this cycle:</p>
+
+  <ul style="padding-left:1.4rem; margin-bottom:.85rem;">
+    <li style="margin-bottom:.4rem;"><strong>hook-input-is-a-dict</strong> — use <code>dict.get()</code> or a <code>_get_field()</code> helper; <code>getattr()</code> on a dict always returns the default</li>
+    <li style="margin-bottom:.4rem;"><strong>dontAsk-requires-allowed-tools</strong> — always set <code>allowed_tools</code> when using <code>permission_mode="dontAsk"</code>, or all your MCP tools are silently denied</li>
+    <li style="margin-bottom:.4rem;"><strong>(carried from Cycle 5)</strong> act-strategy adaptation — when a tool fails, change the tool, not the retry count</li>
+  </ul>
+
+  <p>Rung 6 closes the act-strategy gap from Cycle 5 in morning-spark's domain. The PreToolUse
+  guard detects when the model is stuck (same params, same tool) and injects a variation instruction
+  before the call executes. That's the hook as a strategy enforcer, not just an audit tool.</p>
+
+  <p style="color: var(--muted); font-size:.9rem; margin-top:2rem; border-top:1px solid var(--border); padding-top:1rem;">
+    Cycle 6 · Morning Spark · morning-briefing domain · Closed 2026-06-25<br>
+    Rung 6 introduced: PreToolUse guard + PostToolUse audit + JSONL span trace<br>
+    Next: Cycle 7 — Habit Streak + Accountability · Rung 6 hooks + path-dependent predicate
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mac Advisor — Learning Insights (Part 2)</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --accent: #b8472a;
+    --accent-soft: #f4e4dc;
+    --success: #2d7a47;
+    --warning: #c97d20;
+    --info: #3a6ea5;
+    --muted: #8a8a8a;
+    --rule: #e6e1d8;
+    --card: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lift: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 32px 96px; }
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 28px; margin-bottom: 48px; }
+  .eyebrow {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  h1 { font-size: 36px; margin: 0 0 12px; font-weight: 700; line-height: 1.2; }
+  .tagline { font-size: 18px; color: var(--ink-soft); margin: 0; }
+  h2 {
+    font-size: 24px;
+    margin: 56px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 700;
+  }
+  h2 .num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-size: 15px;
+    margin-right: 12px;
+    vertical-align: 2px;
+  }
+  h3 { font-size: 19px; margin: 28px 0 12px; color: var(--ink); }
+  p { margin: 0 0 16px; }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+    border-radius: 0 6px 6px 0;
+  }
+  .setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .setup-card {
+    background: var(--card);
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+  }
+  .setup-card .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .setup-card .value { font-size: 16px; color: var(--ink); }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 36px 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .stat-card.warning { border-color: var(--warning); background: #fff8ed; }
+  .stat-card.info { border-color: var(--info); background: #eef4fb; }
+  .stat-card .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .stat-card .stat-value { font-size: 24px; font-weight: 700; color: var(--ink); }
+  .stat-card .stat-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .proof-card {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--rule);
+    margin: 20px 0;
+    box-shadow: var(--shadow);
+  }
+  .proof-card .question {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  .verdict { font-weight: 600; color: var(--success); margin-top: 12px; }
+  .verdict.warn { color: var(--warning); }
+  .trait-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .trait-card {
+    background: var(--card);
+    border-radius: 10px;
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+  }
+  .trait-card .trait-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .trait-card .trait-tier {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .trait-card blockquote { margin: 10px 0 8px; padding: 8px 14px; font-size: 13px; }
+  .trait-card .explain { font-size: 15px; color: var(--ink-soft); }
+  .timeline { margin: 24px 0; }
+  .stage {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stage:last-child { border-bottom: none; }
+  .stage-name {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 15px;
+  }
+  .stage-content blockquote { margin: 6px 0 8px; font-size: 12px; padding: 6px 12px; }
+  .stage-content p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+  .progress-strip {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    margin: 18px 0;
+    box-shadow: var(--shadow);
+  }
+  .turn-row {
+    display: grid;
+    grid-template-columns: 70px 90px 1fr;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-size: 14px;
+  }
+  .turn-row:last-child { border-bottom: none; }
+  .turn-row .num-col {
+    font-weight: 700;
+    font-family: "SF Mono", Menlo, monospace;
+    color: var(--muted);
+  }
+  .turn-row .verdict-col {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .verdict-False { color: var(--warning); }
+  .verdict-CAP { color: var(--accent); }
+  .spectrum {
+    margin: 24px 0;
+    padding: 24px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .spectrum-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin: 20px 0;
+  }
+  .spectrum-step {
+    padding: 12px 8px;
+    text-align: center;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .spectrum-step.active {
+    background: var(--accent);
+    color: white;
+  }
+  .contrast-callout {
+    background: #fff8ed;
+    border: 1px solid var(--warning);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 15px;
+  }
+  .contrast-callout strong { color: var(--warning); }
+  .flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .flashcard {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px 18px;
+    min-height: 130px;
+    cursor: pointer;
+    border: 2px solid var(--rule);
+    transition: all 0.2s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+  .flashcard:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+  .flashcard.flipped { background: var(--accent-soft); border-color: var(--accent); }
+  .flashcard .front, .flashcard .back {
+    display: block;
+    font-size: 15px;
+  }
+  .flashcard .front { font-weight: 700; color: var(--ink); }
+  .flashcard .back { font-weight: 400; color: var(--ink-soft); font-size: 13px; line-height: 1.5; display: none; }
+  .flashcard.flipped .front { display: none; }
+  .flashcard.flipped .back { display: block; }
+  .mcq {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    padding: 20px;
+    margin: 16px 0;
+    box-shadow: var(--shadow);
+  }
+  .mcq .q { font-weight: 700; margin-bottom: 12px; font-size: 16px; }
+  .mcq .options { display: flex; flex-direction: column; gap: 8px; }
+  .mcq .opt {
+    padding: 10px 14px;
+    background: #f7f4ee;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--rule);
+    transition: all 0.15s;
+    font-size: 14px;
+  }
+  .mcq .opt:hover { background: var(--accent-soft); }
+  .mcq .opt.correct { background: #d8eedb; border-color: var(--success); }
+  .mcq .opt.wrong { background: #f8d7d7; border-color: #c4574e; }
+  .mcq .explain {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #f0f7ff;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    display: none;
+  }
+  .mcq .explain.show { display: block; }
+  .next-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .next-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--info);
+    box-shadow: var(--shadow);
+  }
+  .next-card h4 { margin: 0 0 8px; font-size: 16px; color: var(--ink); }
+  .next-card p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+  aside.deep-dive {
+    background: #f3efe6;
+    border: 1px dashed var(--muted);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  aside.deep-dive .dd-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  aside.deep-dive details summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 2px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  footer table { border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+  footer th, footer td { padding: 4px 12px 4px 0; text-align: left; vertical-align: top; }
+  footer th { font-weight: 700; color: var(--ink); }
+  .glossary {
+    background: #f3efe6;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 13px;
+  }
+  .glossary h4 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .glossary table { width: 100%; }
+  .lesson {
+    background: #fff8ed;
+    border: 2px solid var(--warning);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .lesson .lesson-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--warning);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lesson p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Agent Foundry · Cycle 4 · Part 2 (post-run)</div>
+  <h1>Mac Advisor — what just happened</h1>
+  <p class="tagline">An agent that ran exactly as designed — and taught us something we didn't know to look for.</p>
+</header>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">1</span>About this run</h2>
+
+<h3>The setup — what this agent was trying to do</h3>
+
+<div class="setup-grid">
+  <div class="setup-card">
+    <div class="label">The agent's role</div>
+    <div class="value">A research assistant whose job is to recommend the best MacBook Pro M4 variant for a software developer who also does AI work, buying in India.</div>
+  </div>
+  <div class="setup-card">
+    <div class="label">The specific question this run answered</div>
+    <div class="value">Of the M4 Base, M4 Pro, and M4 Max, which is the right fit — and what does it cost?</div>
+  </div>
+  <div class="setup-card">
+    <div class="label">What counts as "done"</div>
+    <div class="value">Two checks must both pass: research is complete across four areas (specs, pricing, thermal performance, comparisons), AND the agent has produced a recommendation it's at least 80% confident in.</div>
+  </div>
+  <div class="setup-card">
+    <div class="label">The safety limit (and who set it)</div>
+    <div class="value"><strong>We set it</strong> — a maximum of 8 research turns and 3 synthesis turns. The agent did not choose this. It's a guardrail we put around it so it can't run forever.</div>
+  </div>
+  <div class="setup-card">
+    <div class="label">The tools the agent had</div>
+    <div class="value">Five — look up specs, check current price, analyze thermal performance, compare two variants, and produce the final recommendation. Crucially, only four of these were available during research; the fifth (recommendation) was locked until research was complete.</div>
+  </div>
+  <div class="setup-card">
+    <div class="label">A caveat about the data</div>
+    <div class="value">The research databases are mocked — realistic but pre-seeded numbers (₹2,49,900 starting price for M4 Pro 24GB, AnandTech thermal data, etc.). The agent's reasoning is real; the world it reasoned about is a controlled simulation.</div>
+  </div>
+</div>
+
+<div class="divider">Result snapshot</div>
+
+<div class="dashboard">
+  <div class="stat-card warning">
+    <div class="stat-label">Outcome</div>
+    <div class="stat-value">Cap reached</div>
+    <div class="stat-sub">8 of 8 research turns used; no recommendation produced</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Tool calls used</div>
+    <div class="stat-value">13 / 24</div>
+    <div class="stat-sub">11 in turn 1 alone; near-silent thereafter</div>
+  </div>
+  <div class="stat-card info">
+    <div class="stat-label">Cost</div>
+    <div class="stat-value">~$1.87</div>
+    <div class="stat-sub">16,833 tokens in · 7,040 tokens out</div>
+  </div>
+</div>
+
+<div class="lesson">
+  <div class="lesson-label">The headline</div>
+  <p><strong>This run did not produce a recommendation — and that is not a failure.</strong> The agent worked correctly: it gathered evidence, spotted a contradiction, and stopped when it couldn't resolve the contradiction within the safety limit. What it surfaced is a design lesson that's worth more than the recommendation would have been.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">2</span>Was this really an agent? Here's the proof</h2>
+
+<p>The most important section of this document. Three plain-English questions, each answered with one line the agent actually printed during the run.</p>
+
+<div class="proof-card">
+  <div class="question">Did the agent decide when it was done?</div>
+  <blockquote>📐 [GOAL PREDICATE] is_research_complete(state) → False<br>&nbsp;&nbsp;&nbsp;(specs=3≥2, price=2≥1, thermal=True, resolved=False, compare=True)</blockquote>
+  <p>Yes. At every turn, the agent ran its own checklist and reported the result. Notice the detail in parentheses — the agent shows which items it has and which it's missing. The flag <code>resolved=False</code> meant "I still have an unresolved contradiction; I'm not done." The agent didn't ask us. It checked itself.</p>
+  <p class="verdict">✓ The agent owned the done-decision.</p>
+</div>
+
+<div class="proof-card">
+  <div class="question">Did the agent choose its own next move?</div>
+  <blockquote>🎲 [MODEL DECISION] selected 11 tool call(s) from research palette · alternatives: different tool, different params, stop</blockquote>
+  <p>Yes — and at industrial scale. In turn 1 alone the agent freely selected <strong>eleven tool calls</strong> across four different tools: look up specs for three variants, check prices for two SKUs, run thermal analysis on two workloads, and run two head-to-head comparisons. The Python code didn't sequence these. The model picked, in real time, which tools to use and in what order.</p>
+  <p class="verdict">✓ The agent picked its own playbook.</p>
+</div>
+
+<div class="proof-card">
+  <div class="question">Did the agent learn from what it saw?</div>
+  <blockquote>⚠ [CONFLICT DETECTED] thermal data contradiction for m4_pro<br>&nbsp;&nbsp;── O ──&nbsp;&nbsp;Source 1 (Apple white paper 2025): 'none detected'<br>&nbsp;&nbsp;── O ──&nbsp;&nbsp;Source 2 (AnandTech independent review 2026-04): '15-20% under sustained AI inference'</blockquote>
+  <p>Partially — and this is where the run got interesting. The <em>code-side</em> of the agent learned brilliantly: it saw the contradiction between Apple's claim and the independent lab's measurement, named the conflict, and computed exactly what to do about it. But the <em>model-side</em> — the LLM at the heart of the agent — never received that resolution instruction in its next briefing. From that point on, it could see "conflict unresolved" as a flag, but had no idea what action would resolve it.</p>
+  <p class="verdict warn">✓ Partially — and the gap is the most valuable thing this run revealed. See §3.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">3</span>Why this goal counted as a real check</h2>
+
+<p>There are two ways an agent can decide it's done. One is a wish — "I think I've covered enough." The other is a test it runs on itself — a checklist where every box has to be tickable from the current evidence, or the answer is "not yet."</p>
+
+<p>This agent took the second path. At every turn it computed a boolean — true or false — from its current state. The line you saw in §2:</p>
+
+<blockquote>📐 [GOAL PREDICATE] is_research_complete(state) → False<br>&nbsp;&nbsp;&nbsp;(specs=3≥2, price=2≥1, thermal=True, resolved=False, compare=True)</blockquote>
+
+<p>That's the test. Five subconditions, all needing to be true. Four were satisfied. One — the requirement that any spotted contradictions be resolved — wasn't. So the answer was <code>False</code>, and the loop continued. The agent didn't "feel" undone. It <em>was</em> undone by an unambiguous, computable test it could not yet pass.</p>
+
+<p>Here is what's powerful about this: the agent could not lie to itself. In turn 1 it actually said "RESEARCH COMPLETE" in its own text. The checklist disagreed, because <code>resolved</code> was still <code>False</code>. The checklist won. That is what separates an agent that knows what done means from a hopeful loop that stops when the model feels confident.</p>
+
+<p>For a non-coder, the right analogy is a project sign-off form. A PM can feel the project is done — but until every box on the form is ticked, the project is not signed off. The form is the truth. The feeling is just a feeling.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">4</span>Traits in Action</h2>
+
+<p>One card per agentic trait that fired in the run. The blockquote is a real line from your terminal; the sentence beneath explains why it counts as that trait.</p>
+
+<div class="trait-grid">
+
+  <div class="trait-card">
+    <div class="trait-name">Goal-directedness</div>
+    <div class="trait-tier">Core trait</div>
+    <blockquote>📐 [GOAL PREDICATE] is_research_complete(state) → False</blockquote>
+    <p class="explain">The agent doesn't stop until its checklist says so. It computed this verdict 8 times — once per turn — and only the cap was able to stop it.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Autonomy</div>
+    <div class="trait-tier">Core trait</div>
+    <blockquote>🎲 [MODEL DECISION] selected 11 tool call(s) from research palette</blockquote>
+    <p class="explain">The model chose eleven things to do in a single response. The code didn't sequence those choices — the model did, in real time, based on the briefing it received.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Observe-Reason-Act (code-side)</div>
+    <div class="trait-tier">Core trait</div>
+    <blockquote>⚠ [CONFLICT DETECTED] ... ── A ── Inserting resolution step</blockquote>
+    <p class="explain">The agent's code saw two contradictory thermal sources, named the conflict in its own log, and computed a remediation step. That is observe → reason → act in literal labelled form.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Perception</div>
+    <div class="trait-tier">Essential</div>
+    <blockquote>🔧 [TOOL CALL] search_specs({"variant": "m4_pro"})</blockquote>
+    <p class="explain">The agent perceived its world by calling tools. Each call returned a structured fact (CPU cores, prices in rupees, throttling under load) that fed the next decision.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Planning & decomposition</div>
+    <div class="trait-tier">Essential</div>
+    <blockquote>📋 [PLAN GENERATED] · 5 steps · 4 research · 1 synthesis</blockquote>
+    <p class="explain">Before the first tool call, the agent broke its goal into five concrete steps. It then tracked progress against that plan turn-by-turn (search ✓ · price ✓ · thermal ▶ · compare ✓).</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Memory (carried across runs)</div>
+    <div class="trait-tier">Essential</div>
+    <blockquote>🧠 [MEMORY RETRIEVED] 6 prior research finding(s) injected from research_notes.json</blockquote>
+    <p class="explain">The agent loaded six findings from a previous run before starting fresh. This is memory that survives the program ending and restarting — a different kind of remembering than what happens within a single run.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Tool selection & use</div>
+    <div class="trait-tier">Essential — NEW in this cycle</div>
+    <blockquote>🔬 [PHASE 1 — RESEARCH] allowed: search_specs, check_price, analyze_thermal, compare_variants · denied: synthesize_recommendation</blockquote>
+    <p class="explain">This is the headline new capability of this cycle. The agent's available tools changed depending on what phase it was in. During research, the recommendation tool wasn't just discouraged — it was structurally blocked. The model tried it once in turn 2 and was denied at the system level.</p>
+  </div>
+
+  <div class="trait-card">
+    <div class="trait-name">Principled stop</div>
+    <div class="trait-tier">Enhancing</div>
+    <blockquote>🏁 EXIT: research cap — 8/8 turns</blockquote>
+    <p class="explain">The agent labelled <em>why</em> it stopped. Not just "stopped" — but "stopped because it hit the research cap," which is fundamentally different from "stopped because the goal was met." That distinction is what makes the next decision (debrief vs. deliver) obvious.</p>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">5</span>The life of this agent (from wake-up to goodbye)</h2>
+
+<div class="timeline">
+
+  <div class="stage">
+    <div class="stage-name">Wake up</div>
+    <div class="stage-content">
+      <blockquote>🤖 [AGENT BOOT] Mac Advisor v1 · rung 5 · consumer-research</blockquote>
+      <p>The agent introduced itself, confirmed it could run, and loaded six prior research findings from disk.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Plan</div>
+    <div class="stage-content">
+      <blockquote>📋 [PLAN GENERATED] Step 1 search_specs · Step 2 check_price · Step 3 analyze_thermal · Step 4 compare_variants · Step 5 synthesize</blockquote>
+      <p>Before any tool call, the agent broke the goal into five steps. The first four belonged to the research phase; the fifth was the synthesis phase, behind a locked door.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Try (turn 1)</div>
+    <div class="stage-content">
+      <blockquote>🔧 search_specs(m4_base) · search_specs(m4_pro) · search_specs(m4_max) · check_price · check_price · analyze_thermal × 2 · compare_variants × 2 · check_price (refresh) — eleven calls</blockquote>
+      <p>The model went hard in turn 1. Eleven tool calls in a single response. It got every spec, every price, ran thermal analysis under two different workloads, and ran two head-to-head comparisons.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Look</div>
+    <div class="stage-content">
+      <blockquote>⚠ [CONFLICT DETECTED] thermal data contradiction for m4_pro<br>⚠ [PRICE DROP DETECTED] m4_pro_24gb: ₹2,49,900 → ₹2,29,900</blockquote>
+      <p>The agent's code spotted two notable findings: a contradiction between Apple's marketing claim and an independent lab's measurement, and a real-time price drop of ₹20,000 on the leading candidate.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Try again (turn 2)</div>
+    <div class="stage-content">
+      <blockquote>🔧 synthesize_recommendation(...) → BLOCKED<br>"The synthesize_recommendation tool is blocked by..."</blockquote>
+      <p>The model tried to jump straight to the recommendation. It was denied — not by a polite suggestion in the prompt, but by the system itself. This is the rung 5 moment. The recommendation tool was structurally unavailable during research.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Loop (turns 3–8)</div>
+    <div class="stage-content">
+      <blockquote>"Honestly — nothing. The research loop has reached..."<br>"Same answer, and I'll hold it firmly: no area needs attention..."<br>"None. The answer hasn't changed and won't."</blockquote>
+      <p>From turn 3 onward the model said the same thing five times — "nothing to do." It didn't know what to do because the resolution instruction never reached it. The checklist still said <code>resolved=False</code>, but the model had no way to act on that flag.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name">Stop</div>
+    <div class="stage-content">
+      <blockquote>🏁 EXIT: research cap — 8/8 turns</blockquote>
+      <p>The agent reached the safety limit and stopped. Crucially, it labelled <em>why</em> — not "stopped" but "stopped because the research cap fired." That label is what tells anyone reading this: this is a workflow debrief, not a delivery.</p>
+    </div>
+  </div>
+
+</div>
+
+<aside class="deep-dive">
+  <div class="dd-header">Deeper dive (skip if not curious)</div>
+  <details>
+    <summary>The technical view: the SDK call sequence</summary>
+    <p>The Python loop opened a <code>ClaudeSDKClient</code> in the research phase with <code>allowed_tools = [search_specs, check_price, analyze_thermal, compare_variants]</code> and <code>permission_mode = "dontAsk"</code>. Each iteration emitted a <code>[SDK →]</code> marker, awaited the model's reply, parsed the resulting messages for <code>ToolUseBlock</code>s, and emitted a <code>[← SDK]</code> close marker. The "dontAsk" permission mode is what made the synthesize_recommendation block in turn 2 a hard denial rather than a permission prompt.</p>
+  </details>
+</aside>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">6</span>Did the agent reach its goal? (the progress trace)</h2>
+
+<p>The agent's own check at the end of every turn, in order. The bracketed bit is the agent showing its scratch work.</p>
+
+<div class="progress-strip">
+  <div class="turn-row">
+    <div class="num-col">Turn 1</div>
+    <div class="verdict-col verdict-False">FALSE</div>
+    <div>Researched all 3 variants, both prices, both thermal workloads, both comparisons. Conflict spotted. <em>Not done because the conflict isn't resolved yet.</em></div>
+  </div>
+  <div class="turn-row">
+    <div class="num-col">Turn 2</div>
+    <div class="verdict-col verdict-False">FALSE</div>
+    <div>Model tried to synthesize. Denied. Still <code>resolved=False</code>. <em>Not done.</em></div>
+  </div>
+  <div class="turn-row">
+    <div class="num-col">Turn 3</div>
+    <div class="verdict-col verdict-False">FALSE</div>
+    <div>Model said "nothing to do." Checklist unchanged. <em>Still not done.</em></div>
+  </div>
+  <div class="turn-row">
+    <div class="num-col">Turn 4</div>
+    <div class="verdict-col verdict-False">FALSE</div>
+    <div>Model tried asking the user (also blocked). Checklist unchanged. <em>Still not done.</em></div>
+  </div>
+  <div class="turn-row">
+    <div class="num-col">Turns 5–7</div>
+    <div class="verdict-col verdict-False">FALSE</div>
+    <div>Model repeated "nothing to do" three more times. The agent kept asking; the checklist kept saying false. <em>Still not done.</em></div>
+  </div>
+  <div class="turn-row">
+    <div class="num-col">Turn 8</div>
+    <div class="verdict-col verdict-CAP">CAP HIT</div>
+    <div>Safety limit reached. The agent stopped — not because the goal was met, but because we had set a ceiling of 8 turns and the agent respected it.</div>
+  </div>
+</div>
+
+<p style="font-size: 14px; color: var(--ink-soft); margin-top: 12px;">Read down that "FALSE" column. The agent never lied to itself about whether it was done. It just couldn't get the contradiction resolved within the runway we gave it.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">7</span>Agent Spectrum Placement</h2>
+
+<div class="spectrum">
+  <p>Where does Mac Advisor sit on the spectrum from rigid workflow to fully autonomous agent?</p>
+
+  <div class="spectrum-bar">
+    <div class="spectrum-step">Workflow</div>
+    <div class="spectrum-step">Simple Agent</div>
+    <div class="spectrum-step active">Multi-Step Agent</div>
+    <div class="spectrum-step">Autonomous Agent</div>
+  </div>
+
+  <p>Mac Advisor is a <strong>multi-step agent</strong>. It has a fixed plan structure (research → synthesis), but within each phase the model has genuine choice about which tools to use, in what order, and how many to call per response. The eleven-tool sequence in turn 1 wasn't scripted — the model improvised it.</p>
+
+  <div class="contrast-callout">
+    <strong>If this were a workflow instead</strong>, the code would have looked like: <code>specs = search_specs(); price = check_price(); thermal = analyze_thermal(); recommendation = synthesize()</code>. Four lines, fixed order, no choice. The model would never have spotted the thermal conflict on its own, because it would never have decided to call <code>analyze_thermal</code> twice with different workload parameters. That's the difference — and you can point to it on this line:
+    <blockquote style="margin-top: 10px; background: white; border-color: var(--warning);">🎲 [MODEL DECISION] selected 11 tool call(s) from research palette · alternatives: different tool, different params, stop</blockquote>
+    The phrase "alternatives: different tool, different params, stop" is the proof. The model had options. The model chose. A workflow has no alternatives — it just does the next line.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">8</span>Flashcards</h2>
+
+<p>Click any card to flip it. Each definition is anchored to a specific moment in your run, not a generic textbook line.</p>
+
+<div class="flashcard-grid">
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Goal-directedness</span>
+    <span class="back">This agent computed <code>is_research_complete</code> at every turn — eight times — and only stopped when the cap intervened. It refused to let "feels done" override "checklist says not done."</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Autonomy</span>
+    <span class="back">Eleven tool calls in turn 1, chosen by the model in real time from a palette of four. Your Python never sequenced any of them.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Phase gating</span>
+    <span class="back">The recommendation tool was structurally blocked during research. When the model tried to use it in turn 2, the SDK denied the call. Not a polite "please don't" — a locked door.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Principled stop</span>
+    <span class="back">This run ended with the label "EXIT: research cap — 8/8 turns" — not just "stopped." The label tells the next person which kind of stop happened, and what to do about it.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">App memory</span>
+    <span class="back">Six research findings were loaded from <code>research_notes.json</code> before this run started. They were written by a previous run, survived the program ending and restarting, and were read again this morning.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Did-it-finish check</span>
+    <span class="back">A computable yes/no test the agent runs on itself, not a feeling it has. This agent's check had five subconditions; four passed, one didn't, so the test returned False.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Phase-handoff instruction leak</span>
+    <span class="back">The design lesson of this run. The code spotted a contradiction and printed the fix to the terminal. The model never saw the printed line — it only sees what's in its briefing. The remediation didn't travel.</span>
+  </div>
+  <div class="flashcard" onclick="this.classList.toggle('flipped')">
+    <span class="front">Execution vs goal</span>
+    <span class="back">This agent executed perfectly and did not achieve its goal. Those are two separate measures. Most engineers conflate them. A working principled stop forces the distinction into view.</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">9</span>Quick self-check</h2>
+
+<div class="mcq">
+  <div class="q">The agent didn't produce a recommendation. Is this run a failure?</div>
+  <div class="options">
+    <div class="opt" onclick="markMcq(this, false, 'mcq1')">Yes — the agent failed to meet its goal.</div>
+    <div class="opt" onclick="markMcq(this, true, 'mcq1')">No — execution succeeded; the goal wasn't reached because the agent couldn't resolve a contradiction within its safety limit. Two different things.</div>
+    <div class="opt" onclick="markMcq(this, false, 'mcq1')">Yes — but only because the safety cap was too low.</div>
+  </div>
+  <div class="explain" id="mcq1-explain">Right answer is the second. The agent executed every step correctly: it ran its checklist, hit a real obstacle, and respected the safety limit. The recommendation was missing not because the agent broke, but because the agent stopped honestly when it couldn't pass its own check. Raising the cap wouldn't have helped — the model wasn't going to resolve the conflict no matter how many more turns it had.</div>
+</div>
+
+<div class="mcq">
+  <div class="q">In turn 2, the model tried to call the recommendation tool and got blocked. What blocked it?</div>
+  <div class="options">
+    <div class="opt" onclick="markMcq(this, false, 'mcq2')">A polite reminder in the system prompt.</div>
+    <div class="opt" onclick="markMcq(this, false, 'mcq2')">The Python loop noticed and overrode the call.</div>
+    <div class="opt" onclick="markMcq(this, true, 'mcq2')">The SDK itself — the recommendation tool was structurally unavailable during research, configured before the model ever ran.</div>
+  </div>
+  <div class="explain" id="mcq2-explain">Right answer is the third. This is the headline new capability of this cycle: we declared which tools the model could call during each phase, and the SDK enforced that. The model tried, and the call was denied at the system level. This is the difference between a soft instruction (which a model can ignore or misread) and a structural constraint (which is provably impossible to violate).</div>
+</div>
+
+<div class="mcq">
+  <div class="q">What's the difference between Mac Advisor and a four-line script that says <code>search_specs(); check_price(); analyze_thermal(); synthesize()</code>?</div>
+  <div class="options">
+    <div class="opt" onclick="markMcq(this, false, 'mcq3')">Nothing meaningful — they do the same thing.</div>
+    <div class="opt" onclick="markMcq(this, true, 'mcq3')">The script always runs those four lines in order. Mac Advisor chose to run eleven tool calls in turn 1, in an order the model picked, because the model decided that's what the question needed.</div>
+    <div class="opt" onclick="markMcq(this, false, 'mcq3')">Mac Advisor is slower, that's all.</div>
+  </div>
+  <div class="explain" id="mcq3-explain">Right answer is the second. The script can't notice it should check thermal performance under two different workloads. Mac Advisor did, because the model made that call after seeing the spec data. That's the agent/workflow line: a workflow runs a recipe; an agent decides the recipe in real time based on what it's seen.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">10</span>What you could build next</h2>
+
+<div class="next-grid">
+  <div class="next-card">
+    <h4>An agent that learns from yesterday's runs</h4>
+    <p>Mac Advisor remembers findings between runs, but it remembers <em>everything</em>. A smarter version would write a summary at the end of each run ("M4 Pro is the leading candidate; thermal conflict unresolved") and read only what's relevant the next morning. The technical term is episodic memory.</p>
+  </div>
+  <div class="next-card">
+    <h4>An agent whose handoffs always work</h4>
+    <p>The big lesson of this run: when the code spots something the model needs to do, the only place that signal counts is the model's next briefing. An agent that systematically writes "clearance register" entries into the model's context — every time, automatically — would not have hit Mac Advisor's wall.</p>
+  </div>
+  <div class="next-card">
+    <h4>An agent you can audit after the fact</h4>
+    <p>Right now, the only audit trail is what gets printed to the terminal. Imagine being able to inspect every tool call before it ran, attach reasons, block invalid ones, and write the whole story to a machine-readable log. That's the next rung up.</p>
+  </div>
+  <div class="next-card">
+    <h4>An agent that asks for help</h4>
+    <p>Mac Advisor never escalated to a human when it got stuck. It just kept saying "nothing to do" until the cap fired. An agent with a structured escalation path — "I'm blocked because X; need your input" — would have surfaced the problem in turn 3 instead of turn 8.</p>
+  </div>
+</div>
+
+<aside class="deep-dive">
+  <div class="dd-header">Deeper dive (skip if not curious)</div>
+  <p>The four ideas above map onto rungs 7 (independent verifier), 6 (PreToolUse hooks), 6 (PostToolUse audit / JSONL span trace), and a higher-level escalation pattern that combines hooks with subagents (rung 8).</p>
+</aside>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="num">11</span>Provenance & glossary</h2>
+
+<footer>
+  <table>
+    <tr><th>Agent slug</th><td>mac-advisor</td></tr>
+    <tr><th>Run date</th><td>2026-06-11 19:18:26</td></tr>
+    <tr><th>SDK rung introduced</th><td>5 — allowed_tools / disallowed_tools / permission_mode</td></tr>
+    <tr><th>Gate verdicts</th><td>G1 PASS · G2 PASS (strongest to date — 11 tool calls in turn 1) · G3 PARTIAL (code-side strong, model-side propagation gap) · G4 PASS (cap fired cleanly with labelled exit) · G5 N/A (independent verifier first appears at rung 7)</td></tr>
+    <tr><th>Part 1 companion</th><td>mac-advisor_learning-guide.html</td></tr>
+    <tr><th>Log source</th><td>mac-advisor_run_output.log (287 lines)</td></tr>
+    <tr><th>Cost</th><td>~$1.87 · 16,833 in / 7,040 out tokens · ~$0.23 per turn average</td></tr>
+    <tr><th>Cycle</th><td>4 of 8 in the Agent Foundry curriculum</td></tr>
+  </table>
+
+  <div class="glossary">
+    <h4>Glossary — for the technically curious</h4>
+    <table>
+      <tr><th>Functional alias used in this document</th><th>Spec code</th></tr>
+      <tr><td>did-it-finish check</td><td>G1 — goal predicate is a function that returns True/False</td></tr>
+      <tr><td>model's own choice</td><td>G2 — at least one branch is chosen by the model at runtime</td></tr>
+      <tr><td>learning from what it saw</td><td>G3 — observe→reason→act loop closes within the agent</td></tr>
+      <tr><td>principled stop</td><td>G4 — at least two reachable termination paths (goal-met and cap)</td></tr>
+      <tr><td>independent check</td><td>G5 — verification by a separate critic call (not in this agent; first appears at rung 7)</td></tr>
+    </table>
+  </div>
+</footer>
+
+</div>
+
+<script>
+function markMcq(el, isCorrect, group) {
+  var opts = el.parentElement.querySelectorAll('.opt');
+  opts.forEach(function(o){ o.classList.remove('correct','wrong'); });
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  document.getElementById(group + '-explain').classList.add('show');
+}
+</script>
+
+</body>
+</html>

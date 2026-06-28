@@ -1,0 +1,24 @@
+{
+  "python_lists": [
+    {
+      "subtopic": "list_creation_and_indexing",
+      "last_confidence": 0.2,
+      "last_session_date": "2026-06-08"
+    },
+    {
+      "subtopic": "list_mutation_methods",
+      "last_confidence": 0.95,
+      "last_session_date": "2026-06-08"
+    },
+    {
+      "subtopic": "slicing",
+      "last_confidence": 0.95,
+      "last_session_date": "2026-06-08"
+    },
+    {
+      "subtopic": "references_and_copying",
+      "last_confidence": 0.95,
+      "last_session_date": "2026-06-08"
+    }
+  ]
+}

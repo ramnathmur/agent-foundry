@@ -1,0 +1,15 @@
+{
+  "last_run": "2026-06-11T19:21:03.421258",
+  "specs_researched": [
+    "m4_base",
+    "m4_pro",
+    "m4_max"
+  ],
+  "prices_checked": [
+    "m4_base_16gb",
+    "m4_pro_24gb"
+  ],
+  "thermal_conflict_detected": true,
+  "thermal_conflict_resolved": false,
+  "price_drop_detected": true
+}
