@@ -39,21 +39,23 @@
     "phase-handoff-instruction-leak — when the agent loop detects a conflict and prints the remediation step to the terminal, the *model* doesn't see that printed line — only the structured state dict injected into the next turn's context does. If the remediation isn't in the dict, the model has no idea what to do next. Carry over remediation as a structured 'pending_clearance' field, not just a binary unresolved flag (mac-advisor Cycle 4 design gap — surfaced in Phase F2 Probe 1)",
     "corrupt-response — when a sub-researcher's query() call returns malformed, empty, or unparseable JSON, treat it as low-confidence (confidence=0.0, gap=True) rather than crashing the loop; the sub-researcher still delivers a report to the main agent so the run can continue (research-lead main.py:523)",
     "hook-input-is-a-dict — the SDK passes PreToolUse and PostToolUse hook input_data as a plain Python dict, not as an object with named attributes. getattr(input_data, 'tool_name', '?') always returns '?' (dicts have no such attribute). Use dict.get('tool_name') instead, or a _get_field() helper that branches on isinstance(obj, dict). This caused all MCP tool calls to hash to ('?', '{}') and be denied as duplicates of the ToolSearch call that fired first. (morning-spark Cycle 6 — discovered on first run; fixed with _get_field helper)",
-    "dontAsk-requires-allowed-tools — permission_mode='dontAsk' without an explicit allowed_tools list silently denies all MCP tools at the SDK permission layer — AFTER PreToolUse fires ALLOW. From the output this is invisible: PreToolUse prints ALLOW, a ToolResult UserMessage appears, but the result contains a permission denial, PostToolUse never fires, and the model says 'the tool was denied.' Harness tools (e.g. ToolSearch) are auto-allowed and bypass the check; only MCP tools registered on your server are affected. Fix: add allowed_tools=[list all mcp__server__tool_name strings] to ClaudeAgentOptions when using dontAsk. (morning-spark Cycle 6 — discovered on second run; fixed with ALL_ALLOWED constant)"
+    "dontAsk-requires-allowed-tools — permission_mode='dontAsk' without an explicit allowed_tools list silently denies all MCP tools at the SDK permission layer — AFTER PreToolUse fires ALLOW. From the output this is invisible: PreToolUse prints ALLOW, a ToolResult UserMessage appears, but the result contains a permission denial, PostToolUse never fires, and the model says 'the tool was denied.' Harness tools (e.g. ToolSearch) are auto-allowed and bypass the check; only MCP tools registered on your server are affected. Fix: add allowed_tools=[list all mcp__server__tool_name strings] to ClaudeAgentOptions when using dontAsk. (morning-spark Cycle 6 — discovered on second run; fixed with ALL_ALLOWED constant)",
+    "query-is-async-generator — await query(prompt=...) raises TypeError: object async_generator can't be used in 'await' expression because claude-agent-sdk's query() is an async generator (yields messages), not a plain coroutine. Use async for msg in query(prompt=...): result = msg (or a _run_query() wrapper). Smoke test mocks must also use yield not return, or the mismatch stays hidden until the first real SDK run — all smoke test calls pass with AsyncMock/coroutine mocks but fail on the real SDK. (morning-intel Cycle 7 — discovered on first real run; fixed with _run_query() adapter and async-generator mocks)",
+    "result-message-empty-text — ResultMessage.text is empty in the real SDK even on a successful query() call. The actual response text lives in ResultMessage.result (a string), not .text. AssistantMessage carries the same text in content blocks, but ResultMessage.result is the cleanest extraction point. Mock objects (SimpleNamespace) set .text directly, so the mismatch is invisible in smoke tests — every mock passes, every real run fails with quality=0.45 (parse-fallback). Fix: in the _run_query() adapter, check getattr(msg, 'result', None) first, then .text, then content blocks. (morning-intel Cycle 7 — discovered on second real run; fixed by reading DEBUG MSG output showing ResultMessage attrs)"
   ],
   "report_card": {
-    "agents_understood": ["study-prep", "study-buddy", "recipe-companion", "mac-advisor", "research-lead"],
+    "agents_understood": ["study-prep", "study-buddy", "recipe-companion", "mac-advisor", "research-lead", "morning-intel"],
     "sdk_rungs_introduced": [1, 2, 3, 4, 5, 8],
     "gate_verdicts_summary": {
-      "G1": "demonstrated across 5 agents — predicate computed each step. Mac-advisor sharpened the distinction: predicate stayed False even when model emitted 'RESEARCH COMPLETE' text. Research-lead extends to a three-part compound predicate (all_dispatched_returned AND synthesis_produced AND confidence >= 0.7) — goal complexity scales with agent complexity.",
-      "G2": "demonstrated and deepened — recipe-companion: model orchestrates tool chains; mac-advisor: model freely chose 11 tools turn 1 (strongest G2 before Cycle 5); research-lead: model selected 3 of 6 research angles based on question semantics — first time angle selection itself is the model's own choice.",
-      "G3": "demonstrated multi-layer across cycles. Mac-advisor: code-side O-R-A strong but model-side propagation gap. Research-lead: gap detection at team level (3 low-confidence reports → follow-up dispatch) — G3 evidence; but follow-ups queried same data source with same parameters. Act-strategy adaptation gap still open.",
-      "G4": "demonstrated across all 5 agents — both exit paths reachable. Research-lead's cap-exit (5/5 subagents) is a clean principled stop with labelled exit reason.",
-      "G5": "N/A — first appears at rung 7 (skipped in Cycles 4 and 5)"
+      "G1": "demonstrated across 6 agents — predicate computed each step. Mac-advisor sharpened the distinction: predicate stayed False even when model emitted 'RESEARCH COMPLETE' text. Research-lead extends to a three-part compound predicate (all_dispatched_returned AND synthesis_produced AND confidence >= 0.7). Morning-intel: five-part compound predicate (all sections received, all quality >= 0.6, synthesis produced).",
+      "G2": "demonstrated and deepened across 6 agents. Morning-intel adds a new G2 placement: post-collection (model reads all three completed sections and picks which leads). Contrast: research-lead G2 fires pre-dispatch (model picks which angles to research). Both are valid — G2 is about who decides, not when.",
+      "G3": "ACT-STRATEGY GAP CLOSED in morning-intel (Cycle 7). Research-lead gap: follow-ups re-dispatched with same parameters. Morning-intel fix: follow-up changes category (news: general→technology) or priority (calendar: all→high) — different params, not retry. Log evidence: DISPATCHING: news-specialist #4 (follow-up) params={'category': 'technology'}.",
+      "G4": "demonstrated across all 6 agents — both exit paths reachable. Morning-intel adds a sub-agent cap exit on top of the turn cap (6/6 dispatches → exit).",
+      "G5": "N/A — first appears at rung 7 (skipped in Cycles 4, 5, and 7)"
     },
     "domain_coverage": {
       "learning-research": 3,
-      "morning-briefing": 0,
+      "morning-briefing": 1,
       "health-habits": 1,
       "consumer-research": 1
     },
@@ -570,6 +572,43 @@
     }
   ],
   "brainstorm_sessions": [
+    {
+      "date": "2026-10-21",
+      "cycle": 7,
+      "candidates": [
+        {
+          "name": "Habit Streak Verifier",
+          "domain": "health-habits",
+          "gates": "G1 PASS · G2 PASS · G3 PASS · G4 PASS · G5 PASS (introduces rung 7 — independent verifier with fresh-context critic call)",
+          "decision": "available",
+          "notes": "FORWARD — introduces rung 7 (independent verifier, G5). Habit streak domain; verifier call reads only outcome and returns cold pass/fail. Surfaced per protocol (always surface one FORWARD); Ram directed toward rung 8."
+        },
+        {
+          "name": "Research Navigator",
+          "domain": "learning-research",
+          "gates": "G1 PASS (compound) · G2 PASS · G3 PASS (act-strategy repair — follow-up brief explicitly varied) · G4 PASS · G5 N/A",
+          "decision": "available",
+          "notes": "FOUNDATIONAL — targets Cycle 5 act-strategy gap. Sub-researchers dispatched with varied briefs when starvation detected. HIGH SIMILARITY (same domain + same rung as research-lead). Score ≈ 0.98."
+        },
+        {
+          "name": "Daily Health Panel",
+          "domain": "health-habits",
+          "gates": "G1 PASS (all_panels_received AND min_confidence) · G2 PASS (model selects synthesis priority order) · G3 PASS (low-confidence sub-report → rephrased follow-up brief) · G4 PASS (sub-agent cap) · G5 N/A",
+          "decision": "available",
+          "notes": "LATERAL-RIGHT — health-habits domain, rung 8. 3 heterogeneous sub-agents: sleep rater, activity rater, nutrition rater. HIGH SIMILARITY flag (rung 8 carried; health-habits used in recipe-companion)."
+        },
+        {
+          "name": "Morning Intel",
+          "domain": "morning-briefing",
+          "gates": "G1 PASS (all_sections_received AND synthesis_produced AND min_quality) · G2 PASS (model selects briefing priority order) · G3 PASS (low-quality sub-report → rephrased follow-up with different framing) · G4 PASS (sub-agent cap + main loop cap) · G5 N/A",
+          "decision": "selected — pending lock confirmation",
+          "notes": "LATERAL-RIGHT — morning-briefing domain, rung 8. 3 heterogeneous sub-agents: WeatherAnalyst, NewsScanner, CalendarPrep. Architecture contrast from research-lead: heterogeneous tasks, synthesis must weight different information types. HIGH SIMILARITY flag (rung 8 carried; morning-briefing used in morning-spark). Ram selected Candidate 3 in brainstorm."
+        }
+      ],
+      "locked": "Morning Intel",
+      "decision_type": "brainstorm",
+      "notes": "Cycle 7 brainstorm. Ram opened with 'I want to repeat cycle 5 with a new use case' — directing toward rung 8 LATERAL. Phase 0 Part A delivered; Part B skipped when Ram redirected to brainstorm. Four candidates proposed: one FORWARD (rung 7, surfaced per protocol), one FOUNDATIONAL, two LATERAL-RIGHT. Ram selected Morning Intel. Lock pending explicit confirmation."
+    },
     {
       "date": "2026-06-14",
       "cycle": 6,
