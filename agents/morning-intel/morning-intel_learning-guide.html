@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Intel — Learning Guide (Part 1)</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1f2e;
+  --surface2: #222840;
+  --border: #2d3555;
+  --accent: #4f8ef7;
+  --accent2: #7c6af7;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --code-bg: #131829;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+}
+.page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* nav */
+.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2.5rem; }
+.toc h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem; }
+.toc ol { padding-left: 1.2rem; }
+.toc li { margin: 0.3rem 0; }
+.toc a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+.toc a:hover { text-decoration: underline; }
+
+/* hero */
+.hero { background: linear-gradient(135deg, #1a1f2e 0%, #1e2540 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem 2rem; margin-bottom: 2.5rem; text-align: center; }
+.hero .cycle-badge { display: inline-block; background: var(--accent2); color: white; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.3rem 0.75rem; border-radius: 999px; margin-bottom: 1rem; }
+.hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+.hero h1 span { color: var(--accent); }
+.hero .sub { color: var(--muted); font-size: 1rem; }
+.meta-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1.25rem; }
+.chip { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 0.78rem; padding: 0.3rem 0.75rem; border-radius: 999px; }
+.chip.accent { background: rgba(79,142,247,0.12); border-color: var(--accent); color: var(--accent); }
+
+/* sections */
+.section { margin-bottom: 2.5rem; }
+.section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.5rem; }
+h2.section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1rem; color: var(--text); }
+p:last-child { margin-bottom: 0; }
+
+/* cards */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card.green { border-left: 4px solid var(--green); }
+.card.amber { border-left: 4px solid var(--amber); }
+.card.blue { border-left: 4px solid var(--accent); }
+.card.purple { border-left: 4px solid var(--accent2); }
+.card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.card .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.4rem; }
+
+/* trait grid */
+.trait-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; }
+.trait-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; }
+.trait-card .tier { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.5rem; }
+.tier-core { background: rgba(79,142,247,0.15); color: var(--accent); }
+.tier-essential { background: rgba(124,106,247,0.15); color: var(--accent2); }
+.tier-enhancing { background: rgba(34,197,94,0.15); color: var(--green); }
+.trait-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+.trait-card p { font-size: 0.88rem; color: var(--muted); }
+
+/* sub-agent cards */
+.subagent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; margin: 1rem 0; }
+.sa-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; }
+.sa-card .sa-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.sa-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.sa-card p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+/* code block */
+.code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.82rem; line-height: 1.6; overflow-x: auto; margin: 1rem 0; white-space: pre; color: #a8d8ff; }
+.code-comment { color: #6a7fa8; }
+.code-label { color: var(--amber); }
+.code-green { color: var(--green); }
+.code-red { color: var(--red); }
+
+/* output line */
+.output-block { background: #0a0e1a; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.81rem; line-height: 1.8; margin: 1rem 0; }
+.ol { display: block; margin: 0; }
+.ol-label { color: var(--amber); }
+.ol-dim { color: #4a5a7a; }
+.ol-green { color: var(--green); }
+.ol-blue { color: var(--accent); }
+.ol-gloss { font-family: -apple-system, sans-serif; color: var(--muted); font-size: 0.78rem; font-style: italic; display: block; margin-left: 1.5rem; margin-bottom: 0.25rem; }
+
+/* deeper dive sidebar */
+aside.deep-dive { background: #141929; border: 1px solid #2a3352; border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.deep-dive-header { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.deep-dive-header::before { content: "▶"; font-size: 0.6rem; transition: transform 0.2s; }
+.deep-dive-header.open::before { transform: rotate(90deg); }
+.deep-dive-body { display: none; font-size: 0.88rem; color: #8899bb; line-height: 1.65; }
+.deep-dive-body.open { display: block; }
+.deep-dive-body table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.82rem; }
+.deep-dive-body td, .deep-dive-body th { border: 1px solid #2a3352; padding: 0.5rem 0.75rem; text-align: left; }
+.deep-dive-body th { background: #1a1f2e; color: var(--muted); font-weight: 700; }
+.deep-dive-body code { background: #0a0e1a; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; color: #a8d8ff; }
+
+/* checklist */
+.checklist { list-style: none; padding: 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+.checklist li:last-child { border: none; }
+.checklist li::before { content: "○"; color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; }
+
+/* gotcha list */
+.gotcha-list { list-style: none; padding: 0; }
+.gotcha-list li { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--amber); border-radius: 6px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; font-size: 0.9rem; }
+.gotcha-list li strong { color: var(--amber); }
+
+/* MCQ */
+.mcq-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.mcq-block .question { font-weight: 600; margin-bottom: 0.75rem; }
+.mcq-options { list-style: none; padding: 0; }
+.mcq-options li { padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.4rem; border: 1px solid var(--border); font-size: 0.9rem; transition: background 0.15s; }
+.mcq-options li:hover { background: var(--surface2); }
+.mcq-options li.correct { background: rgba(34,197,94,0.12); border-color: var(--green); color: var(--green); }
+.mcq-options li.wrong { background: rgba(239,68,68,0.1); border-color: var(--red); color: #f87171; }
+.mcq-explain { display: none; margin-top: 0.75rem; font-size: 0.86rem; color: var(--muted); background: var(--code-bg); padding: 0.75rem 1rem; border-radius: 6px; }
+.mcq-explain.show { display: block; }
+
+/* svg diagram */
+.svg-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; }
+
+/* plan board */
+.plan-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 0.75rem; margin: 1rem 0; }
+.plan-step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; text-align: center; }
+.plan-step .step-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+.plan-step .step-name { font-size: 0.78rem; font-weight: 700; color: var(--accent); }
+.plan-step .step-desc { font-size: 0.74rem; color: var(--muted); margin-top: 0.2rem; }
+
+/* provenance */
+.provenance { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem 1.5rem; margin-top: 2rem; font-size: 0.82rem; color: var(--muted); }
+.provenance table { border-collapse: collapse; width: 100%; }
+.provenance td { padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
+.provenance td:first-child { color: var(--text); font-weight: 600; width: 40%; }
+
+/* primer box */
+.primer-box { background: rgba(79,142,247,0.06); border: 1px solid rgba(79,142,247,0.2); border-radius: 8px; padding: 1rem 1.25rem; margin: 0.75rem 0; }
+.primer-box h4 { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.6rem; }
+.primer-box ul { padding-left: 1.2rem; font-size: 0.86rem; color: var(--muted); }
+.primer-box li { margin-bottom: 0.4rem; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="cycle-badge">Cycle 7 · Rung 8 · LATERAL-RIGHT</div>
+  <h1>Morning <span>Intel</span></h1>
+  <p class="sub">Three specialists. One brief. An agent that knows who to ask.</p>
+  <div class="meta-chips">
+    <span class="chip">morning-briefing</span>
+    <span class="chip accent">Sub-agents (rung 8)</span>
+    <span class="chip">Part 1 of 2 — pre-run</span>
+  </div>
+</div>
+
+<!-- ═══════════════ TABLE OF CONTENTS ═══════════════ -->
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1">What this agent is for</a></li>
+    <li><a href="#s2">How this agent thinks</a></li>
+    <li><a href="#s3">What makes this an "agent"</a></li>
+    <li><a href="#s4">Where each trait lives in the code ›</a></li>
+    <li><a href="#s5">Reading the code ›</a></li>
+    <li><a href="#s6">What to expect when you run it</a></li>
+    <li><a href="#s7">Things worth noticing</a></li>
+    <li><a href="#s8">Watch out for these</a></li>
+    <li><a href="#s9">Who's making the decisions</a></li>
+    <li><a href="#s10">SDK glossary ›</a></li>
+    <li><a href="#s11">A few self-check questions</a></li>
+    <li><a href="#s12">Before you hit Run</a></li>
+    <li><a href="#s13">Provenance</a></li>
+  </ol>
+</nav>
+
+<!-- ═══════════════ §1 WHAT IT'S FOR ═══════════════ -->
+<section class="section" id="s1">
+  <div class="section-label">Section 1</div>
+  <h2 class="section-title">What this agent is for</h2>
+  <p>Morning Intel assembles your morning briefing by sending three independent specialists to work simultaneously — one fetches weather conditions, one scans the news, one reads your calendar — and then combines their reports into a single prioritized brief.</p>
+  <p>The key word is <em>independent</em>. Each specialist works in complete isolation. The weather specialist has no idea what the news specialist found. The calendar specialist has never seen a weather report. They are hired for one job each, they do it, and they hand in a report. Then Morning Intel reads all three and decides which piece of information is most important for your day.</p>
+  <p>This is the same underlying pattern as the previous cycle's research agent — but with a twist that matters: in that agent, all the sub-agents had the same job. Here, each specialist has a completely different expertise, and when one fails, you can't ask another to cover for it. The weather specialist cannot fetch news headlines. The architecture forces the agent to care specifically about <em>which</em> specialist is struggling and what different approach to give them.</p>
+
+  <div class="subagent-grid">
+    <div class="sa-card">
+      <div class="sa-icon">🌤</div>
+      <h4>WeatherAnalyst</h4>
+      <p>Fetches conditions, forecast, and commute advisory for your location.</p>
+    </div>
+    <div class="sa-card">
+      <div class="sa-icon">📰</div>
+      <h4>NewsScanner</h4>
+      <p>Pulls top headlines filtered by category. Returns the three most relevant stories.</p>
+    </div>
+    <div class="sa-card">
+      <div class="sa-icon">📅</div>
+      <h4>CalendarPrep</h4>
+      <p>Reads today's events and tasks. Highlights high-priority items to keep front-of-mind.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ §2 HOW IT THINKS ═══════════════ -->
+<section class="section" id="s2">
+  <div class="section-label">Section 2</div>
+  <h2 class="section-title">How this agent thinks</h2>
+  <p>Morning Intel moves through six stages, in this order:</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 760 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:500px">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#4f8ef7"/>
+        </marker>
+      </defs>
+      <!-- boxes -->
+      <rect x="5" y="60" width="90" height="60" rx="8" fill="#1a1f2e" stroke="#2d3555"/>
+      <rect x="125" y="60" width="90" height="60" rx="8" fill="#1a1f2e" stroke="#2d3555"/>
+      <rect x="245" y="20" width="90" height="50" rx="8" fill="#1a1f2e" stroke="#4f8ef7" stroke-width="1.5"/>
+      <rect x="245" y="80" width="90" height="50" rx="8" fill="#1a1f2e" stroke="#4f8ef7" stroke-width="1.5"/>
+      <rect x="245" y="110" width="90" height="50" rx="8" fill="#1a1f2e" stroke="#4f8ef7" stroke-width="1.5"/>
+      <rect x="375" y="60" width="90" height="60" rx="8" fill="#1a1f2e" stroke="#2d3555"/>
+      <rect x="495" y="60" width="90" height="60" rx="8" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <rect x="625" y="60" width="100" height="60" rx="8" fill="#1a1f2e" stroke="#22c55e" stroke-width="1.5"/>
+      <!-- labels -->
+      <text x="50" y="88" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="sans-serif" font-weight="700">Wake</text>
+      <text x="50" y="103" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">up</text>
+      <text x="170" y="88" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="sans-serif" font-weight="700">Send</text>
+      <text x="170" y="103" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">specialists</text>
+      <text x="290" y="42" text-anchor="middle" fill="#4f8ef7" font-size="9.5" font-family="sans-serif">Weather</text>
+      <text x="290" y="103" text-anchor="middle" fill="#4f8ef7" font-size="9.5" font-family="sans-serif">News</text>
+      <text x="290" y="133" text-anchor="middle" fill="#4f8ef7" font-size="9.5" font-family="sans-serif">Calendar</text>
+      <text x="420" y="88" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="sans-serif" font-weight="700">Collect</text>
+      <text x="420" y="103" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">&amp; assess</text>
+      <text x="540" y="85" text-anchor="middle" fill="#7c6af7" font-size="11" font-family="sans-serif" font-weight="700">Decide</text>
+      <text x="540" y="100" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">what leads</text>
+      <text x="675" y="85" text-anchor="middle" fill="#22c55e" font-size="11" font-family="sans-serif" font-weight="700">Write &amp;</text>
+      <text x="675" y="100" text-anchor="middle" fill="#22c55e" font-size="11" font-family="sans-serif">stop</text>
+      <!-- arrows -->
+      <line x1="96" y1="90" x2="122" y2="90" stroke="#4f8ef7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="216" y1="80" x2="242" y2="50" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="216" y1="90" x2="242" y2="100" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="216" y1="100" x2="242" y2="130" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="336" y1="50" x2="373" y2="80" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="336" y1="100" x2="373" y2="90" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="336" y1="130" x2="373" y2="100" stroke="#4f8ef7" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="466" y1="90" x2="492" y2="90" stroke="#4f8ef7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="586" y1="90" x2="622" y2="90" stroke="#4f8ef7" stroke-width="1.5" marker-end="url(#arr)"/>
+    </svg>
+  </div>
+
+  <p>The three middle boxes — Weather, News, Calendar — run simultaneously and in complete isolation. None of them can see what the others are doing. After all three finish, the agent collects their reports, checks that each one is good enough, then makes a decision about which piece of information matters most today, and writes the final brief.</p>
+  <p>If a section comes back degraded — say the news scanner returned something thin because the category was too narrow — the agent tries again with different instructions for that specific specialist. It cannot ask a different specialist to cover. It has to give the original specialist a better brief.</p>
+</section>
+
+<!-- ═══════════════ §3 WHAT MAKES IT AN AGENT ═══════════════ -->
+<section class="section" id="s3">
+  <div class="section-label">Section 3</div>
+  <h2 class="section-title">What makes this an "agent" (in plain English)</h2>
+
+  <div class="trait-grid">
+    <div class="trait-card">
+      <span class="tier tier-core">Core</span>
+      <h4>It knows what "done" means</h4>
+      <p>Before running a single line of real work, the agent establishes a five-part definition of success. All three sections must arrive. All three must meet a quality bar. A final brief must exist. The agent checks this definition after every action — it doesn't stop because the model says it's done.</p>
+    </div>
+    <div class="trait-card">
+      <span class="tier tier-core">Core</span>
+      <h4>It makes its own choices</h4>
+      <p>When all three sections are ready, the agent reads them and decides which one should lead the brief. Stormy weather? Weather section leads. Packed calendar? Calendar section leads. This choice belongs to the model — it is not hard-coded.</p>
+    </div>
+    <div class="trait-card">
+      <span class="tier tier-core">Core</span>
+      <h4>It changes based on what it finds</h4>
+      <p>If the news section comes back with a quality score below the threshold, the agent does not simply retry. It changes what it asks for — a different news category, a broader search scope. The next action depends on what the previous one returned.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ §4 DEEPER DIVE: TRAIT MAP ═══════════════ -->
+<section class="section" id="s4">
+  <aside class="deep-dive">
+    <div class="deep-dive-header" onclick="toggleDeep(this)">Deeper dive (skip if not curious): Where each trait lives in the code</div>
+    <div class="deep-dive-body">
+      <table>
+        <tr><th>Trait</th><th>Where in main.py</th><th>What to grep for</th></tr>
+        <tr><td>Goal-directedness</td><td><code>briefing_complete()</code> function</td><td><code>GATE[G1]</code></td></tr>
+        <tr><td>Autonomy</td><td>Synthesis <code>query()</code> call — model picks lead section</td><td><code>GATE[G2]</code></td></tr>
+        <tr><td>Observe–reason–act</td><td>Low quality detection → follow-up dispatch loop</td><td><code>GATE[G3]</code></td></tr>
+        <tr><td>Perception</td><td>Mock data sources in <code>MOCK_WEATHER_DATA</code>, <code>MOCK_HEADLINES</code>, <code>MOCK_CALENDAR_DATA</code></td><td><code>TRAIT[perception]</code></td></tr>
+        <tr><td>Planning</td><td>Plan printed at boot; progress board updated each turn</td><td><code>TRAIT[planning]</code></td></tr>
+        <tr><td>Memory (sub-agent)</td><td><code>run_weather_analyst()</code>, <code>run_news_scanner()</code>, <code>run_calendar_prep()</code> — each creates its own <code>query()</code> call</td><td><code>TRAIT[memory]</code>, rung 8</td></tr>
+        <tr><td>Memory (session)</td><td>Main agent carries all three reports in its loop context</td><td><code>SESSION MEMORY</code></td></tr>
+        <tr><td>Memory (app)</td><td><code>morning-intel_briefing_log.json</code> — written on goal-met</td><td><code>APP MEMORY</code></td></tr>
+        <tr><td>Principled stop</td><td><code>MAX_MAIN_TURNS</code> + <code>MAX_SUBAGENTS</code> constants</td><td><code>GATE[G4]</code></td></tr>
+      </table>
+      <p style="margin-top:0.75rem">G5 is not demonstrated in this agent — it requires a separate independent reviewer, which is introduced at rung 7. Look for <code>GATE[G5]: N/A</code> at the bottom of the gate-annotation block in main.py.</p>
+    </div>
+  </aside>
+</section>
+
+<!-- ═══════════════ §5 READING THE CODE ═══════════════ -->
+<section class="section" id="s5">
+  <aside class="deep-dive">
+    <div class="deep-dive-header" onclick="toggleDeep(this)">Deeper dive (skip if not curious): Reading the code</div>
+    <div class="deep-dive-body">
+      <div class="primer-box">
+        <h4>Python Reading Primer — five things to recognize (not write)</h4>
+        <ul>
+          <li><strong>def</strong> — declares a named function: a block of code you can call by name.</li>
+          <li><strong>async def / await</strong> — marks code that can pause while waiting for a response. Think of <code>await query()</code> as "wait here until the AI replies." The rest of the program keeps running during the wait.</li>
+          <li><strong>while / for</strong> — loops: repeat a block of code a fixed number of times (<code>for</code>) or until a condition changes (<code>while</code>).</li>
+          <li><strong>if / else</strong> — branching: "if this is true, do A; otherwise, do B."</li>
+          <li><strong>print()</strong> — displays a line in the terminal. Every labeled line you see when you run main.py comes from a print() call.</li>
+        </ul>
+      </div>
+      <p style="margin-top:0.75rem"><strong>Guided reading order:</strong></p>
+      <ol style="padding-left:1.2rem;font-size:0.86rem;line-height:1.8">
+        <li>Module docstring (top of file) — AGENTIC TRAITS table gives the full map before you read a line of code.</li>
+        <li><code>briefing_complete()</code> — read this first. It tells you exactly what "done" means. Everything else in the file is in service of making this return True.</li>
+        <li><code>run_weather_analyst()</code> — the simplest sub-agent. One independent context window, one data fetch, one structured return.</li>
+        <li><code>main()</code> — the main loop. Find the for loop, then read the O-R-A block inside it.</li>
+        <li>The synthesis <code>query()</code> call — find the line labeled <code>[MODEL DECISION]</code>. This is where the model makes the only real choice it owns.</li>
+      </ol>
+    </div>
+  </aside>
+</section>
+
+<!-- ═══════════════ §6 WHAT TO EXPECT ═══════════════ -->
+<section class="section" id="s6">
+  <div class="section-label">Section 6</div>
+  <h2 class="section-title">What to expect when you run it</h2>
+  <p>Open <code>agents/morning-intel/main.py</code> in PyCharm and click Run (or right-click → Run 'main'). Here is roughly what you will see, with each line explained:</p>
+
+  <div class="output-block">
+<span class="ol"><span class="ol-label">🤖 [AGENT BOOT]</span> Morning Intel v1 · rung 8</span>
+<span class="ol-gloss">The agent introduces itself. preflight() has already checked Python version and CLI login.</span>
+<span class="ol"><span class="ol-label">📖 [OUTPUT GUIDE]</span> each labeled line is a teaching element</span>
+<span class="ol-gloss">This line orients you — everything after it is a labeled teaching moment.</span>
+<span class="ol"><span class="ol-label">🎯 [GOAL SET]</span> briefing_complete() = all_sections AND quality AND synthesis</span>
+<span class="ol-gloss">The agent declares its success rule before doing any work.</span>
+<span class="ol"><span class="ol-label">📀 [APP MEMORY]</span> no prior briefing — first run</span>
+<span class="ol-gloss">Checks the briefing log file. On the first run it will be empty.</span>
+<span class="ol"><span class="ol-label">📋 [PLAN GENERATED]</span></span>
+<span class="ol-gloss">The plan: dispatch-weather → dispatch-news → dispatch-calendar → synthesize → stop.</span>
+
+<span class="ol"></span>
+<span class="ol"><span class="ol-label">📍 [STEP 1]</span></span>
+<span class="ol"><span class="ol-label">  📤 [DISPATCHING: weather-analyst]</span></span>
+<span class="ol-gloss">The agent sends the WeatherAnalyst specialist to work.</span>
+<span class="ol"><span class="ol-dim">  ┆ [WeatherAnalyst] fetching data...</span></span>
+<span class="ol-gloss">Indented lines (with ┆) are from inside the sub-agent's context window.</span>
+<span class="ol"><span class="ol-label">  📬 [REPORT RECEIVED: weather-analyst]</span> quality=0.85</span>
+<span class="ol-gloss">The weather section returned. Quality is above the 0.6 threshold — no follow-up needed.</span>
+<span class="ol"><span class="ol-label">  📤 [DISPATCHING: news-scanner]</span></span>
+<span class="ol"><span class="ol-label">  📬 [REPORT RECEIVED: news-scanner]</span> quality=0.80</span>
+<span class="ol"><span class="ol-label">  📤 [DISPATCHING: calendar-prep]</span></span>
+<span class="ol"><span class="ol-label">  📬 [REPORT RECEIVED: calendar-prep]</span> quality=0.88</span>
+
+<span class="ol"></span>
+<span class="ol"><span class="ol-label">━━━ [SDK →]</span> model · synthesis call</span>
+<span class="ol-gloss">The boundary where Python hands the three reports to Claude and waits for a decision.</span>
+<span class="ol"><span class="ol-label">🎲 [MODEL DECISION]</span> lead=calendar · weather=secondary · news=tertiary</span>
+<span class="ol-gloss">The model chose which section leads the brief. The code did not pick this.</span>
+<span class="ol"><span class="ol-label">━━━ [← SDK]</span> 0.8s · +412 output tokens</span>
+
+<span class="ol"></span>
+<span class="ol"><span class="ol-label">📐 [GOAL PREDICATE]</span> briefing_complete() → True</span>
+<span class="ol-gloss">All five conditions met. The agent's own check returns True.</span>
+<span class="ol"><span class="ol-label">🏁 [GOAL MET]</span> briefing complete · synthesis produced · all quality passed</span>
+<span class="ol"></span>
+<span class="ol"><span class="ol-label">╔══ 🧠 AGENT SUMMARY ══╗</span></span>
+<span class="ol-gloss">A full account of what happened: traits demonstrated, decisions made, memory written.</span>
+  </div>
+
+  <p>The three moments worth slowing down for: the <code>📬 [REPORT RECEIVED]</code> lines (each one is a sub-agent's context window closing and handing its report back), the <code>🎲 [MODEL DECISION]</code> line (the only moment the model owns a real choice), and <code>📐 [GOAL PREDICATE]</code> (the agent's own pass/fail check).</p>
+</section>
+
+<!-- ═══════════════ §7 THINGS WORTH NOTICING ═══════════════ -->
+<section class="section" id="s7">
+  <div class="section-label">Section 7</div>
+  <h2 class="section-title">Things worth noticing during the run</h2>
+
+  <div class="card blue">
+    <h3>Sub-agent context windows are born and discarded</h3>
+    <p>Each time you see <code>📤 [DISPATCHING]</code>, a brand-new independent context window starts. The WeatherAnalyst has never seen the NewsScanner's work. By the time <code>📬 [REPORT RECEIVED]</code> prints, that context window is gone — discarded after handing back its report. What stays is only the structured report itself, which the main agent keeps in its session memory.</p>
+  </div>
+
+  <div class="card purple">
+    <h3>The main agent does not remember what the sub-agents reasoned</h3>
+    <p>This agent does not remember what each specialist thought about while working — only what they returned. The weather specialist may have considered three different ways to phrase the commute advisory, but by the time the report arrives, that reasoning is gone. This is the same principle as session notes versus a shared database: useful during the engagement, gone when the consultant leaves.</p>
+    <p>This also means that on the next run, the specialist starts completely fresh with no memory of yesterday's brief. The only cross-run memory lives in <code>morning-intel_briefing_log.json</code>, which the main agent writes on a successful exit.</p>
+  </div>
+
+  <div class="card green">
+    <h3>The follow-up path is the teachable moment</h3>
+    <p>If you see <code>🔄 [LOOP FEEDBACK]</code> followed by a second <code>📤 [DISPATCHING]</code> for the same specialist, that is the agent doing something different rather than just trying again. Watch what parameter changed in the second dispatch call — that is the act-strategy adaptation.</p>
+  </div>
+
+  <div class="card amber">
+    <h3>Run log accumulates across every run</h3>
+    <p><code>morning-intel_run_output.log</code> grows with every run you do. After a few runs you can open it and compare: did the model choose the same lead section both times? Was the quality score different? The log is the raw material for Part 2 of this guide, which you will read after running the agent.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ §8 GOTCHAS ═══════════════ -->
+<section class="section" id="s8">
+  <div class="section-label">Section 8</div>
+  <h2 class="section-title">Watch out for these</h2>
+  <p>These are the known traps that show up in code like this. Morning Intel is written to avoid them — but knowing they exist will help you read the code and understand why certain lines are there.</p>
+
+  <ul class="gotcha-list">
+    <li><strong>Sub-agents cannot cover for each other.</strong> If the news specialist returns low quality, you cannot send the calendar specialist to check the news. The follow-up logic has to know which specialist type to reissue to. This is the defining constraint of heterogeneous sub-agent architectures.</li>
+    <li><strong>The model's summary is not the goal check.</strong> The model might say "I have everything I need for a great briefing" — and the goal predicate might still return False, because the quality score for one section is 0.55. Text statements from the model are not evidence. The predicate decides.</li>
+    <li><strong>Silence between ALLOW and execution is a clue.</strong> If you have used permission controls in prior agents and carried that pattern here, remember: a missing <code>[REPORT RECEIVED]</code> after a <code>[DISPATCHING]</code> line is diagnostic — something silently failed between dispatch and return. Look for what print statement is absent, not what error message appeared.</li>
+    <li><strong>The sub-agent context is isolated on purpose.</strong> If you see a sub-agent return a report that looks uninformed — it didn't know about the other sections, because it was not supposed to. Shared context between sub-agents would compromise the independence of their outputs. The isolation is a feature, not a bug.</li>
+    <li><strong>Note: the "plan revised" banner does not fire in this agent.</strong> Morning Intel's plan is structurally fixed — dispatch three specialists, collect, synthesize. The plan-revised moment fires when the model encounters an unexpected tool result and restructures mid-task. That behaviour first appeared in a later cycle.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════ §9 WHO'S DECIDING ═══════════════ -->
+<section class="section" id="s9">
+  <div class="section-label">Section 9</div>
+  <h2 class="section-title">Who's making the decisions</h2>
+
+  <div class="card green">
+    <div class="label">The code owns</div>
+    <p>Whether all three sections have been received. Whether each section met the quality threshold (0.6). Whether the hard caps have been reached. The decision to dispatch a follow-up. The decision to stop.</p>
+  </div>
+  <div class="card purple">
+    <div class="label">The model owns</div>
+    <p>Which section leads the morning brief (weather urgency, calendar priority, or news significance). The actual text of the final briefing. The phrasing and emphasis within each synthesized section.</p>
+  </div>
+  <div class="card amber">
+    <div class="label">The specialists own</div>
+    <p>How to format and phrase their section given the raw data. Whether the data they found is complete enough (reflected in the quality_score they return).</p>
+  </div>
+
+  <p style="margin-top:1rem">If Morning Intel were a plain script (not an agent), the lead section would be hardcoded — weather always leads, or calendar always leads. You would lose the model's judgment about what actually matters today. The <code>🎲 [MODEL DECISION]</code> line in the output marks the exact moment that judgment happens.</p>
+</section>
+
+<!-- ═══════════════ §10 SDK GLOSSARY ═══════════════ -->
+<section class="section" id="s10">
+  <aside class="deep-dive">
+    <div class="deep-dive-header" onclick="toggleDeep(this)">Deeper dive (skip if not curious): SDK glossary</div>
+    <div class="deep-dive-body">
+      <table>
+        <tr><th>SDK term</th><th>Plain English</th></tr>
+        <tr><td><code>query()</code></td><td>The single call that sends a prompt to Claude and waits for a response. Each call is independent — it has no memory of previous calls unless you explicitly include prior context in the prompt.</td></tr>
+        <tr><td><code>ClaudeSDKClient</code></td><td>A client object that holds a multi-turn conversation. Used when you want the AI to remember what was said earlier in the same session.</td></tr>
+        <tr><td><code>ResultMessage</code></td><td>The final message returned by a <code>query()</code> call. It contains the model's response text and token usage information.</td></tr>
+        <tr><td><code>SystemMessage</code></td><td>Instructions given to the model before the conversation starts — its role, its constraints, its output format.</td></tr>
+        <tr><td><code>create_sdk_mcp_server()</code></td><td>Registers a set of tools the model can call. The model decides when and whether to call each tool.</td></tr>
+        <tr><td><code>@tool</code></td><td>A decorator that marks a Python function as a tool the model can request. The SDK routes the model's tool-call request to the decorated function and passes back the result.</td></tr>
+        <tr><td>Rung 8</td><td>The SDK concept this agent demonstrates: running independent sub-agents, each with its own separate conversation context that is created fresh and discarded after use.</td></tr>
+      </table>
+    </div>
+  </aside>
+</section>
+
+<!-- ═══════════════ §11 MCQs ═══════════════ -->
+<section class="section" id="s11">
+  <div class="section-label">Section 11</div>
+  <h2 class="section-title">A few self-check questions</h2>
+
+  <div class="mcq-block" id="q1">
+    <div class="question">1. The NewsScanner returns a section with quality_score = 0.55. What does Morning Intel do?</div>
+    <ul class="mcq-options">
+      <li onclick="answer(this,'q1','wrong')">Discards the news section and writes the brief without it.</li>
+      <li onclick="answer(this,'q1','correct')">Dispatches the NewsScanner again with different parameters.</li>
+      <li onclick="answer(this,'q1','wrong')">Asks the CalendarPrep specialist to cover the news gap.</li>
+      <li onclick="answer(this,'q1','wrong')">Accepts the section — 0.55 is close enough to the threshold.</li>
+    </ul>
+    <div class="mcq-explain" id="q1-exp">Correct. The main agent identifies that news quality is below the 0.6 minimum, then reissues a brief to the NewsScanner specifically — with a different category or broader framing. It cannot substitute another specialist type. Wrong answers: discarding a section makes the goal predicate permanently unsatisfiable; substitution is the key mistake this architecture is designed to prevent; 0.55 is below threshold and the predicate enforces the check.</div>
+  </div>
+
+  <div class="mcq-block" id="q2">
+    <div class="question">2. Which line in the terminal output proves this is an agent (not just a script that calls three functions)?</div>
+    <ul class="mcq-options">
+      <li onclick="answer(this,'q2','wrong')">📤 [DISPATCHING: weather-analyst] — the agent sent a specialist.</li>
+      <li onclick="answer(this,'q2','correct')">🎲 [MODEL DECISION] lead=calendar — the model made a choice the code didn't hard-pick.</li>
+      <li onclick="answer(this,'q2','wrong')">📋 [PLAN GENERATED] — the agent made a plan.</li>
+      <li onclick="answer(this,'q2','wrong')">🏁 [GOAL MET] — the agent finished successfully.</li>
+    </ul>
+    <div class="mcq-explain" id="q2-exp">Correct. The [MODEL DECISION] line is the evidence that a real branching choice was made by the model at runtime, not pre-determined by the code. A plain script would always lead with the same section. Wrong answers: dispatching specialists is mechanical (the code decides to dispatch, not the model); a plan is still code-driven; GOAL MET just confirms the predicate passed.</div>
+  </div>
+
+  <div class="mcq-block" id="q3">
+    <div class="question">3. WeatherAnalyst finishes before NewsScanner returns. Can WeatherAnalyst's context window see the news data that arrives later?</div>
+    <ul class="mcq-options">
+      <li onclick="answer(this,'q3','wrong')">Yes — the main agent shares all incoming reports with all active specialists.</li>
+      <li onclick="answer(this,'q3','correct')">No — WeatherAnalyst's context window closes when it returns its report. It no longer exists by the time the news data arrives.</li>
+      <li onclick="answer(this,'q3','wrong')">Only if the main agent explicitly forwards the news data to WeatherAnalyst.</li>
+    </ul>
+    <div class="mcq-explain" id="q3-exp">Correct. Each sub-agent's context window is created, used, and discarded when the sub-agent returns its report. There is no shared memory between sub-agents. This is the key isolation property that makes independent sub-agents useful — if they shared context, their outputs couldn't be independently combined. Wrong answer (forwarding): even if you tried, there's no mechanism to send data to a context window that has already closed.</div>
+  </div>
+
+  <div class="mcq-block" id="q4">
+    <div class="question">4. The agent hits MAX_SUBAGENTS = 6 without briefing_complete() returning True. What does this mean?</div>
+    <ul class="mcq-options">
+      <li onclick="answer(this,'q4','wrong')">The agent is broken — a working agent always reaches its goal.</li>
+      <li onclick="answer(this,'q4','correct')">The agent stopped correctly — reaching the cap with the goal unmet is a principled stop, not a failure.</li>
+      <li onclick="answer(this,'q4','wrong')">The agent will loop indefinitely until the goal is met.</li>
+    </ul>
+    <div class="mcq-explain" id="q4-exp">Correct. A principled stop via hard cap is a governance exit, not a broken agent. The exit line says [EXIT: sub-agent cap] — the agent explains why it stopped. The goal was not met, but the agent behaved correctly by enforcing its own limit. Wrong answer (broken): an agent without a cap that loops forever is the broken one. Wrong answer (infinite loop): hard caps are code-enforced, not optional.</div>
+  </div>
+</section>
+
+<!-- ═══════════════ §12 BEFORE YOU HIT RUN ═══════════════ -->
+<section class="section" id="s12">
+  <div class="section-label">Section 12</div>
+  <h2 class="section-title">Before you hit Run</h2>
+  <p>Five things to confirm before you open PyCharm:</p>
+  <ul class="checklist">
+    <li>You can say in one sentence what the goal predicate checks — it has five conditions, not one.</li>
+    <li>You know which output line marks the model's only real decision (the lead section choice).</li>
+    <li>You understand why the NewsScanner can't be replaced by the CalendarPrep if it fails — and what the agent does instead.</li>
+    <li>You know where the sub-agent context windows are created, and when they disappear.</li>
+    <li>You have <code>claude auth status</code> passing and <code>claude-agent-sdk</code> installed (see README.md for the one-line install).</li>
+  </ul>
+</section>
+
+<!-- ═══════════════ §13 PROVENANCE ═══════════════ -->
+<section class="section" id="s13">
+  <div class="section-label">Section 13</div>
+  <h2 class="section-title">Provenance</h2>
+  <div class="provenance">
+    <table>
+      <tr><td>Agent slug</td><td>morning-intel</td></tr>
+      <tr><td>Generated</td><td>2026-10-21</td></tr>
+      <tr><td>Cycle</td><td>7</td></tr>
+      <tr><td>SDK rung demonstrated</td><td>Rung 8 — sub-agents with independent context windows (LATERAL-RIGHT)</td></tr>
+      <tr><td>Prior rungs carried</td><td>1, 2, 3, 4, 5, 6, 8</td></tr>
+      <tr><td>Learning position</td><td>LATERAL-RIGHT (rung 8 revisited; morning-briefing domain)</td></tr>
+      <tr><td>Companion file</td><td>morning-intel_learning-insights.html (Part 2 — generated after run)</td></tr>
+      <tr><td>Run log</td><td>morning-intel_run_output.log (auto-created by main.py)</td></tr>
+      <tr><td>PRD version</td><td>v9 + FR-C10 + FR-C11 + FR-F7</td></tr>
+    </table>
+  </div>
+</section>
+
+</div><!-- .page-wrap -->
+
+<script>
+function toggleDeep(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function answer(el, qid, result) {
+  const block = document.getElementById(qid);
+  const opts = block.querySelectorAll('.mcq-options li');
+  opts.forEach(o => { o.classList.remove('correct','wrong'); o.style.pointerEvents='none'; });
+  el.classList.add(result);
+  const exp = document.getElementById(qid + '-exp');
+  exp.classList.add('show');
+}
+</script>
+</body>
+</html>

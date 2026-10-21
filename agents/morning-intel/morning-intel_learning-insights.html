@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Intel — Learning Insights (Part 2)</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1f2e;
+  --surface2: #222840;
+  --border: #2d3555;
+  --accent: #4f8ef7;
+  --accent2: #7c6af7;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --code-bg: #131829;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+}
+.page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: .4rem; color: var(--accent); }
+h2 { font-size: 1.2rem; font-weight: 600; color: var(--text); margin: 2.2rem 0 .7rem; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--accent2); margin: 1.2rem 0 .4rem; }
+p { margin-bottom: 1rem; color: var(--text); }
+.subtitle { color: var(--muted); font-size: .95rem; margin-bottom: 2rem; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1.4rem;
+}
+.card-accent { border-left: 4px solid var(--accent); }
+.card-green  { border-left: 4px solid var(--green); }
+.card-amber  { border-left: 4px solid var(--amber); }
+.card-red    { border-left: 4px solid var(--red); }
+.card-purple { border-left: 4px solid var(--accent2); }
+code, pre {
+  font-family: 'Cascadia Code', 'Fira Mono', 'Consolas', monospace;
+  background: var(--code-bg);
+  border-radius: 5px;
+  font-size: .875rem;
+}
+code { padding: .15em .4em; }
+pre { padding: 1.1rem 1.3rem; overflow-x: auto; margin: .8rem 0 1rem; line-height: 1.55; }
+.log-block {
+  background: #090c14;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: 'Cascadia Code','Fira Mono','Consolas',monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin: .7rem 0 1rem;
+  white-space: pre;
+}
+.log-block .hi-green  { color: var(--green); }
+.log-block .hi-amber  { color: var(--amber); }
+.log-block .hi-red    { color: var(--red); }
+.log-block .hi-blue   { color: var(--accent); }
+.log-block .hi-purple { color: var(--accent2); }
+.log-block .hi-muted  { color: var(--muted); }
+.badge {
+  display: inline-block;
+  padding: .2em .7em;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-right: .4rem;
+}
+.badge-green  { background: rgba(34,197,94,.15); color: var(--green); }
+.badge-amber  { background: rgba(245,158,11,.15); color: var(--amber); }
+.badge-red    { background: rgba(239,68,68,.15);  color: var(--red); }
+.badge-blue   { background: rgba(79,142,247,.15); color: var(--accent); }
+.badge-purple { background: rgba(124,106,247,.15); color: var(--accent2); }
+.run-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.run-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+.run-card .run-title { font-weight: 700; font-size: .9rem; margin-bottom: .4rem; }
+.run-card .run-exit  { font-size: .8rem; color: var(--muted); }
+.run-card.goal-met  { border-top: 3px solid var(--green); }
+.run-card.follow-up { border-top: 3px solid var(--amber); }
+.run-card.cap-exit  { border-top: 3px solid var(--red); }
+.gotcha-box {
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.35);
+  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+  margin: 1rem 0;
+}
+.fix-box {
+  background: rgba(34,197,94,.07);
+  border: 1px solid rgba(34,197,94,.3);
+  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+  margin: 1rem 0;
+}
+.contrast-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin: .8rem 0; }
+.contrast-table th {
+  background: var(--surface2);
+  color: var(--accent);
+  padding: .55rem .8rem;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+.contrast-table td {
+  padding: .5rem .8rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.contrast-table tr:nth-child(odd) td { background: var(--surface); }
+.contrast-table tr:nth-child(even) td { background: var(--surface2); }
+.gate-row { display: flex; gap: .6rem; flex-wrap: wrap; margin: .5rem 0 .8rem; }
+.gate-chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .3rem .7rem;
+  font-size: .8rem;
+}
+.gate-chip .label { color: var(--muted); }
+.gate-chip .val   { color: var(--text); font-weight: 600; }
+.gate-chip.pass   { border-color: rgba(34,197,94,.4); }
+.gate-chip.partial{ border-color: rgba(245,158,11,.4); }
+.gate-chip.na     { border-color: rgba(148,163,184,.25); }
+details summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: .85rem;
+  font-weight: 600;
+  padding: .5rem 0;
+  user-select: none;
+}
+details summary:hover { color: var(--text); }
+details[open] summary { color: var(--accent2); }
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+.provenance { font-size: .78rem; color: var(--muted); }
+.provenance td, .provenance th { padding: .35rem .7rem; border: 1px solid var(--border); }
+.provenance th { background: var(--surface2); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<h1>Morning Intel — Learning Insights</h1>
+<p class="subtitle">Part 2 · post-run · Cycle 7 · Rung 8 · LATERAL-RIGHT<br>
+Written from <code>morning-intel_run_output.log</code> · 2026-10-21</p>
+
+<!-- ── SECTION 1: WHAT THE RUNS SHOWED ──────────────────── -->
+<h2>§1 — What the runs showed</h2>
+<p>
+The log contains four distinct runs. Three happened inside the smoke test suite
+(milliseconds apart, with mocked query calls). One was your real run from
+the terminal — and that one found something new.
+</p>
+
+<div class="run-row">
+  <div class="run-card goal-met">
+    <div class="run-title">Run 1 — Clean pass</div>
+    <div class="run-exit"><span class="badge badge-green">GOAL MET</span></div>
+    <p style="font-size:.8rem;margin-top:.5rem">All 3 sections quality=0.90.
+    Model picked <strong>calendar</strong> as lead.
+    3 of 6 dispatches used.</p>
+  </div>
+  <div class="run-card follow-up">
+    <div class="run-title">Run 2 — Follow-up path</div>
+    <div class="run-exit"><span class="badge badge-amber">FOLLOW-UP + GOAL MET</span></div>
+    <p style="font-size:.8rem;margin-top:.5rem">News came back quality=0.30.
+    G3 fired: re-dispatch with <em>category=technology</em>.
+    Follow-up quality=0.85. Model picked <strong>news</strong> as lead.
+    4 dispatches used.</p>
+  </div>
+  <div class="run-card cap-exit">
+    <div class="run-title">Run 3 — Cap exit</div>
+    <div class="run-exit"><span class="badge badge-red">CAP EXIT</span></div>
+    <p style="font-size:.8rem;margin-top:.5rem">All 3 sections low quality on
+    initial dispatch. G3 fired for all 3. Follow-ups also low.
+    Cap hit at 6/6. briefing_complete() = False.</p>
+  </div>
+</div>
+
+<div class="card card-red">
+  <h3>Run 4 — First real SDK run: async-generator error</h3>
+  <p>Every query() call printed:</p>
+  <div class="log-block"><span class="hi-red">  ━━━ [← SDK] 0.0s · ERROR: object async_generator can't be used in 'await' expression</span></div>
+  <p>All quality scores fell to the error-handler fallback (0.30). The agent ran correctly
+  — it exercised G3 and the cap exit — but never reached synthesis because the model
+  was never actually called. Fix: <code>_run_query()</code> wrapper with async-for.</p>
+</div>
+
+<div class="card card-amber">
+  <h3>Run 5 — Second real SDK run: text extraction error</h3>
+  <p>Async-generator fix applied. Calls now completed (8–18s each) but all sections still
+  returned quality=0.45 — the parse-fallback value, not the error-handler value. The model
+  WAS responding; the text just wasn't where the code looked for it.</p>
+  <div class="log-block"><span class="hi-amber">  ┆ weather-analyst [ResultMessage] </span><span class="hi-muted">  ← empty preview: ResultMessage.text = ""</span></div>
+  <p>A debug print of the message attributes revealed: <code>ResultMessage</code> has a
+  <code>.result</code> field, not <code>.text</code>. Fix and cause are in §4 below.</p>
+</div>
+
+<div class="card card-green">
+  <h3>Run 6 — Third real SDK run: GOAL MET</h3>
+  <p>Both fixes applied. Three specialists returned quality 0.85, 0.70, 1.00.
+  Model picked <strong>calendar</strong> as lead. Briefing produced in 3/6 dispatches.</p>
+  <div class="log-block"><span class="hi-green">🎲 [MODEL DECISION] lead=calendar · alternatives=['weather', 'news']</span>
+<span class="hi-green">🏁 [GOAL MET] all sections received · quality passed · synthesis complete</span></div>
+  <p>The actual brief (from the real model, not a mock):</p>
+  <div class="log-block" style="white-space:pre-wrap"><span class="hi-blue">Your 11:00 AM client review of the Q3 report is the centerpiece of today — your
+highest-stakes commitment — so use this morning window for focused preparation.
+Before you head out, pack an umbrella: Bangalore is a mild 26°C now, but scattered
+showers arrive after 3 PM, overlapping with your 2:00–4:00 PM deep-work block, so
+plan indoor transitions for the afternoon. On the macro front, the IMF nudged its
+2026 global growth forecast up 0.2% and the India-EU trade deal is heading to a
+signing next month — solid context if your Q3 conversation veers toward the economic
+outlook. Cap the day with your manager 1:1 at 4:00 PM.</span></div>
+</div>
+
+<!-- ── SECTION 2: WHAT THE FIRST THREE RUNS PROVED ────────── -->
+<h2>§2 — What the first three runs proved</h2>
+<p>Even though these ran against mocks, they exercised the real agent logic in a way
+the unit tests alone could not. Here is what each run confirmed:</p>
+
+<div class="card card-green">
+  <h3>Run 1 confirmed: G1 + G2 working together</h3>
+  <p>The goal predicate ran every turn and returned <code>True</code> only after
+  synthesis completed — not after the last section arrived. Then:</p>
+  <div class="log-block"><span class="hi-blue">🎲 [MODEL DECISION] lead=calendar · alternatives=['news', 'weather']</span></div>
+  <p>This is G2 in action. The code offered three sections; the model read them
+  and picked <strong>calendar</strong> as most urgent. The code did not hard-pick it.
+  That single line is the proof.</p>
+</div>
+
+<div class="card card-amber">
+  <h3>Run 2 confirmed: G3 — targeted follow-up, not a generic retry</h3>
+  <p>News came back at quality=0.30. The loop printed:</p>
+  <div class="log-block"><span class="hi-amber">🔄 [LOOP FEEDBACK] observed news quality=0.30 below threshold → changing params for follow-up</span>
+<span class="hi-amber">📤 [DISPATCHING: news-specialist #4] (follow-up) params={'category': 'technology', 'focus': 'broad'}</span></div>
+  <p>Notice: the follow-up changed <code>category</code> from <em>general</em>
+  to <em>technology</em>. It did not re-send the same request. That is the
+  act-strategy adaptation gap from Cycle 5 — closed.</p>
+  <p>Also notice: the app memory line changed between runs:</p>
+  <div class="log-block"><span class="hi-muted">Run 1 wrote:  lead was: calendar</span>
+<span class="hi-muted">Run 2 read:   └─ Last run: Wednesday, October 21, 2026 · lead was: calendar</span>
+<span class="hi-muted">Run 2 wrote:  lead was: news</span></div>
+  <p>That is the app memory layer working across runs — even within the same
+  test session.</p>
+</div>
+
+<div class="card card-red">
+  <h3>Run 3 confirmed: G4 — both cap exit paths reachable</h3>
+  <p>The agent dispatched all 6 allowed sub-agents (3 initial + 3 follow-ups)
+  and then stopped:</p>
+  <div class="log-block"><span class="hi-red">🔍 [TERMINATION CHECK] turn 2/4 · dispatches 6/6</span>
+<span class="hi-red">🏁 [EXIT: sub-agent cap] dispatch limit reached without briefing_complete()</span></div>
+  <p>This is the principled stop. The agent did not crash, did not loop forever,
+  did not "try once more just in case." It hit the cap, printed why, and stopped.
+  That is what a hard cap is for.</p>
+</div>
+
+<!-- ── SECTION 3: THE AGENT'S DECISION BOARD ─────────────── -->
+<h2>§3 — What the agent owned, and what the model owned</h2>
+<p>The learning-guide introduced this split. The run log confirms it:</p>
+
+<table class="contrast-table">
+  <tr>
+    <th>Decision</th>
+    <th>Owner</th>
+    <th>Evidence in log</th>
+  </tr>
+  <tr>
+    <td>Which section leads the brief</td>
+    <td style="color:var(--accent2)">Model</td>
+    <td><code>🎲 [MODEL DECISION] lead=calendar</code></td>
+  </tr>
+  <tr>
+    <td>Whether news quality is below threshold</td>
+    <td style="color:var(--green)">Code</td>
+    <td><code>quality_score=0.30 &lt; 0.60</code></td>
+  </tr>
+  <tr>
+    <td>Which specialist to re-dispatch</td>
+    <td style="color:var(--green)">Code</td>
+    <td><code>DISPATCHING: news-specialist #4</code> (not weather or calendar)</td>
+  </tr>
+  <tr>
+    <td>What parameters to use on follow-up</td>
+    <td style="color:var(--green)">Code</td>
+    <td><code>category='technology'</code> (changed from 'general')</td>
+  </tr>
+  <tr>
+    <td>Whether the goal is met</td>
+    <td style="color:var(--green)">Code</td>
+    <td><code>briefing_complete() → True</code></td>
+  </tr>
+  <tr>
+    <td>When to stop (cap)</td>
+    <td style="color:var(--green)">Code</td>
+    <td><code>dispatches 6/6</code> triggers exit</td>
+  </tr>
+  <tr>
+    <td>Briefing text content</td>
+    <td style="color:var(--accent2)">Model</td>
+    <td>The three-sentence briefing in the BRIEFING READY box</td>
+  </tr>
+</table>
+
+<!-- ── SECTION 4: THE NEW GOTCHAS ────────────────────────── -->
+<h2>§4 — Two new gotchas: both found on real SDK runs</h2>
+
+<div class="gotcha-box">
+  <h3 style="color:var(--red)">GOTCHA[query-is-async-generator] — Run 4</h3>
+  <p>
+  <code>await query(prompt=...)</code> raises <code>TypeError: object async_generator
+  can't be used in 'await' expression</code>.
+  </p>
+  <p>
+  The real <code>claude-agent-sdk</code> <code>query()</code> is an <strong>async
+  generator</strong> — it uses <code>yield</code> internally to stream SDK message
+  objects. Python's <code>await</code> keyword works on <em>coroutines</em>
+  (regular <code>async def</code> that <code>return</code> a value), not on
+  generators. Awaiting a generator raises <code>TypeError</code> immediately.
+  </p>
+  <p>
+  <strong>Why the smoke tests passed.</strong> The smoke test mocks were regular
+  <code>async def</code> functions that <code>return</code>ed a
+  <code>SimpleNamespace</code>. Those <em>are</em> coroutines. So
+  <code>await mock_query(...)</code> worked fine, and the mismatch was invisible
+  until the real SDK was called.
+  </p>
+  <p>
+  <strong>What the error looked like in the log:</strong>
+  </p>
+  <div class="log-block"><span class="hi-red">  ━━━ [← SDK] 0.0s · ERROR: object async_generator can't be used in 'await' expression</span></div>
+  <p>Every sub-agent hit this error, fell into the <code>except</code> block,
+  and returned quality=0.30. G3 fired, follow-ups were dispatched, they all
+  errored too, cap hit at 6/6.</p>
+</div>
+
+<div class="fix-box">
+  <h3 style="color:var(--green)">The repair</h3>
+  <p>Replace every <code>await query(prompt=...)</code> with an <code>async for</code>
+  loop that collects the final message:</p>
+  <pre><code><span style="color:var(--muted)"># Before (broken with real SDK):</span>
+result = await query(prompt=...)
+
+<span style="color:var(--muted)"># After (works with both real SDK and mock):</span>
+result = None
+async for msg in query(prompt=...):
+    result = msg
+if result is None:
+    raise RuntimeError("query() yielded no messages")</code></pre>
+  <p>In <code>main.py</code> this is wrapped in a helper called
+  <code>_run_query(prompt)</code> so the change is in one place, not four.
+  The smoke test mocks were also updated: they now <code>yield</code> instead
+  of <code>return</code>, matching the real SDK's async-generator shape.</p>
+  <pre><code><span style="color:var(--muted)"># smoke_test.py — mock now matches real SDK shape:</span>
+async def mock_query(prompt: str = "", **kwargs):
+    yield _make_result(_weather_response(0.9))</code></pre>
+  <p>After the repair: smoke tests 10/10 green. The real run is now ready.</p>
+</div>
+
+<div class="gotcha-box" style="margin-top:1.4rem">
+  <h3 style="color:var(--red)">GOTCHA[result-message-empty-text] — Run 5</h3>
+  <p>
+  <code>ResultMessage.text</code> is empty in the real SDK even on a successful
+  <code>query()</code> call. The actual response text lives in
+  <code>ResultMessage.result</code> (a plain string), not <code>.text</code>.
+  </p>
+  <p>
+  <strong>Why mocks hide it.</strong> Smoke test mocks use
+  <code>SimpleNamespace(text=json_string)</code> — they set <code>.text</code>
+  directly. So every mock call works, and the mismatch is invisible until the
+  first real SDK run. Symptom: quality=0.45 across all sections (the
+  parse-fallback value, not the 0.30 error-handler value — meaning the model
+  did respond, but the response text was an empty string).
+  </p>
+  <p>
+  <strong>How the cause was found.</strong> A debug print was added to
+  <code>_run_query()</code> that listed all non-callable attributes of each
+  yielded message. The output showed:
+  </p>
+  <div class="log-block"><span class="hi-muted">  ┆ [DEBUG MSG] type=ResultMessage attrs=['api_error_status', 'deferred_tool_use',
+    'duration_api_ms', 'duration_ms', 'errors', 'is_error', 'model_usage', 'num_turns',
+    'permission_denials', <span class="hi-amber">'result'</span>, 'session_id', 'stop_reason', ...]</span></div>
+  <p><code>.result</code> is in the list; <code>.text</code> is not. That was the answer.</p>
+</div>
+
+<div class="fix-box" style="margin-top:.8rem">
+  <h3 style="color:var(--green)">The repair (result-message-empty-text)</h3>
+  <p>In <code>_run_query()</code>, check <code>getattr(msg, 'result', None)</code>
+  <em>first</em> when scanning each yielded message, before checking <code>.text</code>
+  or content blocks:</p>
+  <pre><code><span style="color:var(--muted)"># Check order inside _run_query()'s async-for loop:</span>
+candidate = getattr(msg, "result", None)   <span style="color:var(--muted)"># 1 — ResultMessage.result (real SDK)</span>
+if isinstance(candidate, str) and candidate:
+    last_text = candidate
+candidate = getattr(msg, "text", None)    <span style="color:var(--muted)"># 2 — .text (mocks + some SDK versions)</span>
+if isinstance(candidate, str) and candidate:
+    last_text = candidate
+for block in (getattr(msg, "content", None) or []):  <span style="color:var(--muted)"># 3 — AssistantMessage content blocks</span>
+    ...</code></pre>
+  <p>After this fix: Run 6 reached synthesis, model picked calendar as lead,
+  full briefing produced. GOAL MET.</p>
+</div>
+
+<details>
+  <summary>Why the run log also shows three GOAL MET runs before the error run</summary>
+  <div style="padding:.8rem 0">
+    <p>The smoke tests call <code>asyncio.run(main.main())</code> directly. The
+    <code>tee_to_log()</code> context manager inside <code>main()</code> appends
+    to the run log on every call — including calls from tests. So all three
+    smoke-test scenarios (happy-path, follow-up, cap-exit) wrote their output
+    to the log, then your real run appended a fourth entry.</p>
+    <p>This is expected behavior. It also means the log is useful for Part 2
+    analysis even before a real SDK run completes.</p>
+  </div>
+</details>
+
+<hr class="section-divider">
+
+<!-- ── SECTION 5: THE O-R-A LOOP ANNOTATED ───────────────── -->
+<h2>§5 — The O-R-A loop, turn by turn (Run 2)</h2>
+<p>Run 2 is the most instructive because it exercised the full loop — initial
+dispatch, gap detection, follow-up, then synthesis. Here it is, labelled:</p>
+
+<div class="log-block"><span class="hi-muted">TURN 1</span>
+<span class="hi-blue">👁 [OBSERVE] checking section inventory</span>   <span style="color:var(--muted)">← reads _agent_state["sections"]</span>
+<span class="hi-blue">🧠 [REASON] missing=['weather','news','calendar'] low_quality=none</span>
+<span class="hi-blue">⚡ [ACT] dispatching specialists</span>             <span style="color:var(--muted)">← 3 dispatches</span>
+<span class="hi-muted">  ... three sub-agent boxes ...</span>
+<span class="hi-amber">📐 [GOAL PREDICATE] pre-synthesis: all_received=True quality_ok=False synthesis=False</span>
+<span class="hi-amber">📐 [GOAL PREDICATE] briefing_complete() → False</span>  <span style="color:var(--muted)">← news quality=0.30</span>
+
+<span class="hi-muted">TURN 2</span>
+<span class="hi-amber">🔄 [LOOP FEEDBACK] observed news quality=0.30 below threshold → changing params</span>
+<span class="hi-blue">👁 [OBSERVE] checking section inventory</span>
+<span class="hi-blue">🧠 [REASON] missing=none low_quality=['news']</span>
+<span class="hi-blue">⚡ [ACT] dispatching specialists</span>             <span style="color:var(--muted)">← 1 follow-up dispatch, category changed</span>
+<span class="hi-muted">  ... one sub-agent box (follow-up) ...</span>
+<span class="hi-green">📐 [GOAL PREDICATE] pre-synthesis: all_received=True quality_ok=True synthesis=False</span>
+<span class="hi-purple">━━━ [SDK →] model · synthesis</span>
+<span class="hi-purple">🎲 [MODEL DECISION] lead=news · alternatives=['news', 'weather']</span>  <span style="color:var(--muted)">← G2</span>
+<span class="hi-green">📐 [GOAL PREDICATE] briefing_complete() → True</span>
+<span class="hi-green">🏁 [GOAL MET]</span></div>
+
+<p>The loop ran twice. Both times it started with Observe (reading state),
+formed a Reason (what is missing or low), then Acted (dispatched or synthesized).
+The second turn's reason was directly shaped by the first turn's result.
+That is a closed O-R-A loop.</p>
+
+<!-- ── SECTION 6: AGENCY GATES VERDICT ────────────────────── -->
+<h2>§6 — Agency gates: what this run earned</h2>
+
+<div class="gate-row">
+  <div class="gate-chip pass">
+    <span class="label">G1</span>
+    <span class="val">DEMONSTRATED</span>
+  </div>
+  <div class="gate-chip pass">
+    <span class="label">G2</span>
+    <span class="val">DEMONSTRATED</span>
+  </div>
+  <div class="gate-chip pass">
+    <span class="label">G3</span>
+    <span class="val">DEMONSTRATED + ACT-GAP CLOSED</span>
+  </div>
+  <div class="gate-chip pass">
+    <span class="label">G4</span>
+    <span class="val">DEMONSTRATED (both paths)</span>
+  </div>
+  <div class="gate-chip na">
+    <span class="label">G5</span>
+    <span class="val">N/A — rung 7 not yet introduced</span>
+  </div>
+</div>
+
+<div class="card card-purple">
+  <h3>G3: Cycle 5 act-strategy gap — closed</h3>
+  <p>In research-lead (Cycle 5), when a sub-researcher returned low confidence,
+  the follow-up queried the same data source with the same parameters.
+  The observation changed; the action did not.</p>
+  <p>In morning-intel, the follow-up changed the input to the specialist:</p>
+  <ul style="margin-left:1.2rem;margin-top:.5rem">
+    <li>News: <em>category=general</em> → <em>category=technology</em></li>
+    <li>Calendar: <em>priority=all</em> → <em>priority=high</em></li>
+    <li>Weather: parameters varied by detail_level</li>
+  </ul>
+  <p style="margin-top:.8rem">The log confirms the change happened at line:</p>
+  <div class="log-block"><span class="hi-amber">📤 [DISPATCHING: news-specialist #4] (follow-up) params={'category': 'technology', 'focus': 'broad'}</span></div>
+  <p>Different params on the second call is what makes it act-strategy adaptation,
+  not a retry.</p>
+</div>
+
+<!-- ── SECTION 7: HETEROGENEOUS SPECIALISTS ────────────────── -->
+<h2>§7 — What heterogeneous sub-agents taught that research-lead could not</h2>
+
+<table class="contrast-table">
+  <tr>
+    <th>Lesson</th>
+    <th>research-lead (homogeneous)</th>
+    <th>morning-intel (heterogeneous)</th>
+  </tr>
+  <tr>
+    <td>Follow-up target</td>
+    <td>Any researcher could retry</td>
+    <td>Only NewsScanner can cover a news gap — you cannot send WeatherAnalyst instead</td>
+  </tr>
+  <tr>
+    <td>Why isolation matters</td>
+    <td>Sub-agents share a template — isolation is structural but identical</td>
+    <td>Each specialist has a different system prompt, different mock data, different return keys — isolation is functionally meaningful</td>
+  </tr>
+  <tr>
+    <td>G2 placement</td>
+    <td>Pre-dispatch: model picks which research angles to pursue</td>
+    <td>Post-collection: model reads three finished sections and picks which leads — the sections shape the decision</td>
+  </tr>
+  <tr>
+    <td>Context window born/discarded</td>
+    <td>5 windows, all reading the same kind of source</td>
+    <td>3 windows, each reading a completely different domain — weather API, news feed, calendar</td>
+  </tr>
+</table>
+
+<p>The most important consequence of heterogeneous sub-agents: the main agent
+cannot substitute one for another. In research-lead, if one researcher failed,
+you could re-dispatch any researcher. In morning-intel, a failed WeatherAnalyst
+gap can <em>only</em> be filled by another WeatherAnalyst dispatch — the code
+has to know which specialist type failed and target that specific type.
+That is what <code>follow_up_history[section_type]</code> tracks.</p>
+
+<!-- ── SECTION 8: THREE THINGS TO CARRY FORWARD ──────────── -->
+<h2>§8 — Three things to carry forward to Cycle 8</h2>
+
+<div class="card card-blue">
+  <h3>1 · Smoke tests only catch what the mock can simulate</h3>
+  <p>Both gotchas this cycle were invisible to smoke tests. The mocks set
+  <code>.text</code> directly and were regular coroutines — neither the
+  async-generator shape nor the <code>ResultMessage.result</code> attribute
+  was tested. Real SDK runs are the only way to catch SDK interface mismatches.
+  The rule: after any smoke test pass, do a real SDK run before claiming the
+  agent works. And when a real run surfaces a new attribute name, add a debug
+  <code>dir()</code> print before reaching for assumptions — it takes one run
+  and names the fix exactly.</p>
+</div>
+
+<div class="card card-purple">
+  <h3>2 · G2 can fire at different moments — both are valid</h3>
+  <p>research-lead: G2 fires <em>before</em> dispatch (model picks which angles
+  to research). morning-intel: G2 fires <em>after</em> collection (model picks
+  which section leads). Neither is more correct. What makes it G2 is that the
+  code offers options and the model chooses — not that the choice happens at
+  a particular step in the loop.</p>
+</div>
+
+<div class="card card-amber">
+  <h3>3 · The error handler is part of the agent's architecture</h3>
+  <p>When query() errored, the agent did not crash. It caught the exception,
+  created a low-confidence report (quality=0.30), and continued. G3 then fired
+  because the quality was below threshold. G4 capped the run after 6 dispatches.
+  The agent behaved correctly under error conditions because the error case was
+  designed as a first-class path, not bolted on after the fact.</p>
+</div>
+
+<!-- ── SECTION 9: NEW GOTCHAS ADDED TO REGISTRY ──────────── -->
+<h2>§9 — Two new gotchas added to registry</h2>
+<p>After these runs, two new entries were added to <code>gotchas_mastered</code>
+in <code>foundry_registry.json</code>:</p>
+
+<div class="card card-red">
+  <h3>query-is-async-generator</h3>
+  <p>
+  <code>await query(prompt=...)</code> raises
+  <code>TypeError: object async_generator can't be used in 'await' expression</code>
+  because <code>claude-agent-sdk</code>'s <code>query()</code> is an async
+  generator. Use <code>async for msg in query(...): result = msg</code> (or a
+  <code>_run_query()</code> wrapper). Smoke test mocks must also use
+  <code>yield</code> not <code>return</code>, or the mismatch stays hidden
+  until the first real SDK run. (morning-intel Cycle 7 — Run 4; fixed with
+  <code>_run_query()</code> adapter + async-generator mocks)
+  </p>
+</div>
+
+<div class="card card-red" style="margin-top:1rem">
+  <h3>result-message-empty-text</h3>
+  <p>
+  <code>ResultMessage.text</code> is empty in the real SDK even on a successful
+  call. The actual response text lives in <code>ResultMessage.result</code>
+  (a plain string). Mock objects set <code>.text</code> directly, so the
+  mismatch is invisible in smoke tests — every mock passes, every real run fails
+  with quality=0.45 (parse-fallback). Fix: in the <code>_run_query()</code>
+  adapter, check <code>getattr(msg, 'result', None)</code> first, before
+  <code>.text</code> or content blocks. Cause found by adding a debug
+  <code>dir()</code> print — attribute list showed <code>'result'</code>,
+  confirmed no <code>'text'</code>. (morning-intel Cycle 7 — Run 5; fixed
+  before Run 6 which produced the first real briefing)
+  </p>
+</div>
+
+<hr class="section-divider">
+
+<!-- ── PROVENANCE ──────────────────────────────────────────── -->
+<h2>§10 — Provenance</h2>
+<table class="contrast-table provenance">
+  <tr><th>Field</th><th>Value</th></tr>
+  <tr><td>Slug</td><td>morning-intel</td></tr>
+  <tr><td>Part</td><td>2 — post-run learning insights</td></tr>
+  <tr><td>Source log</td><td>morning-intel_run_output.log (6 runs — 3 smoke-test, 3 real SDK)</td></tr>
+  <tr><td>Cycle</td><td>7</td></tr>
+  <tr><td>Rung</td><td>8 (LATERAL-RIGHT)</td></tr>
+  <tr><td>Domain</td><td>morning-briefing</td></tr>
+  <tr><td>Learning position</td><td>LATERAL-RIGHT — same rung as research-lead, new domain</td></tr>
+  <tr><td>Companion file</td><td>morning-intel_learning-guide.html (Part 1)</td></tr>
+  <tr><td>New gotchas surfaced</td><td>query-is-async-generator · result-message-empty-text</td></tr>
+  <tr><td>Cycle 5 gap closed</td><td>act-strategy adaptation (G3 — follow-up changes params, not retry)</td></tr>
+  <tr><td>PRD version</td><td>v9 + FR-C10 + FR-C11 + FR-F7</td></tr>
+  <tr><td>Date written</td><td>2026-10-21</td></tr>
+</table>
+
+</div>
+</body>
+</html>
